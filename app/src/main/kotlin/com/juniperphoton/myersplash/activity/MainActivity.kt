@@ -252,9 +252,11 @@ class MainActivity : BaseActivity() {
         toolbarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             if (Math.abs(verticalOffset) - appBarLayout.height == 0) {
                 tagView.animate().alpha(1f).setDuration(300).start()
+                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE
                 searchFab.hide()
             } else {
                 tagView.animate().alpha(0f).setDuration(100).start()
+                window.decorView.systemUiVisibility = 0
                 searchFab.show()
             }
         }

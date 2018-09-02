@@ -121,19 +121,6 @@
 
                 <TextView
                     style="@style/AboutSubTitleTextView"
-                    android:text="@string/telegram_bot"/>
-
-                <TextView
-                    android:id="@+id/bot_item"
-                    style="@style/AboutSubContentTextView"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="12dp"
-                    android:drawableLeft="@drawable/ic_telegram"
-                    android:drawablePadding="12dp"
-                    android:text="@string/launch_telegram_bot"/>
-
-                <TextView
-                    style="@style/AboutSubTitleTextView"
                     android:text="@string/feedback"/>
 
                 <LinearLayout

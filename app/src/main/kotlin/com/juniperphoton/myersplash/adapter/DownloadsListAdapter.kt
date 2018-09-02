@@ -37,7 +37,7 @@ class DownloadsListAdapter(private val context: Context) :
 
     var data: MutableList<DownloadItem> = mutableListOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DownloadItemViewHolder? {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DownloadItemViewHolder {
         return when (viewType) {
             ITEM_TYPE_ITEM -> {
                 val view = LayoutInflater.from(context)
@@ -54,7 +54,7 @@ class DownloadsListAdapter(private val context: Context) :
                         parent, false)
                 DownloadItemViewHolder(footer)
             }
-            else -> null
+            else -> throw IllegalArgumentException("unknown view type")
         }
     }
 
@@ -78,7 +78,7 @@ class DownloadsListAdapter(private val context: Context) :
     fun updateItem(item: DownloadItem) {
         val index = data.indexOf(item)
         if (index >= 0 && index <= data.size) {
-            Pasteur.d(TAG, "notifyItemChanged:" + index)
+            Pasteur.d(TAG, "notifyItemChanged:$index")
             notifyItemChanged(index)
         }
     }

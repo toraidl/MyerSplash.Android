@@ -61,7 +61,8 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
 
     private var query: String? = null
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Pasteur.info(TAG, "onCreateView $activity")
 
         val view = LayoutInflater.from(activity!!).inflate(R.layout.fragment_list, container, false)
@@ -216,9 +217,11 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
             }
         }
 
-        adapter = PhotoAdapter(unsplashImages, activity)
+        val context = activity ?: return
+
+        adapter = PhotoAdapter(unsplashImages, context)
         adapter?.onClickQuickDownload = { image ->
-            DownloadUtil.download(activity, image)
+            DownloadUtil.download(context, image)
         }
         adapter?.onClickPhoto = onClickPhotoItem
         contentRecyclerView.adapter = adapter
