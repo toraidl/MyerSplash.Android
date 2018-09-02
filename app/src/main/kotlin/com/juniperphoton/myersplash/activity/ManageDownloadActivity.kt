@@ -56,9 +56,9 @@ class ManageDownloadActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         RealmCache.getInstance().removeAllChangeListeners()
         RealmCache.getInstance().close()
+        super.onDestroy()
     }
 
     @OnClick(R.id.downloads_more_fab)

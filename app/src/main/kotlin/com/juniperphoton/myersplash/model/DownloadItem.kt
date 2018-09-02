@@ -20,7 +20,7 @@ open class DownloadItem() : RealmObject() {
         const val POSITION_KEY = "position"
     }
 
-    @IntDef(DOWNLOAD_STATUS_DOWNLOADING.toLong(), DOWNLOAD_STATUS_OK.toLong(), DOWNLOAD_STATUS_FAILED.toLong())
+    @IntDef(DOWNLOAD_STATUS_DOWNLOADING, DOWNLOAD_STATUS_OK, DOWNLOAD_STATUS_FAILED)
     @Retention(AnnotationRetention.SOURCE)
     annotation class DownloadStatus
 

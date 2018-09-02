@@ -34,12 +34,11 @@
     <string name="feedback_str">I have an idea</string>
     <string name="credit">CREDIT</string>
     <string name="feedback">FEEDBACK</string>
-    <string name="telegram_bot">TELEGRAM BOT</string>
     <string name="give_me_a_rate">Give me a rate</string>
     <string name="like_this_app">LIKE THIS APP</string>
     <string name="myer">Myer</string>
     <string name="splash">Splash</string>
-    <string name="for_windows_amp_android"><![CDATA[for Windows 10 & Android & Telegram Bot]]></string>
+    <string name="for_windows_amp_android"><![CDATA[for Windows 10 & Android]]></string>
     <string name="search">SEARCH PHOTOS</string>
     <string name="searchLowercase">Search</string>
     <string name="downloadLowercase">Downloads</string>
@@ -54,7 +53,6 @@
     <string name="search_action">android.myersplash.action.search</string>
     <string name="random_action">android.myersplash.action.search</string>
     <string name="buy_me_a_drink">Treat me a drink via Alipay</string>
-    <string name="launch_telegram_bot">Launch Telegram Bot</string>
     <string name="downloads">DOWNLOADS</string>eat
     <string name="no_downloads">NO DOWNLOADS</string>
     <string name="cleanup_downloads_list">Clean up downloads list</string>

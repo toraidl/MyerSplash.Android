@@ -23,13 +23,13 @@ class CategoryAdapter(private val context: Context,
      */
     var onClickItem: ((string: String) -> Unit)? = null
 
-    override fun onBindViewHolder(holder: CategoryViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         holder?.bind(list[holder.adapterPosition])
     }
 
     override fun getItemCount(): Int = list.size
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CategoryViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         return CategoryViewHolder(LayoutInflater.from(context).inflate(R.layout.row_search_category, parent, false))
     }
 

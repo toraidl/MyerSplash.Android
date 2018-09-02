@@ -3,7 +3,6 @@ package com.juniperphoton.myersplash.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.WindowManager
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -11,7 +10,6 @@ import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getVersionName
 import com.juniperphoton.myersplash.extension.startActivitySafely
-import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
 @Suppress("unused")
 class AboutActivity : BaseActivity() {
@@ -71,13 +69,6 @@ class AboutActivity : BaseActivity() {
     @OnClick(R.id.weibo_item)
     internal fun onClickWeibo() {
         val uri = Uri.parse(getString(R.string.weibo_url))
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        startActivitySafely(intent)
-    }
-
-    @OnClick(R.id.bot_item)
-    internal fun onClickBot() {
-        val uri = Uri.parse("https://t.me/myersplashbot")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivitySafely(intent)
     }

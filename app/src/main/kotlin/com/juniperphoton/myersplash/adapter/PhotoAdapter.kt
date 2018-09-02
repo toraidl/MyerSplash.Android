@@ -69,7 +69,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder? {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         return when (viewType) {
             ITEM_TYPE_ITEM -> {
                 val view = LayoutInflater.from(context).inflate(R.layout.row_photo, parent, false)
@@ -82,7 +82,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
                 }
                 return PhotoViewHolder(view, viewType, footerFlag)
             }
-            else -> null
+            else -> throw IllegalArgumentException("unknown view type")
         }
     }
 
@@ -147,7 +147,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
 
     private fun isFooterView(position: Int): Boolean = position >= itemCount - 1
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
         lastPosition = -1

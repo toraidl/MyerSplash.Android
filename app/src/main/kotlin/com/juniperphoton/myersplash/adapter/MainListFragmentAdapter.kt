@@ -16,7 +16,7 @@ import com.juniperphoton.myersplash.model.UnsplashImage
 class MainListFragmentAdapter(private var callback: ((RectF, UnsplashImage, View) -> Unit)?,
                               fm: FragmentManager
 ) : FragmentStatePagerAdapter(fm) {
-    override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val o = super.instantiateItem(container, position)
         if (o is MainListFragment) {
             inject(o, position)

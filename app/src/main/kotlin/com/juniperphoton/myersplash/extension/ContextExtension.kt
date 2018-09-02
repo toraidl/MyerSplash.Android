@@ -8,6 +8,7 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.view.Display
 import android.view.WindowManager
+import com.juniperphoton.myersplash.R
 
 fun Context.getDpi(): Float = resources.displayMetrics.density
 
@@ -20,6 +21,19 @@ fun Context.getScreenHeight(): Int = resources.displayMetrics.heightPixels
 fun Context.hasNavigationBar(): Boolean {
     val size = getNavigationBarSize()
     return size.y > 0
+}
+
+fun Context.getStatusBarHeight(): Int {
+    return try {
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            resources.getDimensionPixelSize(resourceId)
+        } else {
+            throw IllegalArgumentException("no res id for status bar height")
+        }
+    } catch (e: Exception) {
+        resources.getDimensionPixelSize(R.dimen.status_bar_height)
+    }
 }
 
 fun Context.getNavigationBarSize(): Point {
