@@ -45,6 +45,7 @@
     <dimen name="gradient_bottom_height">130dp</dimen>
     <dimen name="gradient_top_height">100dp</dimen>
     <dimen name="common_corner_radius">4dp</dimen>
+    <dimen name="large_corner_radius">20dp</dimen>
     <dimen name="copy_url_text_size">13sp</dimen>
     <dimen name="search_button_padding">16dp</dimen>
     <dimen name="search_buttons_width">120dp</dimen>
