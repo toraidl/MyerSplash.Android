@@ -51,11 +51,11 @@
     <style name="TagTextView">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_marginStart">16dp</item>
         <item name="android:layout_marginTop">40dp</item>
-        <item name="android:background">@android:color/black</item>
         <item name="android:paddingBottom">4dp</item>
         <item name="android:paddingTop">4dp</item>
+        <item name="android:shadowColor">#66000000</item>
+        <item name="android:shadowRadius">12.0</item>
         <item name="android:paddingRight">16dp</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:textColor">@android:color/white</item>

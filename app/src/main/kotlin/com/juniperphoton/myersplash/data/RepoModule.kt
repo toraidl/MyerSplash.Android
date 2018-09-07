@@ -12,9 +12,9 @@ class RepoModule(private val context: Context,
     @Provides
     fun providesCategory(): UnsplashCategory {
         return when (pos) {
-            0 -> UnsplashCategory.featuredCategory
-            1 -> UnsplashCategory.newCategory
-            2 -> UnsplashCategory.randomCategory
+            0 -> UnsplashCategory.newCategory
+            1 -> UnsplashCategory.featuredCategory
+            2 -> UnsplashCategory.highlightCategory
             else -> UnsplashCategory.searchCategory
         }
     }

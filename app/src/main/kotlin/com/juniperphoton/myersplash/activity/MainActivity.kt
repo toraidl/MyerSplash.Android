@@ -30,27 +30,29 @@ import com.juniperphoton.myersplash.utils.SimpleObserver
 import com.juniperphoton.myersplash.widget.ImageDetailView
 import com.juniperphoton.myersplash.widget.PivotTitleBar
 import com.juniperphoton.myersplash.widget.SearchView
+import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
 
 class MainActivity : BaseActivity() {
     companion object {
-        private const val SAVED_NAVIGATION_INDEX = "navi_index"
+        private const val SAVED_NAVIGATION_INDEX = "navigation_index"
         private const val DOWNLOADS_SHORTCUT_ID = "downloads_shortcut"
     }
 
     private var mainListFragmentAdapter: MainListFragmentAdapter? = null
 
     private var handleShortcut: Boolean = false
-    private var initNavigationIndex = 1
+    private var initNavigationIndex = PivotTitleBar.DEFAULT_SELECTED
     private var fabPositionX: Int = 0
     private var fabPositionY: Int = 0
 
     private val idMaps = mutableMapOf(
-            0 to UnsplashCategory.FEATURED_CATEGORY_ID,
-            1 to UnsplashCategory.NEW_CATEGORY_ID,
-            2 to UnsplashCategory.RANDOM_CATEGORY_ID)
+            0 to UnsplashCategory.NEW_CATEGORY_ID,
+            1 to UnsplashCategory.FEATURED_CATEGORY_ID,
+            2 to UnsplashCategory.HIGHLIGHTS_CATEGORY_ID)
 
     @BindView(R.id.toolbar_layout)
     lateinit var toolbarLayout: AppBarLayout
@@ -82,7 +84,8 @@ class MainActivity : BaseActivity() {
         clearSharedFiles()
 
         if (savedInstanceState != null) {
-            initNavigationIndex = savedInstanceState.getInt(SAVED_NAVIGATION_INDEX, 1)
+            initNavigationIndex = savedInstanceState.getInt(SAVED_NAVIGATION_INDEX,
+                    PivotTitleBar.DEFAULT_SELECTED)
         }
 
         initShortcuts()
@@ -180,18 +183,13 @@ class MainActivity : BaseActivity() {
         if (!PermissionUtil.check(this)) {
             return
         }
-        Observable.just(FileUtil.sharePath)
+        Completable.create {
+            FileUtil.clearFilesToShared()
+        }
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(object : SimpleObserver<String>() {
-                    override fun onNext(data: String) {
-                        FileUtil.clearFilesToShared()
-                    }
-
-                    override fun onError(e: Throwable) {
-                        e.printStackTrace()
-                    }
-                })
+                .subscribe({
+                    // do nothing
+                }, { e -> e.printStackTrace() })
     }
 
     private fun initMainViews() {
@@ -237,15 +235,16 @@ class MainActivity : BaseActivity() {
             currentItem = initNavigationIndex
             offscreenPageLimit = 1
             addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+                override fun onPageScrolled(position: Int,
+                                            positionOffset: Float,
+                                            positionOffsetPixels: Int) = Unit
 
                 override fun onPageSelected(position: Int) {
                     pivotTitleBar.selectedItem = position
                     tagView.text = "# ${pivotTitleBar.selectedString}"
                 }
 
-                override fun onPageScrollStateChanged(state: Int) {
-                }
+                override fun onPageScrollStateChanged(state: Int) = Unit
             })
         }
 

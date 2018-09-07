@@ -4,8 +4,6 @@ import android.graphics.Color
 import com.google.gson.annotations.SerializedName
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.broadcastreceiver.WallpaperWidgetProvider
-import com.juniperphoton.myersplash.cloudservice.Request.ME_HOME_PAGE
 import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import io.reactivex.Observable
@@ -17,33 +15,11 @@ class UnsplashImage : Serializable {
     companion object {
         private val savingQualitySettingsKey = App.instance.getString(R.string.preference_key_saving_quality)
         private val listQualitySettingsKey = App.instance.getString(R.string.preference_key_list_quality)
-
-        fun createTodayImage(): UnsplashImage {
-            return UnsplashImage().apply {
-                isUnsplash = false
-                id = WallpaperWidgetProvider.DATE_STRING
-                urls = ImageUrl().apply {
-                    raw = WallpaperWidgetProvider.DOWNLOAD_URL
-                    full = WallpaperWidgetProvider.DOWNLOAD_URL
-                    regular = WallpaperWidgetProvider.THUMB_URL
-                    small = WallpaperWidgetProvider.THUMB_URL
-                    thumb = WallpaperWidgetProvider.THUMB_URL
-                }
-                user = UnsplashUser().apply {
-                    val authorName = App.instance.getString(R.string.author_default_name)
-                    userName = authorName
-                    name = authorName
-                    links = ProfileUrl().apply {
-                        html = ME_HOME_PAGE
-                    }
-                }
-            }
-        }
     }
 
     @SerializedName("id")
     var id: String? = null
-        private set
+        internal set
 
     @SerializedName("created_at")
     private val createdAt: String? = null
@@ -55,10 +31,10 @@ class UnsplashImage : Serializable {
     private val likes: Int = 0
 
     @SerializedName("user")
-    private var user: UnsplashUser? = null
+    internal var user: UnsplashUser? = null
 
     @SerializedName("urls")
-    private var urls: ImageUrl? = null
+    internal var urls: ImageUrl? = null
 
     @SerializedName("links")
     private var links: ImageLinks? = null
@@ -67,7 +43,10 @@ class UnsplashImage : Serializable {
         get() = links?.downloadLocation
 
     var isUnsplash: Boolean = true
-        private set
+        internal set
+
+    var showTodayTag: Boolean = false
+        internal set
 
     val pathForDownload: String
         get() = FileUtil.galleryPath + File.separator + fileNameForDownload
