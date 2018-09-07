@@ -108,4 +108,20 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:elevation">50dp</item>
     </style>
+
+    <style name="CopyUrlTextViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginLeft">12dp</item>
+        <item name="android:layout_marginRight">12dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/copy_url_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

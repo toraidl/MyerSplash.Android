@@ -108,5 +108,5 @@
     <string name="author_default_name">JuniperPhoton</string>
     <string name="loading">Loading…</string>
     <string name="recommended_tag">TODAY</string>
-    <string name="copied_tag">COPIED :D</string>
+    <string name="copied_tag">COPIED</string>
 </resources>
