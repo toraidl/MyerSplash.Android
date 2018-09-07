@@ -80,13 +80,13 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
     private fun initUi() {
         rootRL.setOnTouchListener { _, _ -> true }
-        editText.setOnKeyListener({ _, keyCode, event ->
+        editText.setOnKeyListener { _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 onClickSearch()
                 return@setOnKeyListener true
             }
             false
-        })
+        }
 
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) = Unit
