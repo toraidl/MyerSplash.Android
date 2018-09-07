@@ -138,7 +138,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
             editText.setSelection(name.length, name.length)
             onClickSearch()
         }
-        categoryList.layoutManager = FlexboxLayoutManager()
+        categoryList.layoutManager = FlexboxLayoutManager(context)
         categoryList.adapter = categoryAdapter
     }
 
@@ -214,7 +214,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     fun onClickSearch() {
         hideKeyboard()
         Log.d(TAG, "onClickSearch")
-        if (editText.text.toString() == "") {
+        if (editText.text.toString().isEmpty()) {
             ToastService.sendShortToast("Input the keyword to search.")
             return
         }
