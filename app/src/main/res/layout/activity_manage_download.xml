@@ -20,8 +20,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/black"
         android:fitsSystemWindows="false"
-        android:orientation="vertical"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+        android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/downloads_list"

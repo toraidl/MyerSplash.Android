@@ -49,7 +49,7 @@ class ManageDownloadActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_managedownload)
+        setContentView(R.layout.activity_manage_download)
         ButterKnife.bind(this)
 
         initViews()
