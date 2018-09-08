@@ -57,7 +57,7 @@
             android:layout_marginEnd="24dp"
             android:background="@drawable/ripple"
             android:src="@drawable/vector_ic_more"
-            app:backgroundTint="@color/MyerSplashThemeColor"
+            app:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             tools:layout_editor_absoluteX="0dp"
