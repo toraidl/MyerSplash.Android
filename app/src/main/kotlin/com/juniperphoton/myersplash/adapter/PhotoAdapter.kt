@@ -73,14 +73,14 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
         return when (viewType) {
             ITEM_TYPE_ITEM -> {
                 val view = LayoutInflater.from(context).inflate(R.layout.row_photo, parent, false)
-                return PhotoViewHolder(view, viewType, footerFlag)
+                PhotoViewHolder(view, viewType, footerFlag)
             }
             ITEM_TYPE_FOOTER -> {
                 val view: View = when (footerFlag) {
                     FOOTER_FLAG_SHOW_END -> LayoutInflater.from(context).inflate(R.layout.row_footer_end, parent, false)
                     else -> LayoutInflater.from(context).inflate(R.layout.row_footer, parent, false)
                 }
-                return PhotoViewHolder(view, viewType, footerFlag)
+                PhotoViewHolder(view, viewType, footerFlag)
             }
             else -> throw IllegalArgumentException("unknown view type")
         }

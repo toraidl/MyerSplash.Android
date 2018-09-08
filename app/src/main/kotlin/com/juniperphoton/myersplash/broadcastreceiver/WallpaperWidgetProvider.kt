@@ -12,36 +12,16 @@ import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.MainActivity
 import com.juniperphoton.myersplash.cloudservice.CloudService
-import com.juniperphoton.myersplash.cloudservice.Request
 import com.juniperphoton.myersplash.extension.getLengthInKb
+import com.juniperphoton.myersplash.model.UnsplashImageFactory
 import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.*
 import okhttp3.ResponseBody
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 class WallpaperWidgetProvider : AppWidgetProvider() {
     companion object {
         private const val TAG = "WallpaperWidgetProvider"
-
-        val THUMB_URL: String
-            get() = "${Request.AUTO_CHANGE_WALLPAPER_THUMB}$DATE_STRING.jpg"
-
-        val DOWNLOAD_URL: String
-            get() = "${Request.AUTO_CHANGE_WALLPAPER}$DATE_STRING.jpg"
-
-        val DATE_STRING: String
-            get() {
-                val date = Calendar.getInstance(TimeZone.getDefault())
-                return SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(date.time)
-            }
-
-        private val DATE_STRING_FOR_DISPLAY: String
-            get() {
-                val date = Calendar.getInstance(TimeZone.getDefault())
-                return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date.time)
-            }
     }
 
     override fun onUpdate(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
@@ -51,7 +31,7 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
         }
         Pasteur.debug(TAG, "onUpdate")
 
-        val file = File(FileUtil.cachedPath, "${THUMB_URL.hashCode()}.jpg")
+        val file = File(FileUtil.cachedPath, "${UnsplashImageFactory.TODAY_THUMB_URL.hashCode()}.jpg")
         if (file.exists() && file.getLengthInKb() > 100) {
             AppWidgetUtil.doWithWidgetId {
                 updateWidget(App.instance, it, file.absolutePath)
@@ -79,21 +59,21 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
             }
         }
 
-        CloudService.downloadPhoto(THUMB_URL).subscribeWith(observer)
+        CloudService.downloadPhoto(UnsplashImageFactory.TODAY_THUMB_URL).subscribeWith(observer)
     }
 
     private fun updateWidget(context: Context, widgetId: Int, filePath: String) {
         val manager = AppWidgetManager.getInstance(context)
         val remoteViews = RemoteViews(context.packageName, R.layout.widget_layout)
-        remoteViews.setTextViewText(R.id.widget_update_time_text, "$DATE_STRING_FOR_DISPLAY Updated")
+        remoteViews.setTextViewText(R.id.widget_update_time_text, "$UnsplashImageFactory.DATE_STRING_FOR_DISPLAY Updated")
         val bm = BitmapFactory.decodeFile(filePath)
         remoteViews.setImageViewBitmap(R.id.widget_center_image, bm)
 
-        Log.d(TAG, "pending to download: $DOWNLOAD_URL")
+        Log.d(TAG, "pending to download: $UnsplashImageFactory.DOWNLOAD_URL")
 
         val intent = Intent(context, DownloadService::class.java)
-        intent.putExtra(Params.URL_KEY, DOWNLOAD_URL)
-        intent.putExtra(Params.NAME_KEY, DATE_STRING)
+        intent.putExtra(Params.URL_KEY, UnsplashImageFactory.TODAY_DOWNLOAD_URL)
+        intent.putExtra(Params.NAME_KEY, UnsplashImageFactory.TODAY_DATE_STRING)
         intent.putExtra(Params.PREVIEW_URI, filePath)
         intent.putExtra(Params.IS_UNSPLASH_WALLPAPER, false)
         val pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
