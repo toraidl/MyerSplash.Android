@@ -208,8 +208,8 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     }
 
     private fun displayListDataInternal(unsplashImages: MutableList<UnsplashImage>) {
-        if (adapter != null && adapter!!.firstImage != null) {
-            if (adapter?.firstImage?.id == unsplashImages[0]?.id) {
+        if (adapter?.firstImage != null) {
+            if (unsplashImages.isNotEmpty() && adapter?.firstImage?.id == unsplashImages[0].id) {
                 return
             }
         }

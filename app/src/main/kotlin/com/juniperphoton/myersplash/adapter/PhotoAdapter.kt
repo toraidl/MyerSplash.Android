@@ -147,7 +147,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
         lastPosition = -1
-        layoutManager = recyclerView!!.layoutManager
+        layoutManager = recyclerView.layoutManager
     }
 
     fun clear() {
