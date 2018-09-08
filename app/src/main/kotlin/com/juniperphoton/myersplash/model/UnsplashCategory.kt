@@ -45,6 +45,13 @@ class UnsplashCategory {
                     id = SEARCH_ID
                 }
             }
+
+        val randomCategory: UnsplashCategory
+            get() {
+                return UnsplashCategory().apply {
+                    id = RANDOM_CATEGORY_ID
+                }
+            }
     }
 
     private val photoCount: Int = 0

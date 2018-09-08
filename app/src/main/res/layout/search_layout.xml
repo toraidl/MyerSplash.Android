@@ -30,31 +30,31 @@
 
                 <FrameLayout
                     android:id="@+id/detail_clear_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackgroundBorderless">
+                    android:layout_width="@dimen/search_bar_height"
+                    android:layout_height="@dimen/search_bar_height">
 
                     <ImageView
-                        android:layout_width="@dimen/search_bar_height"
-                        android:layout_height="@dimen/search_bar_height"
-                        android:layout_gravity="center_vertical"
-                        android:contentDescription="@string/image_desc"
+                        android:layout_width="@dimen/search_bar_button_size"
+                        android:layout_height="@dimen/search_bar_button_size"
+                        android:layout_gravity="center"
                         android:padding="@dimen/search_button_padding"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/image_desc"
                         android:src="@drawable/ic_close"/>
                 </FrameLayout>
 
                 <FrameLayout
                     android:id="@+id/detail_search_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackgroundBorderless">
+                    android:layout_width="@dimen/search_bar_height"
+                    android:layout_height="@dimen/search_bar_height">
 
                     <ImageView
-                        android:layout_width="@dimen/search_bar_height"
-                        android:layout_height="@dimen/search_bar_height"
-                        android:layout_gravity="center_vertical"
-                        android:contentDescription="@string/image_desc"
+                        android:layout_width="@dimen/search_bar_button_size"
+                        android:layout_height="@dimen/search_bar_button_size"
+                        android:layout_gravity="center"
                         android:padding="@dimen/search_button_padding"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/image_desc"
                         android:src="@drawable/vector_ic_search_white"/>
                 </FrameLayout>
             </LinearLayout>

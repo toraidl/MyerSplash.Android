@@ -31,7 +31,7 @@ object CloudService {
 
     private const val TAG = "CloudService"
 
-    private val endDate = SimpleDateFormat("yyyy/MM/dd").parse("2018/07/20")
+    private val endDate = SimpleDateFormat("yyyy/MM/dd").parse("2017/03/20")
 
     private val retrofit: Retrofit
     private val photoService: PhotoService

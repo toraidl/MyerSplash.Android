@@ -7,14 +7,15 @@ import dagger.Provides
 
 @Module
 class RepoModule(private val context: Context,
-                 private val pos: Int,
+                 private val categoryId: Int,
                  private val view: MainContract.MainView) {
     @Provides
     fun providesCategory(): UnsplashCategory {
-        return when (pos) {
-            0 -> UnsplashCategory.newCategory
-            1 -> UnsplashCategory.featuredCategory
-            2 -> UnsplashCategory.highlightCategory
+        return when (categoryId) {
+            UnsplashCategory.NEW_CATEGORY_ID -> UnsplashCategory.newCategory
+            UnsplashCategory.FEATURED_CATEGORY_ID -> UnsplashCategory.featuredCategory
+            UnsplashCategory.HIGHLIGHTS_CATEGORY_ID -> UnsplashCategory.highlightCategory
+            UnsplashCategory.RANDOM_CATEGORY_ID -> UnsplashCategory.randomCategory
             else -> UnsplashCategory.searchCategory
         }
     }
