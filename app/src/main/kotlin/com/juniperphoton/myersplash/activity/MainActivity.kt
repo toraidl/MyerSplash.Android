@@ -230,7 +230,7 @@ class MainActivity : BaseActivity() {
         viewPager.apply {
             adapter = mainListFragmentAdapter
             currentItem = initNavigationIndex
-            offscreenPageLimit = 1
+            offscreenPageLimit = 3
             addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrolled(position: Int,
                                             positionOffset: Float,
