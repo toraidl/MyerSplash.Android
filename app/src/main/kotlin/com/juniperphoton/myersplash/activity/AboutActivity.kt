@@ -47,7 +47,7 @@ class AboutActivity : BaseActivity() {
 
     @OnClick(R.id.rate_item)
     internal fun onClickRate() {
-        val uri = Uri.parse("market://details?id=" + packageName)
+        val uri = Uri.parse("market://details?id=$packageName")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivitySafely(intent)
     }

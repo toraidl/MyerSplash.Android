@@ -11,6 +11,7 @@ import com.juniperphoton.myersplash.data.DaggerRepoComponent
 import com.juniperphoton.myersplash.data.MainListPresenter
 import com.juniperphoton.myersplash.data.RepoModule
 import com.juniperphoton.myersplash.fragment.MainListFragment
+import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.model.UnsplashImage
 
 class MainListFragmentAdapter(private var callback: ((RectF, UnsplashImage, View) -> Unit)?,
@@ -19,15 +20,20 @@ class MainListFragmentAdapter(private var callback: ((RectF, UnsplashImage, View
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val o = super.instantiateItem(container, position)
         if (o is MainListFragment) {
-            inject(o, position)
+            val categoryId = when (position) {
+                0 -> UnsplashCategory.NEW_CATEGORY_ID
+                1 -> UnsplashCategory.FEATURED_CATEGORY_ID
+                else -> UnsplashCategory.HIGHLIGHTS_CATEGORY_ID
+            }
+            inject(o, categoryId)
         }
         return o
     }
 
-    private fun inject(fragment: MainListFragment, position: Int) {
+    private fun inject(fragment: MainListFragment, categoryId: Int) {
         val presenter = MainListPresenter()
         val component = DaggerRepoComponent.builder()
-                .repoModule(RepoModule(App.instance, position, fragment)).build()
+                .repoModule(RepoModule(App.instance, categoryId, fragment)).build()
         component.inject(presenter)
 
         fragment.presenter = presenter

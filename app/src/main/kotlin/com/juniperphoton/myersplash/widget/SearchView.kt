@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -80,13 +79,13 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
     private fun initUi() {
         rootRL.setOnTouchListener { _, _ -> true }
-        editText.setOnKeyListener({ _, keyCode, event ->
+        editText.setOnKeyListener { _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 onClickSearch()
                 return@setOnKeyListener true
             }
             false
-        })
+        }
 
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) = Unit
@@ -138,7 +137,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
             editText.setSelection(name.length, name.length)
             onClickSearch()
         }
-        categoryList.layoutManager = FlexboxLayoutManager()
+        categoryList.layoutManager = FlexboxLayoutManager(context)
         categoryList.adapter = categoryAdapter
     }
 
@@ -162,6 +161,9 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
             clearBtn.animate().scaleX(if (show) 1f else 0f).scaleY(if (show) 1f else 0f).setDuration(200)
                     .start()
         }
+
+        searchBtn.visibility = if (show) View.VISIBLE else View.GONE
+        clearBtn.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     private fun hideKeyboard() {
@@ -213,8 +215,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     @OnClick(R.id.detail_search_btn)
     fun onClickSearch() {
         hideKeyboard()
-        Log.d(TAG, "onClickSearch")
-        if (editText.text.toString() == "") {
+        if (editText.text.toString().isEmpty()) {
             ToastService.sendShortToast("Input the keyword to search.")
             return
         }

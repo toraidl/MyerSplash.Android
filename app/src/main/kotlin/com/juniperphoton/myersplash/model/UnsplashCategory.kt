@@ -5,14 +5,15 @@ import com.juniperphoton.myersplash.cloudservice.Request
 @Suppress("unused")
 class UnsplashCategory {
     companion object {
-        const val FEATURED_CATEGORY_ID = 10000
-        const val NEW_CATEGORY_ID = 10001
-        const val RANDOM_CATEGORY_ID = 10002
+        const val NEW_CATEGORY_ID = 10000
+        const val FEATURED_CATEGORY_ID = 10001
+        const val HIGHLIGHTS_CATEGORY_ID = 10002
         const val SEARCH_ID = 10003
+        const val RANDOM_CATEGORY_ID = 10004
 
         const val FEATURE = "Featured"
         const val NEW = "New"
-        const val RANDOM = "Random"
+        const val HIGHLIGHTS = "Highlights"
 
         val featuredCategory: UnsplashCategory
             get() {
@@ -30,11 +31,11 @@ class UnsplashCategory {
                 }
             }
 
-        val randomCategory: UnsplashCategory
+        val highlightCategory: UnsplashCategory
             get() {
                 return UnsplashCategory().apply {
-                    id = UnsplashCategory.RANDOM_CATEGORY_ID
-                    title = UnsplashCategory.RANDOM
+                    id = UnsplashCategory.HIGHLIGHTS_CATEGORY_ID
+                    title = UnsplashCategory.HIGHLIGHTS
                 }
             }
 
@@ -42,6 +43,13 @@ class UnsplashCategory {
             get() {
                 return UnsplashCategory().apply {
                     id = SEARCH_ID
+                }
+            }
+
+        val randomCategory: UnsplashCategory
+            get() {
+                return UnsplashCategory().apply {
+                    id = RANDOM_CATEGORY_ID
                 }
             }
     }
@@ -56,6 +64,7 @@ class UnsplashCategory {
         get() = when (id) {
             NEW_CATEGORY_ID -> Request.PHOTO_URL
             FEATURED_CATEGORY_ID -> Request.FEATURED_PHOTO_URL
+            HIGHLIGHTS_CATEGORY_ID -> Request.HIGHLIGHTS_PHOTO_URL
             RANDOM_CATEGORY_ID -> Request.RANDOM_PHOTOS_URL
             SEARCH_ID -> Request.SEARCH_URL
             else -> links?.photos

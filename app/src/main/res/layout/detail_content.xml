@@ -68,7 +68,7 @@
 
             <com.juniperphoton.flipperlayout.FlipperLayout
                 android:id="@+id/copy_url_flipper_layout"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/copy_url_width"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
@@ -80,63 +80,40 @@
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="0dp">
 
-                <android.support.v7.widget.CardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="2dp">
+                <com.juniperphoton.myersplash.widget.RoundCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <FrameLayout
                         android:id="@+id/copy_url_fl"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:foreground="@drawable/ripple_rect">
+                        android:foreground="@drawable/ripple_large_round_rect">
 
                         <TextView
                             android:id="@+id/copy_url_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="8dp"
-                            android:layout_marginLeft="12dp"
-                            android:layout_marginRight="12dp"
-                            android:layout_marginTop="8dp"
-                            android:maxLines="1"
-                            android:text="@string/copy_url"
-                            android:textColor="@android:color/white"
-                            android:textSize="16sp"
-                            android:textStyle="bold"/>
+                            style="@style/CopyUrlTextViewStyle"
+                            android:text="@string/copy_url"/>
                     </FrameLayout>
-                </android.support.v7.widget.CardView>
+                </com.juniperphoton.myersplash.widget.RoundCardView>
 
-                <android.support.v7.widget.CardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="2dp">
+                <com.juniperphoton.myersplash.widget.RoundCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <FrameLayout
                         android:id="@+id/copied_url_fl"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@android:color/white"
-                        android:foreground="@drawable/ripple_rect">
+                        android:foreground="@drawable/ripple_large_round_rect">
 
                         <TextView
                             android:id="@+id/copied_url_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="8dp"
-                            android:layout_marginLeft="12dp"
-                            android:layout_marginRight="12dp"
-                            android:layout_marginTop="8dp"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:text="@string/copied_tag"
-                            android:textColor="@android:color/black"
-                            android:textSize="16sp"
-                            android:textStyle="bold"/>
+                            style="@style/CopyUrlTextViewStyle"
+                            android:text="@string/copied_tag"/>
                     </FrameLayout>
-                </android.support.v7.widget.CardView>
+                </com.juniperphoton.myersplash.widget.RoundCardView>
             </com.juniperphoton.flipperlayout.FlipperLayout>
 
 

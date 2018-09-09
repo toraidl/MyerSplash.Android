@@ -24,7 +24,7 @@ class CategoryAdapter(private val context: Context,
     var onClickItem: ((string: String) -> Unit)? = null
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
-        holder?.bind(list[holder.adapterPosition])
+        holder.bind(list[holder.adapterPosition])
     }
 
     override fun getItemCount(): Int = list.size
