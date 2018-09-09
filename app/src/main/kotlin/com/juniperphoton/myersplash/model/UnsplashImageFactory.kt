@@ -40,10 +40,10 @@ object UnsplashImageFactory {
     private val todayDate: Date
         get() = Calendar.getInstance(TimeZone.getDefault()).time
 
-    fun createHighlightImage(date: Date): UnsplashImage {
+    fun createHighlightImage(date: Date, showTodayTag: Boolean = false): UnsplashImage {
         return UnsplashImage().apply {
             isUnsplash = false
-            showTodayTag = date == todayDate
+            this.showTodayTag = showTodayTag
             color = if (dateFormat.format(date).toInt() % 2 == 0) "#50ffffff" else "#000000"
             id = createDateString(date)
             urls = ImageUrl().apply {
@@ -67,6 +67,6 @@ object UnsplashImageFactory {
     }
 
     fun createTodayImage(): UnsplashImage {
-        return createHighlightImage(todayDate)
+        return createHighlightImage(todayDate, true)
     }
 }

@@ -107,13 +107,13 @@ object CloudService {
             val list = mutableListOf<UnsplashImage>()
 
             for (i in 0 until DEFAULT_HIGHLIGHTS_COUNT) {
-                calendar.add(Calendar.DATE, -1)
                 val date = calendar.time
                 if (date > endDate) {
                     list.add(UnsplashImageFactory.createHighlightImage(calendar.time))
                 } else {
                     Log.w(TAG, "the date: $date is before end date $endDate")
                 }
+                calendar.add(Calendar.DATE, -1)
             }
 
             it.onNext(list)

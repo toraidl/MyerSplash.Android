@@ -84,7 +84,7 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
             downloadRL.visibility = View.GONE
         }
 
-        if (!image.isUnsplash && image.showTodayTag) {
+        if (image.showTodayTag) {
             todayTag.visibility = View.VISIBLE
         } else {
             todayTag.visibility = View.GONE
