@@ -84,12 +84,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:background="@drawable/version_round_bg"
                 android:paddingBottom="4dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:paddingTop="4dp"
-                android:textColor="@android:color/black"
+                android:textColor="@color/MyerSplashThemeColor"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -108,7 +107,7 @@
 
                 <TextView
                     style="@style/AboutSubTitleTextView"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="@dimen/settings_sub_title_margin_top"
                     android:text="@string/credit"/>
 
                 <TextView
@@ -121,6 +120,7 @@
 
                 <TextView
                     style="@style/AboutSubTitleTextView"
+                    android:layout_marginTop="@dimen/settings_sub_title_margin_top"
                     android:text="@string/feedback"/>
 
                 <LinearLayout
@@ -158,12 +158,14 @@
 
                 <TextView
                     style="@style/AboutSubTitleTextView"
+                    android:layout_marginTop="@dimen/settings_sub_title_margin_top"
                     android:text="@string/like_this_app"/>
 
                 <TextView
                     android:id="@+id/rate_item"
                     style="@style/AboutSubContentTextView"
                     android:layout_gravity="center"
+                    android:background="@drawable/ripple_large_round_rect"
                     android:text="@string/give_me_a_rate"/>
 
                 <android.support.v4.widget.Space

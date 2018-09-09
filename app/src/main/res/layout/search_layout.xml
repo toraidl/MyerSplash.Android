@@ -19,14 +19,51 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/search_bar_height"
             android:layout_marginTop="@dimen/search_bar_margin"
-            android:background="@android:color/white"
             app:layout_scrollFlags="scroll|enterAlways">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/search_bar_height"
+                android:layout_alignParentRight="true"
+                android:background="@color/SettingBackground"
+                android:gravity="end">
+
+                <FrameLayout
+                    android:id="@+id/detail_clear_btn"
+                    android:layout_width="@dimen/search_bar_height"
+                    android:layout_height="@dimen/search_bar_height">
+
+                    <ImageView
+                        android:layout_width="@dimen/search_bar_button_size"
+                        android:layout_height="@dimen/search_bar_button_size"
+                        android:layout_gravity="center"
+                        android:padding="@dimen/search_button_padding"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/image_desc"
+                        android:src="@drawable/ic_close"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/detail_search_btn"
+                    android:layout_width="@dimen/search_bar_height"
+                    android:layout_height="@dimen/search_bar_height">
+
+                    <ImageView
+                        android:layout_width="@dimen/search_bar_button_size"
+                        android:layout_height="@dimen/search_bar_button_size"
+                        android:layout_gravity="center"
+                        android:padding="@dimen/search_button_padding"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/image_desc"
+                        android:src="@drawable/vector_ic_search_white"/>
+                </FrameLayout>
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/detail_search_et"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="100dp"
+                android:layout_marginEnd="120dp"
                 android:background="@color/SettingBackground"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
@@ -41,46 +78,8 @@
                 android:textSize="15sp"
                 tools:text="Lake"/>
 
-            <LinearLayout
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:layout_alignParentRight="true"
-                android:background="@color/SettingBackground">
-
-                <FrameLayout
-                    android:id="@+id/detail_clear_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackgroundBorderless">
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center_vertical"
-                        android:contentDescription="@string/image_desc"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_close"/>
-                </FrameLayout>
-
-                <FrameLayout
-                    android:id="@+id/detail_search_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackgroundBorderless">
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center_vertical"
-                        android:contentDescription="@string/image_desc"
-                        android:padding="10dp"
-                        android:src="@drawable/vector_ic_search_white"/>
-                </FrameLayout>
-
-            </LinearLayout>
         </RelativeLayout>
     </android.support.design.widget.AppBarLayout>
-
 
     <FrameLayout
         android:id="@+id/search_result_root"

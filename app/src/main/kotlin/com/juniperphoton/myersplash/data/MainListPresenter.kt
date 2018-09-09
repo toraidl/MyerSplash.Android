@@ -6,6 +6,7 @@ import com.juniperphoton.myersplash.cloudservice.CloudService
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.model.UnsplashImage
+import com.juniperphoton.myersplash.model.UnsplashImageFactory
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.utils.ResponseObserver
 import io.reactivex.disposables.CompositeDisposable
@@ -87,7 +88,7 @@ open class MainListPresenter : MainContract.MainPresenter {
                 if (category.id == UnsplashCategory.NEW_CATEGORY_ID
                         && nextPage == DEFAULT_PAGING
                         && preferenceRepo.getBoolean(App.instance.getString(R.string.preference_key_recommendation), true)) {
-                    data.add(0, UnsplashImage.createTodayImage())
+                    data.add(0, UnsplashImageFactory.createTodayImage())
                 }
                 mainView.refreshList(data, nextPage)
             }
@@ -102,12 +103,12 @@ open class MainListPresenter : MainContract.MainPresenter {
 
         category.let {
             val o = when (it.id) {
-                UnsplashCategory.FEATURED_CATEGORY_ID ->
-                    CloudService.getFeaturedPhotos(it.requestUrl!!, next)
                 UnsplashCategory.NEW_CATEGORY_ID ->
                     CloudService.getPhotos(it.requestUrl!!, next)
-                UnsplashCategory.RANDOM_CATEGORY_ID ->
-                    CloudService.getRandomPhotos(it.requestUrl!!)
+                UnsplashCategory.FEATURED_CATEGORY_ID ->
+                    CloudService.getFeaturedPhotos(it.requestUrl!!, next)
+                UnsplashCategory.HIGHLIGHTS_CATEGORY_ID ->
+                    CloudService.getHighlightsPhotos(next)
                 UnsplashCategory.SEARCH_ID ->
                     CloudService.searchPhotos(it.requestUrl!!, next, query!!)
                 else -> throw IllegalArgumentException("unknown category id")

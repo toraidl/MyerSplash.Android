@@ -19,7 +19,8 @@ import com.juniperphoton.myersplash.model.UnsplashCategory
 @Suppress("UNUSED")
 class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     companion object {
-        private const val DEFAULT_SELECTED = 1
+        const val DEFAULT_SELECTED = 0
+        private const val ANIMATION_DURATION_MILLIS = 300L
     }
 
     @BindView(R.id.more_btn)
@@ -58,9 +59,8 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
      */
     val selectedString: String
         get() = when (selectedItem) {
-            0 -> UnsplashCategory.FEATURE.toUpperCase()
-            1 -> UnsplashCategory.NEW.toUpperCase()
-            2 -> UnsplashCategory.RANDOM.toUpperCase()
+            1 -> UnsplashCategory.FEATURE.toUpperCase()
+            2 -> UnsplashCategory.HIGHLIGHTS.toUpperCase()
             else -> UnsplashCategory.NEW.toUpperCase()
         }
 
@@ -69,9 +69,9 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
     private lateinit var gestureDetector: GestureDetector
 
     private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
-        override fun onSingleTapUp(e: MotionEvent): Boolean {
+        override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
             onSingleTap?.invoke(touchingViewIndex)
-            return super.onSingleTapUp(e)
+            return super.onSingleTapConfirmed(e)
         }
 
         override fun onDoubleTap(e: MotionEvent): Boolean {
@@ -81,10 +81,10 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
     }
 
     private val onTouchListener = View.OnTouchListener { v, event ->
-        when {
-            v === item0 -> touchingViewIndex = 0
-            v === item1 -> touchingViewIndex = 1
-            v === item2 -> touchingViewIndex = 2
+        when (v) {
+            item0 -> touchingViewIndex = 0
+            item1 -> touchingViewIndex = 1
+            item2 -> touchingViewIndex = 2
         }
         gestureDetector.onTouchEvent(event)
         true
@@ -96,17 +96,9 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
             R.id.menu_about to AboutActivity::class.java
     )
 
-    private var itemsMap: Map<Int, View>
-
     init {
         LayoutInflater.from(context).inflate(R.layout.pivot_layout, this, true)
         ButterKnife.bind(this)
-
-        itemsMap = mapOf(
-                0 to item0,
-                1 to item1,
-                2 to item2
-        )
 
         gestureDetector = GestureDetector(context, gestureListener)
         item0.setOnTouchListener(onTouchListener)
@@ -114,27 +106,19 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
         item2.setOnTouchListener(onTouchListener)
     }
 
+    // Must follow the init block to initialize item0, item1 and item2.
+    private val itemsMap: Map<Int, View> = mapOf(
+            0 to item0,
+            1 to item1,
+            2 to item2
+    )
+
     private fun toggleAnimation(prevIndex: Int, newIndex: Int) {
         val prevView = itemsMap[prevIndex]
         val nextView = itemsMap[newIndex]
 
-        prevView?.animate()?.alpha(0.3f)?.setDuration(300)?.start()
-        nextView?.animate()?.alpha(1f)?.setDuration(300)?.start()
-    }
-
-    @OnClick(R.id.pivot_item_0)
-    fun onClickItem0() {
-        onSingleTap?.invoke(0)
-    }
-
-    @OnClick(R.id.pivot_item_1)
-    fun onClickItem1() {
-        onSingleTap?.invoke(1)
-    }
-
-    @OnClick(R.id.pivot_item_2)
-    fun onClickItem2() {
-        onSingleTap?.invoke(2)
+        prevView?.animate()?.alpha(0.3f)?.setDuration(ANIMATION_DURATION_MILLIS)?.start()
+        nextView?.animate()?.alpha(1f)?.setDuration(ANIMATION_DURATION_MILLIS)?.start()
     }
 
     @OnClick(R.id.more_btn)

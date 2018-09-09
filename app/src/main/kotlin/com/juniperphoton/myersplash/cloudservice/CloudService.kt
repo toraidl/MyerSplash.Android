@@ -1,8 +1,11 @@
 package com.juniperphoton.myersplash.cloudservice
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.juniperphoton.myersplash.model.UnsplashImage
+import com.juniperphoton.myersplash.model.UnsplashImageFactory
 import io.reactivex.Observable
+import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -13,6 +16,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.security.SecureRandom
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
@@ -22,11 +27,23 @@ import javax.net.ssl.X509TrustManager
 object CloudService {
     private const val DEFAULT_TIMEOUT = 10
     private const val DEFAULT_REQUEST_COUNT = 10
+    private const val DEFAULT_HIGHLIGHTS_COUNT = 60
+
+    private const val TAG = "CloudService"
+
+    private val endDate = SimpleDateFormat("yyyy/MM/dd").parse("2017/03/20")
 
     private val retrofit: Retrofit
     private val photoService: PhotoService
     private val downloadService: DownloadService
     private val builder: OkHttpClient.Builder = OkHttpClient.Builder()
+
+    private fun networkTransformer(): ObservableTransformer<MutableList<UnsplashImage>, MutableList<UnsplashImage>> {
+        return ObservableTransformer {
+            return@ObservableTransformer it.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+        }
+    }
 
     init {
         val ctx = SSLContext.getInstance("SSL")
@@ -64,14 +81,12 @@ object CloudService {
     fun getPhotos(url: String,
                   page: Int): Observable<MutableList<UnsplashImage>> {
         return photoService.getPhotos(url, page, DEFAULT_REQUEST_COUNT)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(networkTransformer())
     }
 
     fun getRandomPhotos(url: String): Observable<MutableList<UnsplashImage>> {
         return photoService.getRandomPhotos(url, DEFAULT_REQUEST_COUNT)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(networkTransformer())
     }
 
     fun getFeaturedPhotos(url: String,
@@ -81,8 +96,29 @@ object CloudService {
                 .map { images ->
                     images.map { it.image!! }.toMutableList()
                 }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(networkTransformer())
+    }
+
+    fun getHighlightsPhotos(page: Int): Observable<MutableList<UnsplashImage>> {
+        return Observable.create<MutableList<UnsplashImage>> {
+            val calendar = Calendar.getInstance(TimeZone.getDefault())
+            calendar.add(Calendar.DATE, -(page - 1) * DEFAULT_HIGHLIGHTS_COUNT)
+
+            val list = mutableListOf<UnsplashImage>()
+
+            for (i in 0 until DEFAULT_HIGHLIGHTS_COUNT) {
+                val date = calendar.time
+                if (date > endDate) {
+                    list.add(UnsplashImageFactory.createHighlightImage(calendar.time))
+                } else {
+                    Log.w(TAG, "the date: $date is before end date $endDate")
+                }
+                calendar.add(Calendar.DATE, -1)
+            }
+
+            it.onNext(list)
+            it.onComplete()
+        }.delay(200, TimeUnit.MILLISECONDS).compose(networkTransformer())
     }
 
     fun searchPhotos(url: String,
@@ -93,8 +129,7 @@ object CloudService {
                 .map { searchResults ->
                     searchResults.list!!
                 }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(networkTransformer())
     }
 
     fun downloadPhoto(url: String): Observable<ResponseBody> {
