@@ -23,7 +23,7 @@ object Pasteur {
     }
 
     fun i(tag: String?, string: String) {
-        i(tag, string)
+        info(tag, string)
     }
 
     fun info(tag: String?, string: String) {
