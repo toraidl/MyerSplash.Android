@@ -18,12 +18,12 @@ android {
         }
     }
 
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion '28.0.2'
     defaultConfig {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 301
         versionName "3.0.1"
 
