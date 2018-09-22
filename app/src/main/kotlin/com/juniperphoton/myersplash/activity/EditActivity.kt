@@ -1,14 +1,13 @@
 package com.juniperphoton.myersplash.activity
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.*
 import android.graphics.drawable.Animatable
 import android.net.Uri
 import android.os.Bundle
 import android.support.annotation.WorkerThread
-import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
@@ -28,9 +27,9 @@ import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getScreenHeight
-import com.juniperphoton.myersplash.extension.getScreenWidth
 import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.utils.*
+import com.juniperphoton.myersplash.widget.edit.PreviewDraweeLayout
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -49,6 +48,9 @@ class EditActivity : BaseActivity() {
 
     @BindView(R.id.edit_image_preview)
     lateinit var previewImageView: SimpleDraweeView
+
+    @BindView(R.id.edit_image_preview_layout)
+    lateinit var previewDraweeLayout: PreviewDraweeLayout
 
     @BindView(R.id.edit_mask)
     lateinit var maskView: View
@@ -134,41 +136,6 @@ class EditActivity : BaseActivity() {
         valueAnimator.repeatMode = ValueAnimator.RESTART
         valueAnimator.repeatCount = ValueAnimator.INFINITE
         valueAnimator.start()
-
-        previewImageView.setOnTouchListener { _, event ->
-            when (event.actionMasked) {
-                MotionEvent.ACTION_DOWN -> {
-                    actionDownX = event.rawX
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    val x = event.rawX
-                    val dx = x - actionDownX
-                    previewImageView.translationX = dx + lastTranslationX
-                }
-                MotionEvent.ACTION_UP -> {
-                    actionDownX = 0f
-                    lastTranslationX = previewImageView.translationX
-                    fixPosition()
-                }
-            }
-            true
-        }
-    }
-
-    private fun fixPosition() {
-        val x = previewImageView.translationX
-        val dx = if (x > 0) {
-            if (x > maxTranslationAbsX) -(x - maxTranslationAbsX) else 0f
-        } else {
-            if (-x > maxTranslationAbsX) (-maxTranslationAbsX - x) else 0f
-        }
-        if (dx != 0f) {
-            previewImageView.animate().translationXBy(dx)
-                    .setDuration(300)
-                    .setInterpolator(FastOutSlowInInterpolator())
-                    .start()
-            lastTranslationX = maxTranslationAbsX * (if (dx > 0) -1 else 1)
-        }
     }
 
     private fun updatePreviewImage() {
@@ -186,54 +153,12 @@ class EditActivity : BaseActivity() {
                     override fun onFinalImageSet(id: String?, imageInfo: ImageInfo?, animatable: Animatable?) {
                         val rect = RectF()
                         previewImageView.hierarchy.getActualImageBounds(rect)
-                        updateImageScale(rect)
+                        previewDraweeLayout.updateContentScale(rect)
                     }
                 })
                 .build() as PipelineDraweeController
 
         previewImageView.controller = controller
-    }
-
-    /**
-     * The last translation x when action up
-     */
-    private var lastTranslationX = 0f
-
-    /**
-     * Raw x when action down
-     */
-    private var actionDownX = 0f
-
-    /**
-     * Scale factor for image scaling. It's the same as the scale x of [previewImageView]
-     */
-    private var finalScale = 1f
-
-    /**
-     * Width of image after apply scaling
-     */
-    private val actualBoundWidth
-        get() = getScreenWidth() * finalScale
-
-    /**
-     * Indicate whether we should fix position up when action up event occurs
-     */
-    private val maxTranslationAbsX
-        get() = (actualBoundWidth - getScreenWidth()) / 2f
-
-    private fun updateImageScale(rect: RectF) {
-        val width = rect.width()
-        val height = rect.height()
-
-        val screenWidth = previewImageView.width
-        val screenHeight = previewImageView.height
-
-        val scaleX = screenWidth.toFloat() / width
-        val scaleY = screenHeight.toFloat() / height
-
-        finalScale = Math.max(scaleX, scaleY)
-        previewImageView.scaleX = finalScale
-        previewImageView.scaleY = finalScale
     }
 
     @OnClick(R.id.edit_confirm_fab)
@@ -277,6 +202,7 @@ class EditActivity : BaseActivity() {
                 })
     }
 
+    @SuppressLint("WrongThread")
     @WorkerThread
     private fun composeMaskInternal(): File {
         val opt = BitmapFactory.Options()

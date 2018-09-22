@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.extension.addDimensions
+import com.juniperphoton.myersplash.extension.getNavigationBarSize
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.widget.item.PhotoFooterView
 import com.juniperphoton.myersplash.widget.item.PhotoItemView
@@ -20,6 +22,12 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
     companion object {
         const val ITEM_TYPE_ITEM = 0
         const val ITEM_TYPE_FOOTER = 1
+
+        private const val BASE_DELAY_MILLIS = 300L
+        private const val ANIMATION_DURATION_MILLIS = 800L
+        private const val ITEM_SLIDE_IN_TRANSLATION_X = 300
+
+        private const val LOAD_MORE_ITEMS_THRESHOLD = 10
     }
 
     private var isAutoLoadMore = true
@@ -62,7 +70,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
             }
             else -> {
                 isAutoLoadMore = false
-                footerView?.toggleCollasped()
+                footerView?.toggleCollapsed()
             }
         }
     }
@@ -74,8 +82,12 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
                 PhotoViewHolder(view)
             }
             ITEM_TYPE_FOOTER -> {
-                footerView = LayoutInflater.from(context)
-                        .inflate(R.layout.row_footer, parent, false) as PhotoFooterView
+                footerView = (LayoutInflater.from(context)
+                        .inflate(R.layout.row_footer, parent, false) as PhotoFooterView).apply {
+                    val padding = context.getNavigationBarSize().y
+                    addDimensions(null, padding)
+                    setPadding(0, 0, 0, padding)
+                }
                 PhotoViewHolder(footerView!!)
             }
             else -> throw IllegalArgumentException("unknown view type")
@@ -108,23 +120,23 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
 
         lastPosition = position
 
-        val delay = 300 * (position + 1)
-        val duration = 800
+        val delay = BASE_DELAY_MILLIS * (position + 1)
+        val duration = ANIMATION_DURATION_MILLIS
 
         container.alpha = 0f
-        container.translationX = 300f
+        container.translationX = ITEM_SLIDE_IN_TRANSLATION_X.toFloat()
 
         val animator = ValueAnimator.ofFloat(0.0f, 1.0f)
         animator.addUpdateListener { valueAnimator -> container.alpha = valueAnimator.animatedValue as Float }
-        animator.startDelay = delay.toLong()
-        animator.duration = duration.toLong()
+        animator.startDelay = delay
+        animator.duration = duration
         animator.start()
 
-        val animator2 = ValueAnimator.ofInt(300, 0)
+        val animator2 = ValueAnimator.ofInt(ITEM_SLIDE_IN_TRANSLATION_X, 0)
         animator2.addUpdateListener { valueAnimator -> container.translationX = (valueAnimator.animatedValue as Int).toFloat() }
         animator2.interpolator = DecelerateInterpolator()
-        animator2.startDelay = delay.toLong()
-        animator2.duration = duration.toLong()
+        animator2.startDelay = delay
+        animator2.duration = duration
         animator2.start()
     }
 
@@ -151,7 +163,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
     }
 
     fun clear() {
-        footerView?.toggleCollasped()
+        footerView?.toggleCollapsed()
         imageData.clear()
         notifyDataSetChanged()
     }
@@ -160,7 +172,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
         val size = this.imageData.size
         this.imageData.addAll(data)
         when {
-            data.size >= 10 -> {
+            data.size >= LOAD_MORE_ITEMS_THRESHOLD -> {
                 isAutoLoadMore = true
                 footerView?.toggleLoading()
                 notifyItemInserted(size)

@@ -7,11 +7,17 @@
                 android:clipChildren="false"
                 android:clipToPadding="false">
 
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/edit_image_preview"
+    <com.juniperphoton.myersplash.widget.edit.PreviewDraweeLayout
+        android:id="@+id/edit_image_preview_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:actualImageScaleType="centerInside"/>
+        android:layout_height="match_parent">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/edit_image_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:actualImageScaleType="centerInside"/>
+    </com.juniperphoton.myersplash.widget.edit.PreviewDraweeLayout>
 
     <View
         android:id="@+id/edit_mask"
