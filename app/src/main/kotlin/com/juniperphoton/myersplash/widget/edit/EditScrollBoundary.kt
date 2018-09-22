@@ -3,6 +3,11 @@ package com.juniperphoton.myersplash.widget.edit
 import android.content.Context
 import com.juniperphoton.myersplash.extension.getScreenWidth
 
+/**
+ * A [ScrollBoundary] used in edit page.
+ * The scrollable axis is Y only.
+ * The x axis scrolling range is from the left side of scaled content image to the right side.
+ */
 class EditScrollBoundary(private val context: Context) : ScrollBoundary {
     /**
      * Indicate whether we should fix position up when action up event occurs

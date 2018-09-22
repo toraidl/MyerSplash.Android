@@ -9,6 +9,10 @@ import android.view.ViewConfiguration
 import android.widget.OverScroller
 import com.juniperphoton.myersplash.utils.Pasteur
 
+/**
+ * Helper class to scroll the [contentView] and perform fling and overscroll.
+ * See [anchorTo], [dispatchInvalidateEventBy] and [computeScroll] for details.
+ */
 class ImagePreviewAttacher(context: Context,
                            private val scrollBoundary: ScrollBoundary) : View.OnTouchListener {
     companion object {
@@ -35,15 +39,26 @@ class ImagePreviewAttacher(context: Context,
     private var velocityTracker = VelocityTracker.obtain()
     private val scroller = OverScroller(context)
 
+    /**
+     * Attach to the content [view] that will update its translation X during scrolling.
+     */
     fun anchorTo(view: View) {
         contentView = view
         contentView.setOnTouchListener(this)
     }
 
-    fun dispatchTouchEventBy(view: View) {
+    /**
+     * Dispatch invalidation event to the [view]. The [view] normally is
+     * the parent of that in [anchorTo].
+     */
+    fun dispatchInvalidateEventBy(view: View) {
         touchEventHandler = view
     }
 
+    /**
+     * Compute scroll. Should be called on the view of [dispatchInvalidateEventBy]'s
+     * computeScroll() method.
+     */
     fun computeScroll() {
         if (scroller.computeScrollOffset()) {
             var currX = scroller.currX.toFloat()

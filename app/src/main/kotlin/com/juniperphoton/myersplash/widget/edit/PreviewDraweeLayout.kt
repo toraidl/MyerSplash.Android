@@ -39,7 +39,7 @@ class PreviewDraweeLayout(context: Context,
     override fun onFinishInflate() {
         super.onFinishInflate()
         attacher.anchorTo(contentView)
-        attacher.dispatchTouchEventBy(this)
+        attacher.dispatchInvalidateEventBy(this)
     }
 
     override fun computeScroll() {
