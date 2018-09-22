@@ -5,9 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Point
 import android.net.ConnectivityManager
-import android.os.Build
-import android.view.Display
-import android.view.WindowManager
 import com.juniperphoton.myersplash.R
 
 fun Context.getDpi(): Float = resources.displayMetrics.density
@@ -37,45 +34,10 @@ fun Context.getStatusBarHeight(): Int {
 }
 
 fun Context.getNavigationBarSize(): Point {
-    val appUsableSize = getAppUsableScreenSize()
-    val realScreenSize = getRealScreenSize()
-
-    // navigation bar on the right
-    if (appUsableSize.x < realScreenSize.x) {
-        return Point(realScreenSize.x - appUsableSize.x, appUsableSize.y)
-    }
-
-    // navigation bar at the bottom
-    if (appUsableSize.y < realScreenSize.y) {
-        return Point(appUsableSize.x, realScreenSize.y - appUsableSize.y)
-    }
-
-    // navigation bar is not present
-    return Point()
-}
-
-fun Context.getAppUsableScreenSize(): Point {
-    val display = (getSystemService(android.content.Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-    val size = Point()
-    display.getSize(size)
-    return size
-}
-
-fun Context.getRealScreenSize(): Point {
-    val windowManager = getSystemService(android.content.Context.WINDOW_SERVICE) as WindowManager
-    val display = windowManager.defaultDisplay
-    val size = Point()
-    if (Build.VERSION.SDK_INT >= 17) {
-        display.getRealSize(size)
-    } else if (Build.VERSION.SDK_INT >= 14) {
-        try {
-            size.x = Display::class.java.getMethod("getRawWidth").invoke(display) as Int
-            size.y = Display::class.java.getMethod("getRawHeight").invoke(display) as Int
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-        }
-    }
-    return size
+    val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+    return if (resourceId > 0) {
+        Point(getScreenWidth(), resources.getDimensionPixelSize(resourceId))
+    } else Point(0, 0)
 }
 
 fun Context.usingWifi(): Boolean {
