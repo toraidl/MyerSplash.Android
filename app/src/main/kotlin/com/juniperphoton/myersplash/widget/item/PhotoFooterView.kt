@@ -21,7 +21,7 @@ class PhotoFooterView(context: Context, attrs: AttributeSet?) : ConstraintLayout
         ButterKnife.bind(this, this)
     }
 
-    fun toggleCollasped() {
+    fun toggleCollapsed() {
         visibility = View.GONE
     }
 
