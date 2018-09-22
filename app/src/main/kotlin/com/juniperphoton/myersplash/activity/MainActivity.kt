@@ -13,14 +13,13 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.ViewPager
 import android.view.View
 import android.view.ViewAnimationUtils
-import android.widget.RelativeLayout
+import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
-import com.juniperphoton.myersplash.extension.getDimenInPixel
 import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.utils.AnimatorListeners
@@ -260,10 +259,11 @@ class MainActivity : BaseActivity() {
         tagView.setOnClickListener { EventBus.getDefault().post(ScrollToTopEvent(idMaps[pivotTitleBar.selectedItem]!!, false)) }
     }
 
-    override fun onConfigNavigationBar(hasNavigationBar: Boolean) {
-        if (!hasNavigationBar) {
-            val params = searchFab.layoutParams as RelativeLayout.LayoutParams
-            params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
+    override fun onConfigNavigationBar(navigationBarHeight: Int) {
+        if (navigationBarHeight > 0) {
+            val params = searchFab.layoutParams as ViewGroup.MarginLayoutParams
+            val previousMargin = params.bottomMargin
+            params.setMargins(0, 0, previousMargin, previousMargin + navigationBarHeight)
             searchFab.layoutParams = params
         }
     }

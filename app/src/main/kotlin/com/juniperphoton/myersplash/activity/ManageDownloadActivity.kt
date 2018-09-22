@@ -2,12 +2,12 @@ package com.juniperphoton.myersplash.activity
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -15,7 +15,6 @@ import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
-import com.juniperphoton.myersplash.extension.getDimenInPixel
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.utils.Pasteur
 import io.realm.RealmChangeListener
@@ -136,10 +135,11 @@ class ManageDownloadActivity : BaseActivity() {
         updateNoItemVisibility()
     }
 
-    override fun onConfigNavigationBar(hasNavigationBar: Boolean) {
-        if (!hasNavigationBar) {
-            val params = moreFab.layoutParams as ConstraintLayout.LayoutParams
-            params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
+    override fun onConfigNavigationBar(navigationBarHeight: Int) {
+        if (navigationBarHeight > 0) {
+            val params = moreFab.layoutParams as ViewGroup.MarginLayoutParams
+            val previousMargin = params.bottomMargin
+            params.setMargins(0, 0, previousMargin, previousMargin + navigationBarHeight)
             moreFab.layoutParams = params
         }
     }

@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.extension.getNavigationBarSize
 import com.juniperphoton.myersplash.extension.getStatusBarHeight
-import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.extension.updateDimensions
 
 open class BaseActivity : AppCompatActivity() {
@@ -29,7 +29,7 @@ open class BaseActivity : AppCompatActivity() {
         super.onStart()
         if (!systemUiConfigured) {
             systemUiConfigured = true
-            onConfigNavigationBar(hasNavigationBar())
+            onConfigNavigationBar(getNavigationBarSize().y)
             onConfigStatusBar()
         }
     }
@@ -39,5 +39,5 @@ open class BaseActivity : AppCompatActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT, getStatusBarHeight())
     }
 
-    open fun onConfigNavigationBar(hasNavigationBar: Boolean) = Unit
+    open fun onConfigNavigationBar(navigationBarHeight: Int) = Unit
 }
