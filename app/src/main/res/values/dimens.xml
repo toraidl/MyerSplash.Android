@@ -51,4 +51,5 @@
     <dimen name="search_button_padding">2dp</dimen>
     <dimen name="search_buttons_width">120dp</dimen>
     <dimen name="settings_sub_title_margin_top">20dp</dimen>
+    <dimen name="footer_height">60dp</dimen>
 </resources>

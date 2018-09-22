@@ -16,9 +16,24 @@ fun View.getActivity(): Activity? {
     return null
 }
 
-fun View.updateDimensions(width: Int, height: Int) {
+fun View.addDimensions(width: Int?, height: Int?) {
     val lp = layoutParams ?: ViewGroup.LayoutParams(0, 0)
-    lp.width = width
-    lp.height = height
+    width?.let {
+        lp.width += it
+    }
+    height?.let {
+        lp.height += it
+    }
+    layoutParams = lp
+}
+
+fun View.updateDimensions(width: Int?, height: Int?) {
+    val lp = layoutParams ?: ViewGroup.LayoutParams(0, 0)
+    width?.let {
+        lp.width = it
+    }
+    height?.let {
+        lp.height = it
+    }
     layoutParams = lp
 }

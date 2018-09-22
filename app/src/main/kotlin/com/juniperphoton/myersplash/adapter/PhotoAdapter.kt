@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.extension.addDimensions
 import com.juniperphoton.myersplash.extension.getNavigationBarSize
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.widget.item.PhotoFooterView
@@ -81,13 +82,12 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
                 PhotoViewHolder(view)
             }
             ITEM_TYPE_FOOTER -> {
-                footerView = LayoutInflater.from(context)
-                        .inflate(R.layout.row_footer, parent, false) as PhotoFooterView
-
-                val lp = footerView!!.layoutParams
-                lp.height = context.getNavigationBarSize().y * 2
-                footerView!!.layoutParams = lp
-
+                footerView = (LayoutInflater.from(context)
+                        .inflate(R.layout.row_footer, parent, false) as PhotoFooterView).apply {
+                    val padding = context.getNavigationBarSize().y
+                    addDimensions(null, padding)
+                    setPadding(0, 0, 0, padding)
+                }
                 PhotoViewHolder(footerView!!)
             }
             else -> throw IllegalArgumentException("unknown view type")
