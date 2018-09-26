@@ -1,7 +1,7 @@
 package com.juniperphoton.myersplash.utils
 
 import android.graphics.BitmapFactory
-import android.support.v7.graphics.Palette
+import androidx.palette.graphics.Palette
 import com.juniperphoton.myersplash.model.UnsplashImage
 import io.reactivex.Maybe
 

@@ -1,6 +1,6 @@
 package com.juniperphoton.myersplash.utils
 
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.cloudservice.APIException
 import io.reactivex.observers.DisposableObserver

@@ -8,16 +8,14 @@ import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.view.ViewPager
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
@@ -58,7 +56,7 @@ class MainActivity : BaseActivity() {
     lateinit var pivotTitleBar: PivotTitleBar
 
     @BindView(R.id.view_pager)
-    lateinit var viewPager: ViewPager
+    lateinit var viewPager: androidx.viewpager.widget.ViewPager
 
     @BindView(R.id.tag_view)
     lateinit var tagView: TextView
@@ -231,7 +229,7 @@ class MainActivity : BaseActivity() {
             adapter = mainListFragmentAdapter
             currentItem = initNavigationIndex
             offscreenPageLimit = 3
-            addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
                 override fun onPageScrolled(position: Int,
                                             positionOffset: Float,
                                             positionOffsetPixels: Int) = Unit
@@ -245,7 +243,7 @@ class MainActivity : BaseActivity() {
             })
         }
 
-        toolbarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+        toolbarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             if (Math.abs(verticalOffset) - appBarLayout.height == 0) {
                 tagView.animate().alpha(1f).setDuration(300).start()
                 window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE
@@ -255,7 +253,7 @@ class MainActivity : BaseActivity() {
                 window.decorView.systemUiVisibility = 0
                 searchFab.show()
             }
-        }
+        })
 
         tagView.setOnClickListener { EventBus.getDefault().post(ScrollToTopEvent(idMaps[pivotTitleBar.selectedItem]!!, false)) }
     }

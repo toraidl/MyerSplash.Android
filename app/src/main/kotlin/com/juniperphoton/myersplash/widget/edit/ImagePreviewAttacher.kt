@@ -1,12 +1,12 @@
 package com.juniperphoton.myersplash.widget.edit
 
 import android.content.Context
-import android.support.v4.view.ViewCompat
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.OverScroller
+import androidx.core.view.ViewCompat
 import com.juniperphoton.myersplash.utils.Pasteur
 
 /**

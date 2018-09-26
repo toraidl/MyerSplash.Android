@@ -9,7 +9,7 @@
                 android:layout_height="match_parent"
                 android:scrollbars="none">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
@@ -19,7 +19,7 @@
             android:background="#000000"
             android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-            <android.support.v4.widget.Space
+            <androidx.legacy.widget.Space
                 android:id="@+id/top_space"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/about_space"
@@ -167,13 +167,13 @@
                     android:background="@drawable/ripple_large_round_rect"
                     android:text="@string/give_me_a_rate"/>
 
-                <android.support.v4.widget.Space
+                <androidx.legacy.widget.Space
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"/>
             </LinearLayout>
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
     <View

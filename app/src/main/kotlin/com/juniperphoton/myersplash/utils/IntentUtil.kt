@@ -2,7 +2,7 @@ package com.juniperphoton.myersplash.utils
 
 import android.app.WallpaperManager
 import android.content.Intent
-import android.support.v4.content.FileProvider
+import androidx.core.content.FileProvider
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import java.io.File

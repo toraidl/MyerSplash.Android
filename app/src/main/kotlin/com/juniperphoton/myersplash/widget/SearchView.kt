@@ -2,9 +2,6 @@ package com.juniperphoton.myersplash.widget
 
 import android.animation.Animator
 import android.content.Context
-import android.support.design.widget.AppBarLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
@@ -17,10 +14,12 @@ import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.material.appbar.AppBarLayout
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.CategoryAdapter
 import com.juniperphoton.myersplash.data.DaggerRepoComponent
@@ -64,7 +63,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     lateinit var searchBox: View
 
     @BindView(R.id.category_list)
-    lateinit var categoryList: RecyclerView
+    lateinit var categoryList: androidx.recyclerview.widget.RecyclerView
 
     private var categoryAdapter: CategoryAdapter? = null
 
@@ -119,13 +118,13 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         val component = DaggerRepoComponent.builder().repoModule(RepoModule(context, -1, mainListFragment!!)).build()
         component.inject(presenter)
 
-        activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment)
+        activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment!!)
                 .commit()
 
-        appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+        appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val fraction = Math.abs(verticalOffset) * 1.0f / appBarLayout.height
             tagView.alpha = fraction
-        }
+        })
 
         initCategoryList()
     }

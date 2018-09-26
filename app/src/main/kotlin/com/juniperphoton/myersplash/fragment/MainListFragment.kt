@@ -2,13 +2,12 @@ package com.juniperphoton.myersplash.fragment
 
 import android.graphics.RectF
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
@@ -34,10 +33,10 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     }
 
     @BindView(R.id.content_activity_rv)
-    lateinit var contentRecyclerView: RecyclerView
+    lateinit var contentRecyclerView: androidx.recyclerview.widget.RecyclerView
 
     @BindView(R.id.content_activity_srl)
-    lateinit var refreshLayout: SwipeRefreshLayout
+    lateinit var refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
     @BindView(R.id.no_item_layout)
     lateinit var noItemLayout: LinearLayout
@@ -128,7 +127,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     }
 
     override fun scrollToTop() {
-        val lm = contentRecyclerView.layoutManager as LinearLayoutManager
+        val lm = contentRecyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager
         val pos = lm.findFirstCompletelyVisibleItemPosition()
         if (pos > SCROLL_START_POSITION) {
             contentRecyclerView.scrollToPosition(SCROLL_START_POSITION)
@@ -189,10 +188,9 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
         refreshLayout.setOnRefreshListener {
             presenter?.refresh()
         }
-        contentRecyclerView.layoutManager = LinearLayoutManager(activity,
-                LinearLayoutManager.VERTICAL, false)
+        contentRecyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
         contentRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(list: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(list: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(list, dx, dy)
                 if (dy > SCROLL_DETECTION_FACTOR_PX) {
                     onScrollHide?.invoke()
