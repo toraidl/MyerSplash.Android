@@ -60,12 +60,13 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     testImplementation 'junit:junit:4.12'
-    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.browser:browser:1.0.0'
-    implementation 'androidx.palette:palette:1.0.0'
+
+    implementation "androidx.legacy:legacy-support-v13:$androidx_version"
+    implementation "androidx.appcompat:appcompat:$androidx_version"
+    implementation "com.google.android.material:material:$androidx_version"
+    implementation "androidx.cardview:cardview:$androidx_version"
+    implementation "androidx.browser:browser:$androidx_version"
+    implementation "androidx.palette:palette:$androidx_version"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
 
     implementation 'com.facebook.fresco:fresco:1.5.0'
