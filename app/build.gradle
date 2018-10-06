@@ -84,7 +84,7 @@ dependencies {
     implementation 'com.jakewharton:butterknife:9.0.0-SNAPSHOT'
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'com.google.android:flexbox:1.1.0'
-    implementation 'com.juniperphoton:flipperlayout:1.1.1'
+    implementation 'com.juniperphoton:flipperlayout:1.2.1'
     kapt 'io.realm:realm-annotations:3.0.0'
     kapt 'io.realm:realm-annotations-processor:3.0.0'
     kapt 'com.jakewharton:butterknife-compiler:9.0.0-SNAPSHOT'
