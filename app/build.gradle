@@ -67,12 +67,15 @@ dependencies {
     implementation "androidx.cardview:cardview:$androidx_version"
     implementation "androidx.browser:browser:$androidx_version"
     implementation "androidx.palette:palette:$androidx_version"
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
 
     implementation "android.arch.persistence.room:runtime:$room_version"
     implementation "android.arch.persistence.room:rxjava2:$room_version"
     testImplementation "android.arch.persistence.room:testing:$room_version"
     kapt "android.arch.persistence.room:compiler:$room_version"
+
+    implementation "com.jakewharton:butterknife:${butterknife_version}"
+    kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
 
     implementation 'com.facebook.fresco:fresco:1.5.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
@@ -81,13 +84,11 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'com.google.code.gson:gson:2.8.0'
-    implementation 'com.jakewharton:butterknife:9.0.0-SNAPSHOT'
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'com.google.android:flexbox:1.1.0'
     implementation 'com.juniperphoton:flipperlayout:1.2.1'
     kapt 'io.realm:realm-annotations:3.0.0'
     kapt 'io.realm:realm-annotations-processor:3.0.0'
-    kapt 'com.jakewharton:butterknife-compiler:9.0.0-SNAPSHOT'
     //dagger
     implementation 'com.google.dagger:dagger:2.11'
     kapt 'com.google.dagger:dagger-compiler:2.11'

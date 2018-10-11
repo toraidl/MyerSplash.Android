@@ -3,6 +3,7 @@ buildscript {
     ext.support_lib_version = '27.1.1'
     ext.androidx_version = '1.0.0'
     ext.room_version = '1.1.1'
+    ext.butterknife_version = '9.0.0-rc1'
 
     repositories {
         jcenter()
