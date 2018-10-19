@@ -15,9 +15,13 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.SimpleDraweeView
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getDarker
+import com.juniperphoton.myersplash.extension.toHexString
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
+import com.juniperphoton.myersplash.utils.PaletteUtil
+import io.reactivex.MaybeObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
@@ -71,7 +75,13 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
     fun bind(image: UnsplashImage?, pos: Int) {
         if (image == null) return
 
+        disposable?.dispose()
+
         unsplashImage = image
+
+        if (!image.isUnsplash) {
+            tryUpdateThemeColor()
+        }
 
         val regularUrl = image.listUrl
 
@@ -109,5 +119,28 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
         })
 
         onBind?.invoke(rootView, pos)
+    }
+
+    private var disposable: Disposable? = null
+
+    private fun tryUpdateThemeColor() {
+        PaletteUtil.extractThemeColorFromUnsplashImage(unsplashImage)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : MaybeObserver<Int> {
+                    override fun onSuccess(color: Int) {
+                        unsplashImage?.color = color.toHexString()
+                    }
+
+                    override fun onComplete() = Unit
+
+                    override fun onSubscribe(d: Disposable) {
+                        disposable = d
+                    }
+
+                    override fun onError(e: Throwable) {
+                        e.printStackTrace()
+                    }
+                })
     }
 }

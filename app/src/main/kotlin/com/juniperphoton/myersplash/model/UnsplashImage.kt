@@ -26,7 +26,6 @@ class UnsplashImage : Serializable {
 
     @SerializedName("color")
     var color: String? = null
-        internal set
 
     @SerializedName("likes")
     private val likes: Int = 0

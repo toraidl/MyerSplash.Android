@@ -44,7 +44,7 @@ object UnsplashImageFactory {
         return UnsplashImage().apply {
             isUnsplash = false
             this.showTodayTag = showTodayTag
-            color = if (dateFormat.format(date).toInt() % 2 == 0) "#50ffffff" else "#000000"
+            color = if (dateFormat.format(date).toInt() % 2 == 0) "#9c9c9c" else "#525252"
             id = createDateString(date)
             urls = ImageUrl().apply {
                 val fullUrl = createFullDownloadUrl(date)
