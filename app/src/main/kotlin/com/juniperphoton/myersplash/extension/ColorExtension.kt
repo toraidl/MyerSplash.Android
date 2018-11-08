@@ -12,3 +12,7 @@ fun Int.getDarker(alpha: Float): Int {
     return Color.rgb((Color.red(this) * alpha).toInt(), (Color.green(this) * alpha).toInt(),
             (Color.blue(this) * alpha).toInt())
 }
+
+fun Int.toHexString(): String {
+    return String.format("#%06X", 0xFFFFFF and this)
+}

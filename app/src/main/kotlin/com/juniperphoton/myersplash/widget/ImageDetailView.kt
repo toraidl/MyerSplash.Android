@@ -7,7 +7,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
@@ -17,7 +16,6 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.support.v7.graphics.Palette
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -38,10 +36,11 @@ import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.extension.copyFile
 import com.juniperphoton.myersplash.extension.isLightColor
+import com.juniperphoton.myersplash.extension.toHexString
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
-import io.reactivex.Observable
+import io.reactivex.MaybeObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -449,22 +448,26 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     private var disposable: Disposable? = null
 
     private fun extractThemeColor(image: UnsplashImage) {
-        val file = FileUtil.getCachedFile(image.listUrl!!) ?: return
-        disposable = Observable.just(image)
+        PaletteUtil.extractThemeColorFromUnsplashImage(image)
                 .subscribeOn(Schedulers.io())
-                .map {
-                    val bm = BitmapFactory.decodeFile(file.absolutePath)
-                    Palette.from(bm).generate().darkVibrantSwatch?.rgb
-                }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : SimpleObserver<Int>() {
-                    override fun onNext(data: Int) {
-                        updateThemeColor(data)
+                .subscribe(object : MaybeObserver<Int> {
+                    override fun onSuccess(color: Int) {
+                        image.color = color.toHexString()
+                        updateThemeColor(color)
+                    }
+
+                    override fun onComplete() {
+                        updateThemeColor(Color.BLACK)
+                    }
+
+                    override fun onSubscribe(d: Disposable) {
+                        disposable = d
                     }
 
                     override fun onError(e: Throwable) {
-                        super.onError(e)
-                        updateThemeColor(Color.BLACK)
+                        e.printStackTrace()
+                        onComplete()
                     }
                 })
     }
