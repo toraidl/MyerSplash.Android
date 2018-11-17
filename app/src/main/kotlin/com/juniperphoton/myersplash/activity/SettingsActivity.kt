@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.activity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
+import android.view.WindowInsets
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick

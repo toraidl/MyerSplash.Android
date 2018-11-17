@@ -11,7 +11,6 @@ import android.support.annotation.WorkerThread
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
-import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import butterknife.BindView
@@ -27,12 +26,10 @@ import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getScreenHeight
-import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.utils.*
 import com.juniperphoton.myersplash.widget.edit.PreviewDraweeLayout
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.io.FileOutputStream
@@ -103,6 +100,20 @@ class EditActivity : BaseActivity() {
         flipperLayout.next(0)
     }
 
+    override fun onStart() {
+        super.onStart()
+    }
+
+    @OnClick(R.id.edit_confirm_fab)
+    fun onClickConfirm() {
+        composeMask()
+    }
+
+    @OnClick(R.id.edit_preview_fab)
+    fun onClickPreview() {
+        showingPreview = !showingPreview
+    }
+
     private fun loadImage() {
         fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM)
                 ?: throw IllegalArgumentException("image url should not be null")
@@ -113,15 +124,6 @@ class EditActivity : BaseActivity() {
     }
 
     private fun initView() {
-        if (!hasNavigationBar()) {
-            val height = resources.getDimensionPixelSize(R.dimen.default_navigation_bar_height)
-            bottomBar.setPadding(0, 0, 0, 0)
-
-            val layoutParams = fabsRoot.layoutParams as RelativeLayout.LayoutParams
-            layoutParams.bottomMargin -= height
-            fabsRoot.layoutParams = layoutParams
-        }
-
         brightnessSeekBar.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 progressText.text = progress.toString()
@@ -161,23 +163,11 @@ class EditActivity : BaseActivity() {
         previewImageView.controller = controller
     }
 
-    @OnClick(R.id.edit_confirm_fab)
-    fun onClickConfirm() {
-        composeMask()
-    }
-
-    @OnClick(R.id.edit_preview_fab)
-    fun onClickPreview() {
-        showingPreview = !showingPreview
-    }
-
     private fun setAs(file: File) {
         Pasteur.d(TAG, "set as, file path:${file.absolutePath}")
         val intent = IntentUtil.getSetAsWallpaperIntent(file)
         App.instance.startActivity(intent)
     }
-
-    private var comp: CompositeDisposable = CompositeDisposable()
 
     private fun composeMask() {
         flipperLayout.next()
@@ -202,6 +192,10 @@ class EditActivity : BaseActivity() {
                 })
     }
 
+    override fun onApplySystemInsets(top: Int, bottom: Int) {
+        bottomBar.setPadding(0, 0, 0, bottomBar.paddingBottom + bottom)
+    }
+
     @SuppressLint("WrongThread")
     @WorkerThread
     private fun composeMaskInternal(): File {
@@ -222,7 +216,8 @@ class EditActivity : BaseActivity() {
         opt.inMutable = true
 
         // Decode file with specified sample size
-        val bm = decodeBitmapFromFile(fileUri, opt) ?: throw IllegalStateException("Can't decode file")
+        val bm = decodeBitmapFromFile(fileUri, opt)
+                ?: throw IllegalStateException("Can't decode file")
 
         Pasteur.d(TAG, "file decoded, sample size:${opt.inSampleSize}, originalHeight=$originalHeight, screenH=$screenHeight")
 

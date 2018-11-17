@@ -550,7 +550,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         var copiedFile: File? = null
 
         if (file != null && file.exists()) {
-            copiedFile = File(FileUtil.cachedPath, "share_${clickedImage!!.listUrl!!.hashCode()}.jpg")
+            copiedFile = File(FileUtil.sharePath, "share_${clickedImage!!.listUrl!!.hashCode()}.jpg")
             file.copyFile(copiedFile)
         }
 

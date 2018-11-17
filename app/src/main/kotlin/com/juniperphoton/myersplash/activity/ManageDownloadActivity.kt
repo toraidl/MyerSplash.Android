@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -135,12 +136,9 @@ class ManageDownloadActivity : BaseActivity() {
         updateNoItemVisibility()
     }
 
-    override fun onConfigNavigationBar(navigationBarHeight: Int) {
-        if (navigationBarHeight > 0) {
-            val params = moreFab.layoutParams as ViewGroup.MarginLayoutParams
-            val previousMargin = params.bottomMargin
-            params.setMargins(0, 0, previousMargin, previousMargin + navigationBarHeight)
-            moreFab.layoutParams = params
-        }
+    override fun onApplySystemInsets(top: Int, bottom: Int) {
+        val params = moreFab.layoutParams as ViewGroup.MarginLayoutParams
+        params.bottomMargin += bottom
+        moreFab.layoutParams = params
     }
 }
