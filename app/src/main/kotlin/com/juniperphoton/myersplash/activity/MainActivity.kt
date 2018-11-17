@@ -14,6 +14,7 @@ import android.support.v4.view.ViewPager
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -259,13 +260,10 @@ class MainActivity : BaseActivity() {
         tagView.setOnClickListener { EventBus.getDefault().post(ScrollToTopEvent(idMaps[pivotTitleBar.selectedItem]!!, false)) }
     }
 
-    override fun onConfigNavigationBar(navigationBarHeight: Int) {
-        if (navigationBarHeight > 0) {
-            val params = searchFab.layoutParams as ViewGroup.MarginLayoutParams
-            val previousMargin = params.bottomMargin
-            params.setMargins(0, 0, previousMargin, previousMargin + navigationBarHeight)
-            searchFab.layoutParams = params
-        }
+    override fun onApplySystemInsets(top: Int, bottom: Int) {
+        val params = searchFab.layoutParams as ViewGroup.MarginLayoutParams
+        params.bottomMargin += bottom
+        searchFab.layoutParams = params
     }
 
     private fun handleShortcutsAction() {

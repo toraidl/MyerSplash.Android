@@ -15,11 +15,6 @@ fun Context.getScreenWidth(): Int = resources.displayMetrics.widthPixels
 
 fun Context.getScreenHeight(): Int = resources.displayMetrics.heightPixels
 
-fun Context.hasNavigationBar(): Boolean {
-    val size = getNavigationBarSize()
-    return size.y > 0
-}
-
 fun Context.getStatusBarHeight(): Int {
     return try {
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")

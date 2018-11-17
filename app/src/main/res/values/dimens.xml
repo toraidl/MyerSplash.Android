@@ -5,7 +5,6 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
     <dimen name="img_height">270dp</dimen>
     <dimen name="img_detail_info_height">100dp</dimen>
     <dimen name="img_detail_height">370dp</dimen>
@@ -52,4 +51,5 @@
     <dimen name="search_buttons_width">120dp</dimen>
     <dimen name="settings_sub_title_margin_top">20dp</dimen>
     <dimen name="footer_height">60dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>
