@@ -14,7 +14,7 @@ class CategoryAdapter(private val context: Context,
                       private val list: Array<String>
 ) : androidx.recyclerview.widget.RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
     companion object ResMap {
-        val KEYWORDS: Array<String> = App.instance.resources.getStringArray(R.array.search_category)!!
+        val KEYWORDS: Array<String> = App.instance.resources.getStringArray(R.array.search_category)
     }
 
     /**

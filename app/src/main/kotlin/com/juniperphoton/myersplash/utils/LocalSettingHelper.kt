@@ -28,7 +28,7 @@ object LocalSettingHelper {
 
     fun getString(context: Context, key: String): String {
         val sharedPreferences = getSharedPreference(context)
-        return sharedPreferences.getString(key, null)
+        return sharedPreferences.getString(key, null) ?: ""
     }
 
     fun putString(context: Context, key: String, value: String): Boolean {

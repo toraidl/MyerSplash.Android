@@ -124,7 +124,7 @@ class ImagePreviewAttacher(context: Context,
             MotionEvent.ACTION_MOVE -> {
                 val x = event.rawX
                 var dx = x - actionDownX
-                if (contentView.translationX !in scrollBoundary.minX..scrollBoundary.maxX) {
+                if (contentView.translationX.toInt() !in scrollBoundary.minX..scrollBoundary.maxX) {
                     dx *= RESISTANT_FACTOR
                 }
                 contentView.translationX = dx + downTranslationX
