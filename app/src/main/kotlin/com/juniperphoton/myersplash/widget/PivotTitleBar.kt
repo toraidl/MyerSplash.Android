@@ -2,11 +2,11 @@ package com.juniperphoton.myersplash.widget
 
 import android.content.Context
 import android.content.Intent
-import android.support.v7.widget.PopupMenu
 import android.util.AttributeSet
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick

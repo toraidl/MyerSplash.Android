@@ -1,12 +1,12 @@
 package com.juniperphoton.myersplash.widget.edit
 
 import android.content.Context
-import android.support.v4.view.ViewCompat
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.OverScroller
+import androidx.core.view.ViewCompat
 import com.juniperphoton.myersplash.utils.Pasteur
 
 /**
@@ -124,7 +124,7 @@ class ImagePreviewAttacher(context: Context,
             MotionEvent.ACTION_MOVE -> {
                 val x = event.rawX
                 var dx = x - actionDownX
-                if (contentView.translationX !in scrollBoundary.minX..scrollBoundary.maxX) {
+                if (contentView.translationX.toInt() !in scrollBoundary.minX..scrollBoundary.maxX) {
                     dx *= RESISTANT_FACTOR
                 }
                 contentView.translationX = dx + downTranslationX

@@ -3,8 +3,6 @@ package com.juniperphoton.myersplash.adapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.RectF
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +16,7 @@ import com.juniperphoton.myersplash.widget.item.PhotoItemView
 
 class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
                    private val context: Context
-) : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
+) : androidx.recyclerview.widget.RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
     companion object {
         const val ITEM_TYPE_ITEM = 0
         const val ITEM_TYPE_FOOTER = 1
@@ -32,8 +30,8 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
 
     private var isAutoLoadMore = true
 
-    private var recyclerView: RecyclerView? = null
-    private var layoutManager: RecyclerView.LayoutManager? = null
+    private var recyclerView: androidx.recyclerview.widget.RecyclerView? = null
+    private var layoutManager: androidx.recyclerview.widget.RecyclerView.LayoutManager? = null
     private var lastPosition = -1
 
     private var footerView: PhotoFooterView? = null
@@ -105,8 +103,8 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
         }
     }
 
-    private fun findLastVisibleItemPosition(layoutManager: RecyclerView.LayoutManager?): Int {
-        return if (layoutManager is LinearLayoutManager) {
+    private fun findLastVisibleItemPosition(layoutManager: androidx.recyclerview.widget.RecyclerView.LayoutManager?): Int {
+        return if (layoutManager is androidx.recyclerview.widget.LinearLayoutManager) {
             layoutManager.findLastVisibleItemPosition()
         } else -1
     }
@@ -155,7 +153,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
 
     private fun isFooterView(position: Int): Boolean = position >= itemCount - 1
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+    override fun onAttachedToRecyclerView(recyclerView: androidx.recyclerview.widget.RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
         lastPosition = -1
@@ -190,7 +188,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
         }
     }
 
-    class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class PhotoViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView)
 }
 
 

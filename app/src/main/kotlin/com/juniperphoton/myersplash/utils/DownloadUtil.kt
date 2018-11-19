@@ -3,7 +3,7 @@ package com.juniperphoton.myersplash.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
@@ -16,7 +16,6 @@ import io.realm.Sort
 import okhttp3.ResponseBody
 import org.greenrobot.eventbus.EventBus
 import java.io.*
-import java.lang.Exception
 import java.util.*
 
 @Suppress("unused_parameter")

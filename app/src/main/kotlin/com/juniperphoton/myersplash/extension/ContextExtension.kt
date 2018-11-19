@@ -42,11 +42,11 @@ fun Context.usingWifi(): Boolean {
 }
 
 @Suppress("unused")
-fun Context.getVersionCode(): Int {
+fun Context.getVersionCode(): Long {
     return try {
         val manager = packageManager
         val info = manager.getPackageInfo(packageName, 0)
-        info.versionCode
+        info.longVersionCode
     } catch (e: Exception) {
         e.printStackTrace()
         -1
@@ -58,7 +58,7 @@ fun Context.getVersionName(): String? {
     return try {
         val manager = packageManager
         val info = manager.getPackageInfo(packageName, 0)
-        "${info.versionName} Build ${info.versionCode}"
+        "${info.versionName} Build ${info.longVersionCode}"
     } catch (e: Exception) {
         null
     }

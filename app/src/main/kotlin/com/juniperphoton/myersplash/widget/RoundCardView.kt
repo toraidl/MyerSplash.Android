@@ -1,13 +1,12 @@
 package com.juniperphoton.myersplash.widget
 
 import android.content.Context
-import android.support.v7.widget.CardView
 import android.util.AttributeSet
 
 /**
  * A card view that round itself to half of its height on measured.
  */
-class RoundCardView(context: Context, attrs: AttributeSet?) : CardView(context, attrs) {
+class RoundCardView(context: Context, attrs: AttributeSet?) : androidx.cardview.widget.CardView(context, attrs) {
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         val targetRadius = (height / 2).toFloat()

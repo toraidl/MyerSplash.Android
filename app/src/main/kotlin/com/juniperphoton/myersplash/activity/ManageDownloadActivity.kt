@@ -2,10 +2,6 @@ package com.juniperphoton.myersplash.activity
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SimpleItemAnimator
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
@@ -13,6 +9,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
@@ -30,7 +27,7 @@ class ManageDownloadActivity : BaseActivity() {
     }
 
     @BindView(R.id.downloads_list)
-    lateinit var downloadsList: RecyclerView
+    lateinit var downloadsList: androidx.recyclerview.widget.RecyclerView
 
     @BindView(R.id.no_item_view)
     lateinit var noItemView: TextView
@@ -119,8 +116,8 @@ class ManageDownloadActivity : BaseActivity() {
 
         adapter!!.refreshItems(downloadItems)
 
-        val layoutManager = GridLayoutManager(this, 2).apply {
-            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+        val layoutManager = androidx.recyclerview.widget.GridLayoutManager(this, 2).apply {
+            spanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     return if (position == adapter!!.itemCount - 1) 2 else 1
                 }
@@ -131,7 +128,7 @@ class ManageDownloadActivity : BaseActivity() {
         downloadsList.adapter = adapter
 
         // We don't change the item animator so we cast it directly
-        (downloadsList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        (downloadsList.itemAnimator as androidx.recyclerview.widget.SimpleItemAnimator).supportsChangeAnimations = false
 
         updateNoItemVisibility()
     }

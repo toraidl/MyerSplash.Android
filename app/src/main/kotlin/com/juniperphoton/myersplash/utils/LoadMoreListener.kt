@@ -1,15 +1,16 @@
 package com.juniperphoton.myersplash.utils
 
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class LoadMoreListener(private val onLoadMore: (() -> Unit)? = null) {
     private var autoLoadMore = true
 
-    fun attach(recyclerView: RecyclerView) {
-        val layoutManager = recyclerView.layoutManager
+    fun attach(recyclerView: androidx.recyclerview.widget.RecyclerView) {
+        val layoutManager = recyclerView.layoutManager ?: return
+
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(list: RecyclerView?, newState: Int) {
+            override fun onScrollStateChanged(list: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(list, newState)
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (!autoLoadMore && findLastVisibleItemPosition(layoutManager) + 1 == layoutManager.itemCount) {
@@ -18,7 +19,7 @@ class LoadMoreListener(private val onLoadMore: (() -> Unit)? = null) {
                 }
             }
 
-            override fun onScrolled(list: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(list: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(list, dx, dy)
                 if (autoLoadMore && findLastVisibleItemPosition(layoutManager) + 1 == layoutManager.itemCount) {
                     onLoadMore?.invoke()
