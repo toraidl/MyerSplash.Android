@@ -16,6 +16,14 @@ fun View.getActivity(): Activity? {
     return null
 }
 
+fun View.updateVisibility(visible: Boolean) {
+    visibility = if (visible) {
+        View.VISIBLE
+    } else {
+        View.GONE
+    }
+}
+
 fun View.addDimensions(width: Int?, height: Int?) {
     val lp = layoutParams ?: ViewGroup.LayoutParams(0, 0)
     width?.let {
