@@ -48,8 +48,8 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
 
             override fun onComplete() {
                 outputFile?.let {
-                    AppWidgetUtil.doWithWidgetId {
-                        updateWidget(App.instance, it, outputFile!!.absolutePath)
+                    AppWidgetUtil.doWithWidgetId { id ->
+                        updateWidget(App.instance, id, outputFile!!.absolutePath)
                     }
                 }
             }

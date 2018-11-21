@@ -1,6 +1,7 @@
 package com.juniperphoton.myersplash.widget
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
@@ -26,7 +27,6 @@ import com.juniperphoton.myersplash.data.DaggerRepoComponent
 import com.juniperphoton.myersplash.data.MainListPresenter
 import com.juniperphoton.myersplash.data.RepoModule
 import com.juniperphoton.myersplash.fragment.MainListFragment
-import com.juniperphoton.myersplash.utils.AnimatorListeners
 import com.juniperphoton.myersplash.utils.ToastService
 
 @Suppress("unused")
@@ -151,7 +151,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
             animating = true
             searchBtn.animate().scaleX(if (show) 1f else 0f).scaleY(if (show) 1f else 0f).setDuration(200)
                     .setStartDelay(100)
-                    .setListener(object : AnimatorListeners.End() {
+                    .setListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(a: Animator) {
                             animating = false
                         }
@@ -195,7 +195,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         mainListFragment?.scrollToTop()
         mainListFragment?.clearData()
         editText.setText("")
-        categoryList.animate()?.alpha(1f)?.setListener(object : AnimatorListeners.End() {
+        categoryList.animate()?.alpha(1f)?.setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(a: Animator?) {
                 categoryList.visibility = View.VISIBLE
             }
@@ -223,7 +223,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
         mainListFragment?.search(editText.text.toString().toLowerCase())
 
-        categoryList.animate().alpha(0f).setListener(object : AnimatorListeners.End() {
+        categoryList.animate().alpha(0f).setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(a: Animator?) {
                 categoryList.visibility = View.GONE
             }

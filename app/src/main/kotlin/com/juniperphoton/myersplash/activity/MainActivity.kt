@@ -1,6 +1,7 @@
 package com.juniperphoton.myersplash.activity
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.TargetApi
 import android.content.Intent
 import android.content.pm.ShortcutInfo
@@ -21,7 +22,6 @@ import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.model.UnsplashCategory
-import com.juniperphoton.myersplash.utils.AnimatorListeners
 import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.PermissionUtil
 import com.juniperphoton.myersplash.widget.ImageDetailView
@@ -150,7 +150,7 @@ class MainActivity : BaseActivity() {
         val animator = ViewAnimationUtils.createCircularReveal(searchView,
                 fabPositionX, fabPositionY,
                 (if (show) 0 else radius).toFloat(), (if (show) radius else 0).toFloat())
-        animator.addListener(object : AnimatorListeners.End() {
+        animator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(a: Animator) {
                 if (!show) {
                     searchView.reset()

@@ -54,17 +54,11 @@ fun File.copyFile(destF: File): Boolean {
             return false
         } finally {
             try {
-                if (inputStream != null) {
-                    inputStream.close()
-                }
-
-                if (outputStream != null) {
-                    outputStream.close()
-                }
+                inputStream?.close()
+                outputStream?.close()
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-
         }
     } catch (e: Exception) {
         e.printStackTrace()

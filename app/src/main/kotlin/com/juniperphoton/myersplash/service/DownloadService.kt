@@ -58,7 +58,7 @@ class DownloadService : Service() {
             ToastService.sendShortToast("Downloading...")
         }
 
-        var previewUri: Uri? = if (previewUrl.isNullOrEmpty()) null else {
+        val previewUri: Uri? = if (previewUrl.isNullOrEmpty()) null else {
             Uri.parse(previewUrl)
         }
 
@@ -82,7 +82,7 @@ class DownloadService : Service() {
                               previewUri: Uri?, isUnsplash: Boolean): String {
         val file = DownloadUtil.getFileToSave(fileName)
         val observer = object : DisposableObserver<ResponseBody>() {
-            internal var outputFile: File? = null
+            var outputFile: File? = null
 
             override fun onComplete() {
                 if (outputFile == null) {
@@ -156,7 +156,7 @@ class DownloadService : Service() {
         }
 
         val disposable = CloudService.downloadPhoto(url).subscribeWith(observer)
-        downloadUrlToDisposableMap.put(url, disposable)
+        downloadUrlToDisposableMap[url] = disposable
 
         return file!!.path
     }

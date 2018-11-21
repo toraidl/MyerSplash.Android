@@ -158,10 +158,10 @@ class DownloadsListAdapter(private val context: Context) :
             this.downloadItem = item
 
             draweeView?.let {
-                var request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(item.thumbUrl))
+                val request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(item.thumbUrl))
                         .setResizeOptions(ResizeOptions(MAX_DIMENSION_PREVIEW_PX,
                                 MAX_DIMENSION_PREVIEW_PX)).build()
-                var controller = Fresco.newDraweeControllerBuilder().setImageRequest(request)
+                val controller = Fresco.newDraweeControllerBuilder().setImageRequest(request)
                         .setOldController(it.controller).build()
                 it.controller = controller
             }

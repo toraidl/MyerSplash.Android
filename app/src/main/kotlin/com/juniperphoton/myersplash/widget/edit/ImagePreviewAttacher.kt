@@ -61,7 +61,7 @@ class ImagePreviewAttacher(context: Context,
      */
     fun computeScroll() {
         if (scroller.computeScrollOffset()) {
-            var currX = scroller.currX.toFloat()
+            val currX = scroller.currX.toFloat()
             contentView.translationX = currX
             ViewCompat.postInvalidateOnAnimation(touchEventHandler)
         }

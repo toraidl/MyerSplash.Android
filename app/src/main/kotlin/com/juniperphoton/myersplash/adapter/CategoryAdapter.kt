@@ -43,8 +43,8 @@ class CategoryAdapter(private val context: Context,
         init {
             ButterKnife.bind(this, itemView)
             itemView.setOnClickListener {
-                category?.let {
-                    onClickItem?.invoke(it)
+                category?.let { c ->
+                    onClickItem?.invoke(c)
                 }
             }
         }

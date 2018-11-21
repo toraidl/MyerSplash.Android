@@ -1,6 +1,7 @@
 package com.juniperphoton.myersplash.widget
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.ClipData
@@ -316,7 +317,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
                 detailImgRL.translationX = startX * (1 - it.animatedFraction)
                 detailImgRL.translationY = it.animatedValue as Float
             }
-            addListener(object : AnimatorListeners.End() {
+            addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(a: Animator) {
                     if (!show && clickedView != null) {
                         clickedView!!.visibility = View.VISIBLE
@@ -363,7 +364,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
             addUpdateListener { animation ->
                 detailInfoRootLayout.translationY = animation.animatedValue as Float
             }
-            addListener(object : AnimatorListeners.End() {
+            addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(a: Animator) {
                     animating = true
                 }
@@ -415,7 +416,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
                 if (show) ContextCompat.getColor(context, R.color.MaskColor) else Color.TRANSPARENT)
         animator.duration = ANIMATION_DURATION_FAST_MILLIS
         animator.addUpdateListener { animation -> detailRootScrollView.background = ColorDrawable(animation.animatedValue as Int) }
-        animator.addListener(object : AnimatorListeners.End() {
+        animator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationStart(a: Animator) {
                 if (show) {
                     onShowing?.invoke()

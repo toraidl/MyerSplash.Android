@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -80,9 +79,9 @@ class ManageDownloadActivity : BaseActivity() {
             it.where(DownloadItem::class.java)
                     .equalTo(DownloadItem.STATUS_KEY, status)
                     .findAll()
-                    .forEach {
-                        it.removeAllChangeListeners()
-                        it.deleteFromRealm()
+                    .forEach { item ->
+                        item.removeAllChangeListeners()
+                        item.deleteFromRealm()
                     }
             initViews()
         }
