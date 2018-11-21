@@ -2,7 +2,6 @@ package com.juniperphoton.myersplash.adapter
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.RectF
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,8 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.addDimensions
 import com.juniperphoton.myersplash.extension.getNavigationBarSize
 import com.juniperphoton.myersplash.model.UnsplashImage
+import com.juniperphoton.myersplash.widget.item.OnClickPhotoListener
+import com.juniperphoton.myersplash.widget.item.OnClickQuickDownloadListener
 import com.juniperphoton.myersplash.widget.item.PhotoFooterView
 import com.juniperphoton.myersplash.widget.item.PhotoItemView
 
@@ -39,13 +40,13 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
     /**
      * Invoked when photo is clicked
      */
-    var onClickPhoto: ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)? = null
+    var onClickPhoto: OnClickPhotoListener? = null
 
     /**
      * Invoked when quick-download button is clicked.
      * Note that [onClickPhoto] and [onClickQuickDownload] won't happened at the same time.
      */
-    var onClickQuickDownload: ((image: UnsplashImage) -> Unit)? = null
+    var onClickQuickDownload: OnClickQuickDownloadListener? = null
 
     val firstImage: UnsplashImage?
         get() {

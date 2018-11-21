@@ -10,6 +10,8 @@ import butterknife.ButterKnife
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 
+typealias OnClickCategoryItemListener = ((string: String) -> Unit)
+
 class CategoryAdapter(private val context: Context,
                       private val list: Array<String>
 ) : androidx.recyclerview.widget.RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
@@ -20,7 +22,7 @@ class CategoryAdapter(private val context: Context,
     /**
      * Invoked when item clicked.
      */
-    var onClickItem: ((string: String) -> Unit)? = null
+    var onClickItem: OnClickCategoryItemListener? = null
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         holder.bind(list[holder.adapterPosition])

@@ -24,6 +24,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 
+typealias OnClickPhotoListener = ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)
+typealias OnClickQuickDownloadListener = ((image: UnsplashImage) -> Unit)
+typealias OnBindListener = ((View, Int) -> Unit)
+
 class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs), View.OnClickListener {
     @BindView(R.id.row_photo_iv)
     lateinit var simpleDraweeView: SimpleDraweeView
@@ -40,9 +44,9 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
     @BindView(R.id.row_photo_today_tag)
     lateinit var todayTag: View
 
-    var onClickPhoto: ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)? = null
-    var onClickQuickDownload: ((image: UnsplashImage) -> Unit)? = null
-    var onBind: ((View, Int) -> Unit)? = null
+    var onClickPhoto: OnClickPhotoListener? = null
+    var onClickQuickDownload: OnClickQuickDownloadListener? = null
+    var onBind: OnBindListener? = null
 
     private var unsplashImage: UnsplashImage? = null
     private var job: Job? = null

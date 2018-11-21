@@ -14,6 +14,7 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.isLightColor
+import com.juniperphoton.myersplash.fragment.Action
 
 @Suppress("unused")
 class DownloadingView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
@@ -32,7 +33,7 @@ class DownloadingView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     @BindView(R.id.cancel_ic)
     lateinit var cancelImageView: ImageView
 
-    var onClickCancel: (() -> Unit)? = null
+    var onClickCancel: Action? = null
 
     var themeColor: Int = Color.TRANSPARENT
         set(value) {

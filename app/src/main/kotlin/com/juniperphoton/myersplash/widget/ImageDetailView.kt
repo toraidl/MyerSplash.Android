@@ -37,6 +37,7 @@ import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.extension.copyFile
 import com.juniperphoton.myersplash.extension.isLightColor
 import com.juniperphoton.myersplash.extension.toHexString
+import com.juniperphoton.myersplash.fragment.Action
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
@@ -77,22 +78,22 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     /**
      * Invoked when the display animation is started.
      */
-    var onShowing: (() -> Unit)? = null
+    var onShowing: Action? = null
 
     /**
      * Invoke when the view is fully displayed.
      */
-    var onShown: (() -> Unit)? = null
+    var onShown: Action? = null
 
     /**
      * Invoked when the view is about to hide.
      */
-    var onHiding: (() -> Unit)? = null
+    var onHiding: Action? = null
 
     /**
      * Invoked when the view is invisible to user.
      */
-    var onHidden: (() -> Unit)? = null
+    var onHidden: Action? = null
 
     @BindView(R.id.detail_root_sv)
     lateinit var detailRootScrollView: ViewGroup

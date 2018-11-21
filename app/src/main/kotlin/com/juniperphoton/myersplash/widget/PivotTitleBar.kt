@@ -16,6 +16,8 @@ import com.juniperphoton.myersplash.activity.ManageDownloadActivity
 import com.juniperphoton.myersplash.activity.SettingsActivity
 import com.juniperphoton.myersplash.model.UnsplashCategory
 
+typealias OnItemSelectedListener = ((Int) -> Unit)
+
 @Suppress("UNUSED")
 class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     companion object {
@@ -38,12 +40,12 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
     /**
      * Invoked when a single tap is performed on an item.
      */
-    var onSingleTap: ((Int) -> Unit)? = null
+    var onSingleTap: OnItemSelectedListener? = null
 
     /**
      * Invoked when a double tap is performed on an item.
      */
-    var onDoubleTap: ((Int) -> Unit)? = null
+    var onDoubleTap: OnItemSelectedListener? = null
 
     /**
      * Which item is current selected.

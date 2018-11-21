@@ -24,6 +24,9 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
+typealias Action = (() -> Unit)
+typealias OnClickPhotoItemListener = ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)
+
 @Suppress("unused", "unused_parameter")
 class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), MainContract.MainView {
     companion object {
@@ -50,9 +53,9 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     override val isBusyRefreshing: Boolean
         get() = refreshLayout.isRefreshing
 
-    var onScrollHide: (() -> Unit)? = null
-    var onScrollShow: (() -> Unit)? = null
-    var onClickPhotoItem: ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)? = null
+    var onScrollHide: Action? = null
+    var onScrollShow: Action? = null
+    var onClickPhotoItem: OnClickPhotoItemListener? = null
 
     private var loadedData: Boolean = false
     private var visible: Boolean = false
