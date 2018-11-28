@@ -34,4 +34,11 @@ class CommonTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(contex
             }
         }
     }
+
+//    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
+//        if (paddingTop != insets.systemWindowInsetTop) {
+//            setPadding(0, insets.systemWindowInsetTop, 0, 0)
+//        }
+//        return insets
+//    }
 }

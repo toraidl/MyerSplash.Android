@@ -8,7 +8,6 @@ import android.graphics.drawable.Animatable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
 import android.widget.TextView
@@ -58,14 +57,14 @@ class EditActivity : BaseActivity() {
     @BindView(R.id.edit_progress_ring)
     lateinit var progressView: View
 
-    @BindView(R.id.edit_home_preview)
-    lateinit var homePreview: View
+    @BindView(R.id.edit_home_preview_top)
+    lateinit var homePreviewTop: View
+
+    @BindView(R.id.edit_home_preview_bottom)
+    lateinit var homePreviewBottom: View
 
     @BindView(R.id.edit_progress_text)
     lateinit var progressText: TextView
-
-    @BindView(R.id.edit_bottom_bar)
-    lateinit var bottomBar: ViewGroup
 
     private val fileUri: Uri by lazy {
         return@lazy intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri
@@ -75,7 +74,9 @@ class EditActivity : BaseActivity() {
     private var showingPreview: Boolean = false
         set(value) {
             field = value
-            homePreview.alpha = if (value) 1f else 0f
+            val alpha = if (value) 1f else 0f
+            homePreviewTop.alpha = alpha
+            homePreviewBottom.alpha = alpha
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -186,10 +187,6 @@ class EditActivity : BaseActivity() {
                         setAs(data)
                     }
                 })
-    }
-
-    override fun onApplySystemInsets(top: Int, bottom: Int) {
-        bottomBar.setPadding(0, 0, 0, bottomBar.paddingBottom + bottom)
     }
 
     @SuppressLint("WrongThread")

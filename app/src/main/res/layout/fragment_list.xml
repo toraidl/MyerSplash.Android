@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/content_activity_srl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:clickable="true">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/content_activity_rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <include
         android:id="@+id/no_item_layout"
-        layout="@layout/detail_no_item" />
+        layout="@layout/detail_no_item"/>
 </FrameLayout>

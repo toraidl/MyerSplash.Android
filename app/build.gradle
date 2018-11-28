@@ -77,7 +77,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     implementation "androidx.legacy:legacy-support-v13:$androidx_version"
-    implementation "androidx.appcompat:appcompat:$androidx_version"
+    implementation "androidx.appcompat:appcompat:$androidx_app_compat_version"
     implementation "com.google.android.material:material:$androidx_version"
     implementation "androidx.cardview:cardview:$androidx_version"
     implementation "androidx.browser:browser:$androidx_version"

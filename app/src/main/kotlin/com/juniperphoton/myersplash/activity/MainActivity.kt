@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.View
 import android.view.ViewAnimationUtils
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
@@ -49,9 +48,6 @@ class MainActivity : BaseActivity() {
     private var initNavigationIndex = PivotTitleBar.DEFAULT_SELECTED
     private var fabPositionX: Int = 0
     private var fabPositionY: Int = 0
-
-    @BindView(R.id.toolbar_layout)
-    lateinit var toolbarLayout: AppBarLayout
 
     @BindView(R.id.pivot_title_bar)
     lateinit var pivotTitleBar: PivotTitleBar
@@ -181,9 +177,9 @@ class MainActivity : BaseActivity() {
             }
             onHidden = {
                 searchFab.show()
-                if (toolbarLayout.height - Math.abs(toolbarLayout.top) < 0.01) {
-                    tagView.animate().alpha(1f).setDuration(300).start()
-                }
+//                if (toolbarLayout.height - Math.abs(toolbarLayout.top) < 0.01) {
+//                    tagView.animate().alpha(1f).setDuration(300).start()
+//                }
             }
         }
 
@@ -230,29 +226,23 @@ class MainActivity : BaseActivity() {
             })
         }
 
-        toolbarLayout.addOnOffsetChangedListener(
-                AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-                    if (Math.abs(verticalOffset) - appBarLayout.height == 0) {
-                        //todo extract duration
-                        tagView.animate().alpha(1f).setDuration(300).start()
-                        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE
-                        searchFab.hide()
-                    } else {
-                        tagView.animate().alpha(0f).setDuration(100).start()
-                        window.decorView.systemUiVisibility = 0
-                        searchFab.show()
-                    }
-                })
+//        toolbarLayout.addOnOffsetChangedListener(
+//                AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+//                    if (Math.abs(verticalOffset) - appBarLayout.height == 0) {
+//                        //todo extract duration
+//                        tagView.animate().alpha(1f).setDuration(300).start()
+//                        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE
+//                        searchFab.hide()
+//                    } else {
+//                        tagView.animate().alpha(0f).setDuration(100).start()
+//                        window.decorView.systemUiVisibility = 0
+//                        searchFab.show()
+//                    }
+//                })
 
         tagView.setOnClickListener {
             EventBus.getDefault().post(ScrollToTopEvent(ID_MAPS[pivotTitleBar.selectedItem]!!, false))
         }
-    }
-
-    override fun onApplySystemInsets(top: Int, bottom: Int) {
-        val params = searchFab.layoutParams as ViewGroup.MarginLayoutParams
-        params.bottomMargin += bottom
-        searchFab.layoutParams = params
     }
 
     private fun handleShortcutsAction() {
@@ -264,7 +254,7 @@ class MainActivity : BaseActivity() {
             when (action) {
                 ACTION_SEARCH -> {
                     handleShortcut = true
-                    toolbarLayout.post { toggleSearchView(true, false) }
+                    //toolbarLayout.post { toggleSearchView(true, false) }
                 }
                 ACTION_DOWNLOADS -> {
                     val intent = Intent(this, ManageDownloadActivity::class.java)
