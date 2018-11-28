@@ -35,7 +35,18 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            resValue "string", "authorities", "com.juniperphoton.myersplash.debug.fileProvider"
+            manifestPlaceholders = [
+                    "APP_NAME": "MyerSplash DEBUG"
+            ]
+        }
         release {
+            resValue "string", "authorities", "com.juniperphoton.myersplash.fileProvider"
+            manifestPlaceholders = [
+                    "APP_NAME": "MyerSplash"
+            ]
             signingConfig signingConfigs.release
 
             android.applicationVariants.all { variant ->
@@ -49,6 +60,7 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        main.res.srcDirs += 'src/debug'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
