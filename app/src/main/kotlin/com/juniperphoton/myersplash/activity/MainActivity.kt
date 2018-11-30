@@ -23,13 +23,10 @@ import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.model.UnsplashCategory
-import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.PermissionUtil
 import com.juniperphoton.myersplash.widget.ImageDetailView
 import com.juniperphoton.myersplash.widget.PivotTitleBar
 import com.juniperphoton.myersplash.widget.SearchView
-import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
 
 class MainActivity : BaseActivity() {
@@ -80,7 +77,6 @@ class MainActivity : BaseActivity() {
         ButterKnife.bind(this)
 
         handleShortcutsAction()
-        clearSharedFiles()
 
         if (savedInstanceState != null) {
             initNavigationIndex = savedInstanceState.getInt(SAVED_NAVIGATION_INDEX,
@@ -176,19 +172,6 @@ class MainActivity : BaseActivity() {
         if (useAnimation) {
             animator.start()
         }
-    }
-
-    private fun clearSharedFiles() {
-        if (!PermissionUtil.check(this)) {
-            return
-        }
-        Completable.create {
-            FileUtil.clearFilesToShared()
-        }
-                .subscribeOn(Schedulers.io())
-                .subscribe({
-                    // do nothing
-                }, { e -> e.printStackTrace() })
     }
 
     private fun initMainViews() {
