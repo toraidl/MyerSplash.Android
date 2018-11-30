@@ -3,10 +3,11 @@ package com.juniperphoton.myersplash.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.CallSuper
+import androidx.fragment.app.Fragment
 import com.juniperphoton.myersplash.data.Contract
 import com.juniperphoton.myersplash.utils.Pasteur
 
-abstract class BasePresenterFragment<T : Contract.BasePresenter?> : androidx.fragment.app.Fragment(), Contract.BaseView<T?> {
+abstract class BasePresenterFragment<T : Contract.BasePresenter?> : Fragment(), Contract.BaseView<T?> {
     companion object {
         const val TAG = "BasePresenterFragment"
     }

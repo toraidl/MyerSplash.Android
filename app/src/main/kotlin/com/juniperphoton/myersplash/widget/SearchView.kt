@@ -16,6 +16,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -63,7 +64,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     lateinit var searchBox: View
 
     @BindView(R.id.category_list)
-    lateinit var categoryList: androidx.recyclerview.widget.RecyclerView
+    lateinit var categoryList: RecyclerView
 
     private var categoryAdapter: CategoryAdapter? = null
 

@@ -1,6 +1,8 @@
 package com.juniperphoton.myersplash.adapter
 
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.data.DaggerRepoComponent
 import com.juniperphoton.myersplash.data.MainListPresenter
@@ -11,7 +13,7 @@ import com.juniperphoton.myersplash.model.UnsplashCategory
 
 class MainListFragmentAdapter(private var callback: OnClickPhotoItemListener?,
                               fm: androidx.fragment.app.FragmentManager
-) : androidx.fragment.app.FragmentStatePagerAdapter(fm) {
+) : FragmentStatePagerAdapter(fm) {
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val o = super.instantiateItem(container, position)
         if (o is MainListFragment) {
@@ -35,7 +37,7 @@ class MainListFragmentAdapter(private var callback: OnClickPhotoItemListener?,
         fragment.onClickPhotoItem = callback
     }
 
-    override fun getItem(position: Int): androidx.fragment.app.Fragment = MainListFragment()
+    override fun getItem(position: Int): Fragment = MainListFragment()
 
     override fun getCount(): Int = 3
 }

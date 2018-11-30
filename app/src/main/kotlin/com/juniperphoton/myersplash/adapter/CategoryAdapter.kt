@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myersplash.App
@@ -14,7 +15,7 @@ typealias OnClickCategoryItemListener = ((string: String) -> Unit)
 
 class CategoryAdapter(private val context: Context,
                       private val list: Array<String>
-) : androidx.recyclerview.widget.RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
     companion object ResMap {
         val KEYWORDS: Array<String> = App.instance.resources.getStringArray(R.array.search_category)
     }
@@ -34,7 +35,7 @@ class CategoryAdapter(private val context: Context,
         return CategoryViewHolder(LayoutInflater.from(context).inflate(R.layout.row_search_category, parent, false))
     }
 
-    inner class CategoryViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+    inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         @BindView(R.id.category_text)
         lateinit var categoryName: TextView
 

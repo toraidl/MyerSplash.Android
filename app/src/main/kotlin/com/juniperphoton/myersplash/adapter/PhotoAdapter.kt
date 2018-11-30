@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.addDimensions
 import com.juniperphoton.myersplash.extension.getNavigationBarSize
@@ -17,7 +19,7 @@ import com.juniperphoton.myersplash.widget.item.PhotoItemView
 
 class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
                    private val context: Context
-) : androidx.recyclerview.widget.RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
+) : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
     companion object {
         const val ITEM_TYPE_ITEM = 0
         const val ITEM_TYPE_FOOTER = 1
@@ -31,8 +33,8 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
 
     private var isAutoLoadMore = true
 
-    private var recyclerView: androidx.recyclerview.widget.RecyclerView? = null
-    private var layoutManager: androidx.recyclerview.widget.RecyclerView.LayoutManager? = null
+    private var recyclerView: RecyclerView? = null
+    private var layoutManager: RecyclerView.LayoutManager? = null
     private var lastPosition = -1
 
     private var footerView: PhotoFooterView? = null
@@ -104,8 +106,8 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
         }
     }
 
-    private fun findLastVisibleItemPosition(layoutManager: androidx.recyclerview.widget.RecyclerView.LayoutManager?): Int {
-        return if (layoutManager is androidx.recyclerview.widget.LinearLayoutManager) {
+    private fun findLastVisibleItemPosition(layoutManager: RecyclerView.LayoutManager?): Int {
+        return if (layoutManager is LinearLayoutManager) {
             layoutManager.findLastVisibleItemPosition()
         } else -1
     }
@@ -154,7 +156,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
 
     private fun isFooterView(position: Int): Boolean = position >= itemCount - 1
 
-    override fun onAttachedToRecyclerView(recyclerView: androidx.recyclerview.widget.RecyclerView) {
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
         lastPosition = -1
@@ -189,7 +191,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
         }
     }
 
-    class PhotoViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView)
+    class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }
 
 

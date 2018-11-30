@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.appbar.AppBarLayout
@@ -35,6 +36,14 @@ class MainActivity : BaseActivity() {
     companion object {
         private const val SAVED_NAVIGATION_INDEX = "navigation_index"
         private const val DOWNLOADS_SHORTCUT_ID = "downloads_shortcut"
+
+        private const val ACTION_SEARCH = "action.search"
+        private const val ACTION_DOWNLOADS = "action.download"
+
+        private val ID_MAPS = mutableMapOf(
+                0 to UnsplashCategory.NEW_CATEGORY_ID,
+                1 to UnsplashCategory.FEATURED_CATEGORY_ID,
+                2 to UnsplashCategory.HIGHLIGHTS_CATEGORY_ID)
     }
 
     private var mainListFragmentAdapter: MainListFragmentAdapter? = null
@@ -44,11 +53,6 @@ class MainActivity : BaseActivity() {
     private var fabPositionX: Int = 0
     private var fabPositionY: Int = 0
 
-    private val idMaps = mutableMapOf(
-            0 to UnsplashCategory.NEW_CATEGORY_ID,
-            1 to UnsplashCategory.FEATURED_CATEGORY_ID,
-            2 to UnsplashCategory.HIGHLIGHTS_CATEGORY_ID)
-
     @BindView(R.id.toolbar_layout)
     lateinit var toolbarLayout: AppBarLayout
 
@@ -56,7 +60,7 @@ class MainActivity : BaseActivity() {
     lateinit var pivotTitleBar: PivotTitleBar
 
     @BindView(R.id.view_pager)
-    lateinit var viewPager: androidx.viewpager.widget.ViewPager
+    lateinit var viewPager: ViewPager
 
     @BindView(R.id.tag_view)
     lateinit var tagView: TextView
@@ -207,11 +211,11 @@ class MainActivity : BaseActivity() {
         pivotTitleBar.apply {
             onSingleTap = {
                 viewPager.currentItem = it
-                EventBus.getDefault().post(ScrollToTopEvent(idMaps[it]!!, false))
+                EventBus.getDefault().post(ScrollToTopEvent(ID_MAPS[it]!!, false))
             }
             onDoubleTap = {
                 viewPager.currentItem = it
-                EventBus.getDefault().post(ScrollToTopEvent(idMaps[it]!!, true))
+                EventBus.getDefault().post(ScrollToTopEvent(ID_MAPS[it]!!, true))
             }
             selectedItem = initNavigationIndex
         }
@@ -229,7 +233,7 @@ class MainActivity : BaseActivity() {
             adapter = mainListFragmentAdapter
             currentItem = initNavigationIndex
             offscreenPageLimit = 3
-            addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
+            addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrolled(position: Int,
                                             positionOffset: Float,
                                             positionOffsetPixels: Int) = Unit
@@ -243,19 +247,23 @@ class MainActivity : BaseActivity() {
             })
         }
 
-        toolbarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-            if (Math.abs(verticalOffset) - appBarLayout.height == 0) {
-                tagView.animate().alpha(1f).setDuration(300).start()
-                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE
-                searchFab.hide()
-            } else {
-                tagView.animate().alpha(0f).setDuration(100).start()
-                window.decorView.systemUiVisibility = 0
-                searchFab.show()
-            }
-        })
+        toolbarLayout.addOnOffsetChangedListener(
+                AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+                    if (Math.abs(verticalOffset) - appBarLayout.height == 0) {
+                        //todo extract duration
+                        tagView.animate().alpha(1f).setDuration(300).start()
+                        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE
+                        searchFab.hide()
+                    } else {
+                        tagView.animate().alpha(0f).setDuration(100).start()
+                        window.decorView.systemUiVisibility = 0
+                        searchFab.show()
+                    }
+                })
 
-        tagView.setOnClickListener { EventBus.getDefault().post(ScrollToTopEvent(idMaps[pivotTitleBar.selectedItem]!!, false)) }
+        tagView.setOnClickListener {
+            EventBus.getDefault().post(ScrollToTopEvent(ID_MAPS[pivotTitleBar.selectedItem]!!, false))
+        }
     }
 
     override fun onApplySystemInsets(top: Int, bottom: Int) {
@@ -271,11 +279,11 @@ class MainActivity : BaseActivity() {
         val action = intent.action
         if (action != null) {
             when (action) {
-                "action.search" -> {
+                ACTION_SEARCH -> {
                     handleShortcut = true
                     toolbarLayout.post { toggleSearchView(true, false) }
                 }
-                "action.download" -> {
+                ACTION_DOWNLOADS -> {
                     val intent = Intent(this, ManageDownloadActivity::class.java)
                     startActivity(intent)
                 }

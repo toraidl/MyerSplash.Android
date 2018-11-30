@@ -65,10 +65,14 @@ class SettingsActivity : BaseActivity() {
             recommendationPreview.visibility = View.GONE
         }
 
-        savingStrings = arrayOf(getString(R.string.settings_saving_highest), getString(R.string.settings_saving_high),
+        savingStrings = arrayOf(
+                getString(R.string.settings_saving_highest),
+                getString(R.string.settings_saving_high),
                 getString(R.string.settings_saving_medium))
 
-        loadingStrings = arrayOf(getString(R.string.settings_loading_large), getString(R.string.settings_loading_small),
+        loadingStrings = arrayOf(
+                getString(R.string.settings_loading_large),
+                getString(R.string.settings_loading_small),
                 getString(R.string.settings_loading_thumb))
 
         val savingChoice = LocalSettingHelper.getInt(this, KEY_SAVING_QUALITY, 1)

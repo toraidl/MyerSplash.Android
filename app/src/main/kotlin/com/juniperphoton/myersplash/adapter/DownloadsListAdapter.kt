@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -25,7 +26,7 @@ import com.juniperphoton.myersplash.widget.DownloadRetryView
 import com.juniperphoton.myersplash.widget.DownloadingView
 
 class DownloadsListAdapter(private val context: Context) :
-        androidx.recyclerview.widget.RecyclerView.Adapter<DownloadsListAdapter.DownloadItemViewHolder>() {
+        RecyclerView.Adapter<DownloadsListAdapter.DownloadItemViewHolder>() {
     companion object {
         private const val TAG = "DownloadsListAdapter"
         private const val ITEM_TYPE_ITEM = 0
@@ -87,7 +88,7 @@ class DownloadsListAdapter(private val context: Context) :
         notifyDataSetChanged()
     }
 
-    inner class DownloadItemViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+    inner class DownloadItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         @BindView(R.id.row_download_item_dv)
         @JvmField
         var draweeView: SimpleDraweeView? = null

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
@@ -36,10 +37,10 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     }
 
     @BindView(R.id.content_activity_rv)
-    lateinit var contentRecyclerView: androidx.recyclerview.widget.RecyclerView
+    lateinit var contentRecyclerView: RecyclerView
 
     @BindView(R.id.content_activity_srl)
-    lateinit var refreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var refreshLayout: SwipeRefreshLayout
 
     @BindView(R.id.no_item_layout)
     lateinit var noItemLayout: LinearLayout
@@ -130,7 +131,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     }
 
     override fun scrollToTop() {
-        val lm = contentRecyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager
+        val lm = contentRecyclerView.layoutManager as LinearLayoutManager
         val pos = lm.findFirstCompletelyVisibleItemPosition()
         if (pos > SCROLL_START_POSITION) {
             contentRecyclerView.scrollToPosition(SCROLL_START_POSITION)

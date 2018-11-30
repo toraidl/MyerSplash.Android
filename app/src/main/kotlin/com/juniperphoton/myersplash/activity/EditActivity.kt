@@ -124,7 +124,9 @@ class EditActivity : BaseActivity() {
         })
 
         val valueAnimator = ValueAnimator.ofFloat(0f, 360f)
-        valueAnimator.addUpdateListener { animation -> progressView.rotation = animation.animatedValue as Float }
+        valueAnimator.addUpdateListener { animation ->
+            progressView.rotation = animation.animatedValue as Float
+        }
         valueAnimator.interpolator = LinearInterpolator()
         valueAnimator.duration = 1200
         valueAnimator.repeatMode = ValueAnimator.RESTART
@@ -144,7 +146,9 @@ class EditActivity : BaseActivity() {
                 .setOldController(previewImageView.controller)
                 .setImageRequest(request)
                 .setControllerListener(object : SimpleControllerListener() {
-                    override fun onFinalImageSet(id: String?, imageInfo: ImageInfo?, animatable: Animatable?) {
+                    override fun onFinalImageSet(id: String?,
+                                                 imageInfo: ImageInfo?,
+                                                 animatable: Animatable?) {
                         val rect = RectF()
                         previewImageView.hierarchy.getActualImageBounds(rect)
                         previewDraweeLayout.updateContentScale(rect)
@@ -211,7 +215,8 @@ class EditActivity : BaseActivity() {
         val bm = decodeBitmapFromFile(fileUri, opt)
                 ?: throw IllegalStateException("Can't decode file")
 
-        Pasteur.d(TAG, "file decoded, sample size:${opt.inSampleSize}, originalHeight=$originalHeight, screenH=$screenHeight")
+        Pasteur.d(TAG, "file decoded, sample size:${opt.inSampleSize}, " +
+                "originalHeight=$originalHeight, screenH=$screenHeight")
 
         Pasteur.d(TAG, "decoded size: ${bm.width} x ${bm.height}")
 

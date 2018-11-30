@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 class LoadMoreListener(private val onLoadMore: (() -> Unit)? = null) {
     private var autoLoadMore = true
 
-    fun attach(recyclerView: androidx.recyclerview.widget.RecyclerView) {
+    fun attach(recyclerView: RecyclerView) {
         val layoutManager = recyclerView.layoutManager ?: return
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
