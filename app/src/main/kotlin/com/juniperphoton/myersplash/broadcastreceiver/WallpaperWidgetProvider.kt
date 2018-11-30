@@ -12,7 +12,7 @@ import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.MainActivity
 import com.juniperphoton.myersplash.cloudservice.CloudService
-import com.juniperphoton.myersplash.extension.getLengthInKb
+import com.juniperphoton.myersplash.extension.getLengthInKB
 import com.juniperphoton.myersplash.model.UnsplashImageFactory
 import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.*
@@ -32,7 +32,7 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
         Pasteur.debug(TAG, "onUpdate")
 
         val file = File(FileUtil.cachedPath, "${UnsplashImageFactory.TODAY_THUMB_URL.hashCode()}.jpg")
-        if (file.exists() && file.getLengthInKb() > 100) {
+        if (file.exists() && file.getLengthInKB() > 100) {
             AppWidgetUtil.doWithWidgetId {
                 updateWidget(App.instance, it, file.absolutePath)
             }

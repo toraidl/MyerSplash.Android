@@ -10,7 +10,7 @@ import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.cloudservice.CloudService
-import com.juniperphoton.myersplash.extension.sendScanBroadcast
+import com.juniperphoton.myersplash.extension.notifyFileUpdated
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.utils.*
 import io.reactivex.Observable
@@ -102,7 +102,7 @@ class DownloadService : Service() {
                     outputFile!!.renameTo(newFile)
 
                     Log.d(TAG, "renamed file:" + newFile.absolutePath)
-                    newFile.sendScanBroadcast(App.instance)
+                    newFile.notifyFileUpdated(App.instance)
 
                     val realm = RealmCache.getInstance()
 

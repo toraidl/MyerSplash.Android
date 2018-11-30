@@ -35,7 +35,6 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
-import com.juniperphoton.myersplash.extension.copyFile
 import com.juniperphoton.myersplash.extension.isLightColor
 import com.juniperphoton.myersplash.extension.toHexString
 import com.juniperphoton.myersplash.fragment.Action
@@ -549,25 +548,17 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     @OnClick(R.id.detail_share_fab)
     fun onClickShare() {
         val file = FileUtil.getCachedFile(clickedImage!!.listUrl!!)
-        var copiedFile: File? = null
 
-        if (file != null && file.exists()) {
-            copiedFile = File(FileUtil.sharePath, "share_${clickedImage!!.listUrl!!.hashCode()}.jpg")
-            file.copyFile(copiedFile)
-        }
-
-        if (copiedFile == null || !copiedFile.exists()) {
+        if (file == null || !file.exists()) {
             ToastService.sendShortToast(context.getString(R.string.something_wrong))
             return
         }
-
-        Pasteur.d(TAG, "copied file:$copiedFile")
 
         val shareText = String.format(SHARE_TEXT, clickedImage!!.userName, clickedImage!!.downloadUrl)
 
         val intent = Intent(Intent.ACTION_SEND)
         val contentUri = FileProvider.getUriForFile(context,
-                context.getString(R.string.authorities), copiedFile)
+                context.getString(R.string.authorities), file)
         intent.apply {
             action = Intent.ACTION_SEND
             type = "image/*"
