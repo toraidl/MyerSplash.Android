@@ -1,7 +1,5 @@
 package com.juniperphoton.myersplash.data
 
-import com.juniperphoton.myersplash.App
-import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.cloudservice.CloudService
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashCategory
@@ -27,8 +25,6 @@ open class MainListPresenter : MainContract.MainPresenter {
     override lateinit var category: UnsplashCategory
     @Inject
     lateinit var mainView: MainContract.MainView
-    @Inject
-    lateinit var preferenceRepo: PreferenceRepo
 
     override var query: String? = null
 
@@ -85,9 +81,7 @@ open class MainListPresenter : MainContract.MainPresenter {
             }
 
             override fun onNext(data: MutableList<UnsplashImage>) {
-                if (category.id == UnsplashCategory.NEW_CATEGORY_ID
-                        && nextPage == DEFAULT_PAGING
-                        && preferenceRepo.getBoolean(App.instance.getString(R.string.preference_key_recommendation), true)) {
+                if (category.id == UnsplashCategory.NEW_CATEGORY_ID && nextPage == DEFAULT_PAGING) {
                     data.add(0, UnsplashImageFactory.createTodayImage())
                 }
                 mainView.refreshList(data, nextPage)

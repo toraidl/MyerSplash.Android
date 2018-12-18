@@ -39,12 +39,6 @@ class SettingsActivity : BaseActivity() {
     @BindView(R.id.clear_cache_settings)
     lateinit var clearCacheSettings: SettingsItemLayout
 
-    @BindView(R.id.recommendation_settings)
-    lateinit var recommendationSettings: SettingsItemLayout
-
-    @BindView(R.id.recommendation_preview)
-    lateinit var recommendationPreview: View
-
     private lateinit var savingStrings: Array<String>
     private lateinit var loadingStrings: Array<String>
 
@@ -55,14 +49,6 @@ class SettingsActivity : BaseActivity() {
 
         quickDownloadSettings.onCheckedChanged = {
             EventBus.getDefault().post(RefreshUIEvent())
-        }
-
-        recommendationSettings.onCheckedChanged = {
-            recommendationPreview.visibility = if (it) View.VISIBLE else View.GONE
-        }
-
-        if (!recommendationSettings.checked) {
-            recommendationPreview.visibility = View.GONE
         }
 
         savingStrings = arrayOf(
