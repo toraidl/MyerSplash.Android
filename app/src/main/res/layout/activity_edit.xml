@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <com.juniperphoton.myersplash.widget.edit.PreviewDraweeLayout
         android:id="@+id/edit_image_preview_layout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:fitsSystemWindows="true"
+        app:layout_behavior="com.juniperphoton.myersplash.behavior.ScrollingBehavior">
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/edit_image_preview"
@@ -24,54 +25,43 @@
 
     <View
         android:id="@+id/edit_mask"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:alpha="0"
         android:background="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:clipToPadding="false"
+        android:fitsSystemWindows="true"
+        app:layout_behavior="com.juniperphoton.myersplash.behavior.ScrollingBehavior"/>
 
-    <FrameLayout
-        android:id="@+id/edit_home_preview"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_above="@+id/edit_bottom_bar"
+    <include
+        android:id="@+id/edit_home_preview_top"
+        layout="@layout/widget_edit_home_pixel"
+        android:layout_width="match_parent"
+        android:layout_height="76dp"
+        android:layout_marginTop="30dp"
+        tools:alpha="1"/>
+
+    <ImageView
+        android:id="@+id/edit_home_preview_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="right|top"
         android:alpha="0"
-        app:layout_constraintBottom_toTopOf="@id/edit_bottom_bar"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:alpha="1">
-
-        <include
-            layout="@layout/widget_edit_home_pixel"
-            android:layout_width="match_parent"
-            android:layout_height="76dp"
-            android:layout_marginTop="30dp"
-            tools:alpha="1"/>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="20dp"
-            android:contentDescription="@string/image_desc"
-            android:scaleType="fitEnd"
-            android:src="@drawable/preview"/>
-    </FrameLayout>
+        android:contentDescription="@string/image_desc"
+        android:src="@drawable/preview"
+        app:layout_anchor="@id/edit_fabs_root"
+        tools:alpha="1"/>
 
     <LinearLayout
         android:id="@+id/edit_bottom_bar"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:background="@color/HalfBlack"
         android:clickable="true"
+        android:fitsSystemWindows="true"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_behavior="com.juniperphoton.myersplash.behavior.NavigationBarBehindBehavior">
 
         <TextView
             android:layout_width="wrap_content"
@@ -117,9 +107,8 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="12dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/edit_bottom_bar"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/edit_bottom_bar">
+        app:layout_anchor="@id/edit_bottom_bar"
+        app:layout_anchorGravity="top|right">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/edit_preview_fab"
@@ -167,4 +156,4 @@
             </FrameLayout>
         </com.juniperphoton.flipperlayout.FlipperLayout>
     </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
