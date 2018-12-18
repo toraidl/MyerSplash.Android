@@ -56,23 +56,6 @@
                 app:setting_content="@string/settings_download_metered"
                 app:setting_title="@string/settings_download_metered_title"/>
 
-            <com.juniperphoton.myersplash.widget.SettingsItemLayout
-                android:id="@+id/recommendation_settings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:has_checkbox="true"
-                app:preference_key="@string/preference_key_recommendation"
-                app:setting_content="@string/settings_recommendation_content"
-                app:setting_title="@string/settings_recommendation_title"/>
-
-            <ImageView
-                android:id="@+id/recommendation_preview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/image_desc"
-                android:src="@drawable/recommendation_preview"/>
-
             <TextView
                 style="@style/SettingsSubTitle"
                 android:layout_width="wrap_content"
