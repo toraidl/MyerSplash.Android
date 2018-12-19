@@ -15,11 +15,8 @@ class TagScrollDismissBehavior(context: Context?, attrs: AttributeSet?
     override fun onDependentViewChanged(parent: CoordinatorLayout,
                                         child: View,
                                         dependency: View): Boolean {
-        if ((dependency as FloatingActionButton).isShown) {
-            child.animate().alpha(0f).start()
-        } else {
-            child.animate().alpha(1f).start()
-        }
+        val fabShown = (dependency as FloatingActionButton).isShown
+        child.animate().alpha(if (fabShown) 0f else 1f).start()
         return false
     }
 }

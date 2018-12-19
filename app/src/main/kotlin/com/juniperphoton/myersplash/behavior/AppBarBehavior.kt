@@ -11,6 +11,20 @@ import com.juniperphoton.myersplash.utils.Pasteur
 
 private const val TAG = "AppBarBehavior"
 
+private inline fun View.minScrollingY(): Int {
+    return -height
+}
+
+private inline fun View.maxScrollingY(): Int {
+    return 0
+}
+
+/**
+ * A behavior like the AppBarLayout's behavior in support library.
+ * But we make the ui extend to the beneath area of system bar.
+ *
+ * The scrolling view should attach [ScrollingBehavior].
+ */
 class AppBarBehavior(context: Context?, attrs: AttributeSet?
 ) : CoordinatorLayout.Behavior<View>(context, attrs) {
     override fun onApplyWindowInsets(coordinatorLayout: CoordinatorLayout,
@@ -24,13 +38,14 @@ class AppBarBehavior(context: Context?, attrs: AttributeSet?
     private var rect = IntArray(2)
     private var animator: ValueAnimator? = null
 
-    private var fling = false
-
     private fun childVisibleOnWindow(child: View): Boolean {
         child.getLocationInWindow(rect)
         return child.bottom + child.translationY > 0
     }
 
+    /**
+     * Helper inline method to convert touch type to string.
+     */
     private inline fun getTypeString(type: Int): String {
         return when (type) {
             ViewCompat.TYPE_TOUCH -> "touch"
@@ -46,15 +61,17 @@ class AppBarBehavior(context: Context?, attrs: AttributeSet?
                                      type: Int): Boolean {
         animator?.cancel()
 
+        // We only care about vertical scrolling.
         if (axes != ViewCompat.SCROLL_AXIS_VERTICAL) {
             return false
         }
 
         Pasteur.info(TAG, "======onStartNestedScroll: type: ${getTypeString(type)}")
-
-        fling = type != ViewCompat.TYPE_TOUCH
-
         return true
+    }
+
+    private fun minScrollableY(child: View): Float {
+        return -child.height.toFloat()
     }
 
     override fun onNestedPreScroll(coordinatorLayout: CoordinatorLayout,
@@ -65,18 +82,23 @@ class AppBarBehavior(context: Context?, attrs: AttributeSet?
                                    consumed: IntArray,
                                    type: Int) {
         var targetTop = child.translationY - dy
+
+        // Contents are scrolling up.
         if (targetTop < 0) {
-            if (targetTop <= -child.height.toFloat()) {
-                consumed[1] = dy - (-child.height - targetTop.toInt())
-                targetTop = -child.height.toFloat()
+            // If the targetTop of AppBar exceeds the min scrolling y,
+            // we only consume some of the y and restrict the AppBar's y to min scrolling y.
+            if (targetTop <= child.minScrollingY()) {
+                consumed[1] = dy - (child.minScrollingY() - targetTop.toInt())
+                targetTop = child.minScrollingY().toFloat()
             } else {
                 consumed[1] = dy
             }
 
             child.translationY = targetTop
         } else {
-            child.translationY = 0f
-            consumed[1] = -(dy - targetTop.toInt())
+            // Contents are scrolling down but exceeds the max scrolling y.
+            child.translationY = child.maxScrollingY().toFloat()
+            consumed[1] = targetTop.toInt() - dy
         }
 
         //Pasteur.warn(TAG, "======onNestedPreScroll: scroll to $dy, consumed $consumed[1]")
@@ -89,6 +111,7 @@ class AppBarBehavior(context: Context?, attrs: AttributeSet?
 
         Pasteur.info(TAG, "======onStopNestedScroll: type: ${getTypeString(type)}")
 
+        // If this scroll is initialed by a touch, we snap the AppBar.
         if (type == ViewCompat.TYPE_TOUCH) {
             animateToReset(child)
         }
@@ -99,13 +122,13 @@ class AppBarBehavior(context: Context?, attrs: AttributeSet?
             return
         }
 
-        var start = child.translationY
-        var end = when {
+        val start = child.translationY
+        val end = when {
             start < -child.height / 2 -> {
-                -child.height.toFloat()
+                child.minScrollingY().toFloat()
             }
             else -> {
-                0f
+                child.maxScrollingY().toFloat()
             }
         }
 
@@ -146,6 +169,7 @@ class ScrollingBehavior(context: Context?, attrs: AttributeSet?
 
     override fun onDependentViewChanged(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
         val offset = dependency.bottom + dependency.translationY
+        // This scrolling view should always follow the dependency's butt.
         child.translationY = offset
         return offset != 0f
     }
