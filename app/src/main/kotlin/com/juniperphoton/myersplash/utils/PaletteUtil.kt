@@ -15,7 +15,9 @@ suspend fun UnsplashImage.extractThemeColor(): Int = coroutineScope {
     val o = BitmapFactory.Options()
     o.inSampleSize = IN_SAMPLE_SIZE
 
-    val bm = BitmapFactory.decodeFile(file.absolutePath, o)
+    val bm = BitmapFactory.decodeFile(file.absolutePath, o) ?: kotlin.run {
+        return@coroutineScope Int.MIN_VALUE
+    }
 
     return@coroutineScope Palette.from(bm).generate().darkVibrantSwatch?.rgb ?: Int.MIN_VALUE
 }
