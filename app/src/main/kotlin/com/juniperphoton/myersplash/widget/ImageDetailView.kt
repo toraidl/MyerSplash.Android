@@ -153,8 +153,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     private val realmChangeListener = RealmChangeListener<DownloadItem> { element ->
         when (element.status) {
             DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> progressView.progress = element.progress
-            DownloadItem.DOWNLOAD_STATUS_FAILED -> downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
-            DownloadItem.DOWNLOAD_STATUS_OK -> downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
+            DownloadItem.DOWNLOAD_STATUS_FAILED -> flipToView(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+            DownloadItem.DOWNLOAD_STATUS_OK -> flipToView(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
         }
     }
 
@@ -301,7 +301,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     private fun toggleHeroViewAnimation(startY: Float, endY: Float, show: Boolean) {
         if (!show) {
-            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+            flipToView(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
         } else {
             detailImgRL.translationX = 0f
         }
@@ -343,13 +343,21 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
                     it
                 }
                 .subscribe {
-                    downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
+                    flipToView(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
                 }
     }
 
+    private fun flipToView(index: Int) {
+        if (downloadFlipperLayout.displayIndex != index) {
+            downloadFlipperLayout.next(index)
+        }
+    }
+
     private val targetY: Float
-        get() = ((context as Activity).window.decorView.height
-                - resources.getDimensionPixelSize(R.dimen.img_detail_height)) / 2f
+        get() {
+            return ((context as Activity).window.decorView.height
+                    - resources.getDimensionPixelSize(R.dimen.img_detail_height)) / 2f
+        }
 
     private fun toggleDetailRLAnimation(show: Boolean, oneshot: Boolean) {
         val startY = if (show) -resources.getDimensionPixelOffset(R.dimen.img_detail_info_height) else 0
@@ -580,7 +588,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         if (clickedImage == null) {
             return
         }
-        downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+        flipToView(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
 
         DownloadItemTransactionUtil.updateStatus(associatedDownloadItem!!, DownloadItem.DOWNLOAD_STATUS_FAILED)
         DownloadUtil.cancelDownload(context, clickedImage!!)
@@ -600,7 +608,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun receivedDownloadStarted(event: DownloadStartedEvent) {
         if (clickedImage != null && event.id == clickedImage?.id) {
-            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
+            flipToView(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
             associateWithDownloadItem(null)
         }
     }
@@ -648,7 +656,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
             Pasteur.d(TAG, "found download item,status:" + associatedDownloadItem!!.status)
             when (associatedDownloadItem?.status) {
                 DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> {
-                    downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
+                    flipToView(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
                     progressView.progress = associatedDownloadItem!!.progress
                 }
                 DownloadItem.DOWNLOAD_STATUS_FAILED -> {

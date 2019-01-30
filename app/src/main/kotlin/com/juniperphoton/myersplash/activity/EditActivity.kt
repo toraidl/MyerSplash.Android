@@ -97,7 +97,9 @@ class EditActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         // Reset to the initial state anyway
-        flipperLayout.next(0)
+        if (flipperLayout.displayIndex != 0) {
+            flipperLayout.next(0, true)
+        }
     }
 
     @OnClick(R.id.edit_confirm_fab)
