@@ -14,7 +14,7 @@ mapOf(
         "retrofitVersion" to "2.3.0",
         "realmVersion" to "3.0.0",
         "constraintLayoutVersion" to "1.1.3",
-        "flipperLayoutVersion" to "1.2.6"
+        "flipperLayoutVersion" to "1.3.0"
 ).forEach {
     project.extra[it.key] = it.value
 }
