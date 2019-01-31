@@ -135,12 +135,11 @@ class EditActivity : BaseActivity() {
     }
 
     private fun updatePreviewImage() {
-        val screenHeight = previewImageView.height
-
-        Pasteur.d(TAG, "pre scale: screen height:$screenHeight")
-
+        val resize = Math.max(previewImageView.height,
+                previewImageView.width)
+        
         val request = ImageRequestBuilder.newBuilderWithSource(fileUri)
-                .setResizeOptions(ResizeOptions(screenHeight, screenHeight))
+                .setResizeOptions(ResizeOptions(resize, resize))
                 .build()
         val controller = Fresco.newDraweeControllerBuilder()
                 .setOldController(previewImageView.controller)
