@@ -171,7 +171,7 @@ class DownloadsListAdapter(private val context: Context) :
 
             downloadCompleteView?.let {
                 it.filePath = item.filePath
-                it.setThemeBackColor(item.color)
+                it.themeColor = item.color
             }
 
             downloadRetryView?.let {

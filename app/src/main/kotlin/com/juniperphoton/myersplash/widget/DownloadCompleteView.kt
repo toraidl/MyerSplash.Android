@@ -31,6 +31,13 @@ class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(
 
     var filePath: String? = null
 
+    var themeColor: Int = Color.BLACK
+        set(value) {
+            field = value
+            setAsRL.background = ColorDrawable(value)
+            setAsTextView.setTextColor(if (value.isLightColor()) Color.BLACK else Color.WHITE)
+        }
+
     init {
         LayoutInflater.from(context).inflate(R.layout.widget_download_complete_view, this)
         ButterKnife.bind(this)
@@ -43,10 +50,5 @@ class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(it)))
             context.startActivity(intent)
         }
-    }
-
-    fun setThemeBackColor(color: Int) {
-        setAsRL.background = ColorDrawable(color)
-        setAsTextView.setTextColor(if (color.isLightColor()) Color.BLACK else Color.WHITE)
     }
 }
