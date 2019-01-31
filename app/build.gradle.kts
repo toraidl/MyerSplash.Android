@@ -27,6 +27,13 @@ val butterKnifeVersion: String by extra
 val retrofitVersion: String by extra
 val frescoVersion: String by extra
 val constraintLayoutVersion: String by extra
+val minVersion: Int by extra
+val targetVersion: Int by extra
+val compileVersion: Int by extra
+val buildToolVersion: String by extra
+
+val appVersionCode: Int by extra
+val appVersionName: String by extra
 
 android {
     signingConfigs {
@@ -41,15 +48,15 @@ android {
         }
     }
 
-    compileSdkVersion(28)
-    buildToolsVersion("28.0.3")
+    compileSdkVersion(compileVersion)
+    buildToolsVersion(buildToolVersion)
 
     defaultConfig {
         applicationId = "com.juniperphoton.myersplash"
-        minSdkVersion(21)
-        targetSdkVersion(28)
-        versionCode = 310
-        versionName = "3.1.0"
+        minSdkVersion(minVersion)
+        targetSdkVersion(targetVersion)
+        versionCode = appVersionCode
+        versionName = appVersionName
 
         val unsplashKey: String by project
         buildConfigField("String", "UNSPLASH_APP_KEY", "\"$unsplashKey\"")
