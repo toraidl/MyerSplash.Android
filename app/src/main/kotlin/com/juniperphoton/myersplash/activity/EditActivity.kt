@@ -169,26 +169,32 @@ class EditActivity : BaseActivity() {
     }
 
     private fun composeMask() {
-        flipperLayout.next()
-        Observable.just(fileUri)
-                .subscribeOn(Schedulers.io())
-                .map {
-                    composeMaskInternal() ?: throw RuntimeException("Error")
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : SimpleObserver<File>() {
-                    override fun onError(e: Throwable) {
-                        flipperLayout.next()
-                        super.onError(e)
-                        if (e is OutOfMemoryError) {
-                            ToastService.sendShortToast(resources.getString(R.string.oom_toast))
+        flipperLayout.next(nextIndex = 1, animate = true, endBlock = {
+            Observable.just(fileUri)
+                    .subscribeOn(Schedulers.io())
+                    .map {
+                        composeMaskInternal() ?: throw RuntimeException("Error")
+                    }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(object : SimpleObserver<File>() {
+                        override fun onError(e: Throwable) {
+                            flipperLayout.next()
+                            super.onError(e)
+                            if (e is OutOfMemoryError) {
+                                ToastService.sendShortToast(resources.getString(R.string.oom_toast))
+                            }
                         }
-                    }
 
-                    override fun onNext(data: File) {
-                        setAs(data)
-                    }
-                })
+                        override fun onNext(data: File) {
+                            flipperLayout.next(
+                                    nextIndex = 0,
+                                    animate = true,
+                                    endBlock = {
+                                        setAs(data)
+                                    })
+                        }
+                    })
+        })
     }
 
     @SuppressLint("WrongThread")

@@ -31,6 +31,7 @@ val minVersion: Int by extra
 val targetVersion: Int by extra
 val compileVersion: Int by extra
 val buildToolVersion: String by extra
+val flipperLayoutVersion: String by extra
 
 val appVersionCode: Int by extra
 val appVersionName: String by extra
@@ -139,7 +140,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.0")
     implementation("org.greenrobot:eventbus:3.0.0")
     implementation("com.google.android:flexbox:1.1.0")
-    implementation("com.juniperphoton:flipperlayout:1.2.5")
+    implementation("com.juniperphoton:flipperlayout:$flipperLayoutVersion")
     kapt("io.realm:realm-annotations:3.0.0")
     kapt("io.realm:realm-annotations-processor:3.0.0")
 
