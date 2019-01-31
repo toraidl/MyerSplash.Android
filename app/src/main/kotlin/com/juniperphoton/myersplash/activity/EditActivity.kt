@@ -140,7 +140,7 @@ class EditActivity : BaseActivity() {
     private fun updatePreviewImage() {
         val resize = Math.max(previewImageView.height,
                 previewImageView.width)
-        
+
         val request = ImageRequestBuilder.newBuilderWithSource(fileUri)
                 .setResizeOptions(ResizeOptions(resize, resize))
                 .build()
@@ -227,6 +227,7 @@ class EditActivity : BaseActivity() {
         val c = Canvas(bm)
 
         val paint = Paint()
+        paint.isFilterBitmap = true
         paint.isDither = true
 
         val alpha = maskView.alpha
