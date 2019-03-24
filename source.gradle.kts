@@ -1,19 +1,12 @@
 val file = rootProject.file("local.properties")
-file?.useLines { lines ->
-    val sb = StringBuilder()
 
-    lines.forEach { lineString ->
-        sb.append(lineString + "\n")
+file?.forEachLine { line->
+    println("Local properties: $line")
 
-        val split = lineString.split('=')
-        if (split.size != 2) return@useLines
+    val split = line.split('=')
+    if (split.size != 2) return@forEachLine
 
-        val name = split[0]
-        val value = split[1]
-        rootProject.extra[name] = value
-    }
-
-    task("printLocal") {
-        println("Local properties are: \n$sb")
-    }
+    val name = split[0]
+    val value = split[1]
+    rootProject.extra[name] = value
 }
