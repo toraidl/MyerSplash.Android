@@ -48,8 +48,8 @@ android {
         applicationId = "com.juniperphoton.myersplash"
         minSdkVersion(21)
         targetSdkVersion(28)
-        versionCode = 310
-        versionName = "3.1.0"
+        versionCode = 350
+        versionName = "3.0.5"
 
         val unsplashKey: String by project
         buildConfigField("String", "UNSPLASH_APP_KEY", "\"$unsplashKey\"")
