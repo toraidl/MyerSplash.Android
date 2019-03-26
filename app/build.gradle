@@ -30,7 +30,7 @@ android {
         def properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
         def unsplashKey = properties.getProperty('unsplashKey')
-        def appCenterKey = properties.getProperty('appCenterKey')
+        def appCenterKey = properties.getProperty('appcenterKey')
 
         buildConfigField 'String', "UNSPLASH_APP_KEY", "\"" + unsplashKey + "\""
         buildConfigField 'String', "APP_CENTER_KEY", "\"" + appCenterKey + "\""

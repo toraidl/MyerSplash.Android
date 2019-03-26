@@ -42,4 +42,12 @@ object AnalysisHelper {
     fun logRefreshList() {
         Analytics.trackEvent("Refresh list")
     }
+
+    fun logApplyEdit(dimProgress: Boolean) {
+        Analytics.trackEvent("Apply edit", mapOf("Dim progress" to dimProgress.toString()))
+    }
+
+    fun logEditShowPreview() {
+        Analytics.trackEvent("Edit show preview")
+    }
 }

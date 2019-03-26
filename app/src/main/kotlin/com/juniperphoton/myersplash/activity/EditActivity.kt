@@ -101,11 +101,15 @@ class EditActivity : BaseActivity() {
 
     @OnClick(R.id.edit_confirm_fab)
     fun onClickConfirm() {
+        AnalysisHelper.logApplyEdit(brightnessSeekBar.progress > 0)
         composeMask()
     }
 
     @OnClick(R.id.edit_preview_fab)
     fun onClickPreview() {
+        if (!showingPreview) {
+            AnalysisHelper.logEditShowPreview()
+        }
         showingPreview = !showingPreview
     }
 
@@ -137,7 +141,7 @@ class EditActivity : BaseActivity() {
     private fun updatePreviewImage() {
         val resize = Math.max(previewImageView.height,
                 previewImageView.width)
-        
+
         val request = ImageRequestBuilder.newBuilderWithSource(fileUri)
                 .setResizeOptions(ResizeOptions(resize, resize))
                 .build()
