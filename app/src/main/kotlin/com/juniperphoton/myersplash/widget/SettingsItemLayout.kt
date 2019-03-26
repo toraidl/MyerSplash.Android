@@ -12,6 +12,8 @@ import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 
+typealias OnCheckedListener = ((Boolean) -> Unit)
+
 class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.settings_item_title)
     lateinit var titleTextView: TextView
@@ -25,7 +27,7 @@ class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(co
     @BindView(R.id.divider_view)
     lateinit var dividerView: View
 
-    var onCheckedChanged: ((Boolean) -> Unit)? = null
+    var onCheckedChanged: OnCheckedListener? = null
 
     var checked: Boolean
         get() = compoundButton.isChecked

@@ -9,7 +9,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.EditActivity
@@ -20,7 +20,7 @@ import java.io.File
 @Suppress("unused")
 object NotificationUtil {
     private const val TAG = "NotificationUtil"
-    private val NOTIFICATION_CHANNEL_ID = "default_channel"
+    private const val NOTIFICATION_CHANNEL_ID = "default_channel"
 
     private val notificationManager: NotificationManager
         get() {
@@ -78,8 +78,8 @@ object NotificationUtil {
                 .setSmallIcon(R.drawable.small_download_ok)
         previewUri?.let {
             val bm = BitmapFactory.decodeFile(it.toString())
-            bm?.let {
-                builder.setLargeIcon(it)
+            bm?.let { b ->
+                builder.setLargeIcon(b)
             }
         }
         if (filePath != null) {
@@ -103,8 +103,8 @@ object NotificationUtil {
                 .setProgress(100, progress, false)
         previewUri?.let {
             val bm = BitmapFactory.decodeFile(it.toString())
-            bm?.let {
-                builder.setLargeIcon(it)
+            bm?.let { b ->
+                builder.setLargeIcon(b)
             }
         }
         injectAppIntent(builder)

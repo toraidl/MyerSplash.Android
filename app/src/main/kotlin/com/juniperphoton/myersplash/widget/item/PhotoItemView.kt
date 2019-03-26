@@ -16,15 +16,19 @@ import com.facebook.drawee.view.SimpleDraweeView
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getDarker
 import com.juniperphoton.myersplash.extension.toHexString
+import com.juniperphoton.myersplash.extension.updateVisibility
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
-import com.juniperphoton.myersplash.utils.PaletteUtil
-import io.reactivex.MaybeObserver
+import com.juniperphoton.myersplash.utils.extractThemeColor
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 
-class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
+typealias OnClickPhotoListener = ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)
+typealias OnClickQuickDownloadListener = ((image: UnsplashImage) -> Unit)
+typealias OnBindListener = ((View, Int) -> Unit)
+
+class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs), View.OnClickListener {
     @BindView(R.id.row_photo_iv)
     lateinit var simpleDraweeView: SimpleDraweeView
 
@@ -40,15 +44,17 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
     @BindView(R.id.row_photo_today_tag)
     lateinit var todayTag: View
 
-    var onClickPhoto: ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)? = null
-    var onClickQuickDownload: ((image: UnsplashImage) -> Unit)? = null
-    var onBind: ((View, Int) -> Unit)? = null
+    var onClickPhoto: OnClickPhotoListener? = null
+    var onClickQuickDownload: OnClickQuickDownloadListener? = null
+    var onBind: OnBindListener? = null
 
     private var unsplashImage: UnsplashImage? = null
+    private var job: Job? = null
 
     override fun onFinishInflate() {
         super.onFinishInflate()
         ButterKnife.bind(this, this)
+        rippleMaskRL.setOnClickListener(this)
     }
 
     @OnClick(R.id.row_photo_download_rl)
@@ -64,28 +70,20 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { downloaded ->
-                    if (downloaded) {
-                        downloadRL.visibility = View.GONE
-                    } else {
-                        downloadRL.visibility = View.VISIBLE
-                    }
+                    downloadRL.updateVisibility(!downloaded)
                 }
     }
 
     fun bind(image: UnsplashImage?, pos: Int) {
         if (image == null) return
 
-        disposable?.dispose()
+        job?.cancel()
 
         unsplashImage = image
 
         if (!image.isUnsplash) {
             tryUpdateThemeColor()
         }
-
-        val regularUrl = image.listUrl
-
-        val backColor = image.themeColor.getDarker(0.7f)
 
         if (LocalSettingHelper.getBoolean(context,
                         context.getString(R.string.preference_key_quick_download), true)) {
@@ -94,53 +92,42 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
             downloadRL.visibility = View.GONE
         }
 
-        if (image.showTodayTag) {
-            todayTag.visibility = View.VISIBLE
-        } else {
-            todayTag.visibility = View.GONE
-        }
-
-        rootView.background = ColorDrawable(backColor)
-        simpleDraweeView.setImageURI(regularUrl)
-        rippleMaskRL.setOnClickListener(View.OnClickListener {
-            if (regularUrl == null) {
-                return@OnClickListener
-            }
-            if (!Fresco.getImagePipeline().isInBitmapMemoryCache(Uri.parse(image.listUrl))) {
-                return@OnClickListener
-            }
-            val location = IntArray(2)
-            simpleDraweeView.getLocationOnScreen(location)
-            onClickPhoto?.invoke(RectF(
-                    location[0].toFloat(),
-                    location[1].toFloat(),
-                    simpleDraweeView.width.toFloat(),
-                    simpleDraweeView.height.toFloat()), image, rootView)
-        })
+        todayTag.updateVisibility(image.showTodayTag)
+        rootView.background = ColorDrawable(image.themeColor.getDarker(0.7f))
+        simpleDraweeView.setImageURI(image.listUrl)
 
         onBind?.invoke(rootView, pos)
     }
 
-    private var disposable: Disposable? = null
+    override fun onClick(v: View?) {
+        val url = unsplashImage?.listUrl ?: return
+
+        if (!Fresco.getImagePipeline().isInBitmapMemoryCache(Uri.parse(url))) {
+            return
+        }
+
+        val location = IntArray(2)
+        simpleDraweeView.getLocationOnScreen(location)
+        onClickPhoto?.invoke(RectF(
+                location[0].toFloat(),
+                location[1].toFloat(),
+                simpleDraweeView.width.toFloat(),
+                simpleDraweeView.height.toFloat()), unsplashImage!!, rootView)
+    }
 
     private fun tryUpdateThemeColor() {
-        PaletteUtil.extractThemeColorFromUnsplashImage(unsplashImage)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : MaybeObserver<Int> {
-                    override fun onSuccess(color: Int) {
-                        unsplashImage?.color = color.toHexString()
-                    }
-
-                    override fun onComplete() = Unit
-
-                    override fun onSubscribe(d: Disposable) {
-                        disposable = d
-                    }
-
-                    override fun onError(e: Throwable) {
-                        e.printStackTrace()
-                    }
-                })
+        job = GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val colorJob = async {
+                    unsplashImage?.extractThemeColor()
+                }
+                val color = colorJob.await() ?: return@launch
+                if (color != Int.MIN_VALUE) {
+                    unsplashImage?.color = color.toHexString()
+                }
+            } catch (e: CancellationException) {
+                // ignore cancellation
+            }
+        }
     }
 }

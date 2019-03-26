@@ -2,11 +2,11 @@ package com.juniperphoton.myersplash.widget
 
 import android.content.Context
 import android.content.Intent
-import android.support.v7.widget.PopupMenu
 import android.util.AttributeSet
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -15,6 +15,8 @@ import com.juniperphoton.myersplash.activity.AboutActivity
 import com.juniperphoton.myersplash.activity.ManageDownloadActivity
 import com.juniperphoton.myersplash.activity.SettingsActivity
 import com.juniperphoton.myersplash.model.UnsplashCategory
+
+typealias OnItemSelectedListener = ((Int) -> Unit)
 
 @Suppress("UNUSED")
 class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
@@ -38,12 +40,12 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
     /**
      * Invoked when a single tap is performed on an item.
      */
-    var onSingleTap: ((Int) -> Unit)? = null
+    var onSingleTap: OnItemSelectedListener? = null
 
     /**
      * Invoked when a double tap is performed on an item.
      */
-    var onDoubleTap: ((Int) -> Unit)? = null
+    var onDoubleTap: OnItemSelectedListener? = null
 
     /**
      * Which item is current selected.

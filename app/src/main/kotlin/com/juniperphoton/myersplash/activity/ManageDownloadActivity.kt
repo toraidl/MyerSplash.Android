@@ -2,21 +2,21 @@ package com.juniperphoton.myersplash.activity
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SimpleItemAnimator
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
 import com.juniperphoton.myersplash.model.DownloadItem
+import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.Pasteur
 import io.realm.RealmChangeListener
 import io.realm.Sort
@@ -53,6 +53,8 @@ class ManageDownloadActivity : BaseActivity() {
         ButterKnife.bind(this)
 
         initViews()
+
+        AnalysisHelper.logEnterDownloads()
     }
 
     override fun onDestroy() {
@@ -83,9 +85,9 @@ class ManageDownloadActivity : BaseActivity() {
             it.where(DownloadItem::class.java)
                     .equalTo(DownloadItem.STATUS_KEY, status)
                     .findAll()
-                    .forEach {
-                        it.removeAllChangeListeners()
-                        it.deleteFromRealm()
+                    .forEach { item ->
+                        item.removeAllChangeListeners()
+                        item.deleteFromRealm()
                     }
             initViews()
         }

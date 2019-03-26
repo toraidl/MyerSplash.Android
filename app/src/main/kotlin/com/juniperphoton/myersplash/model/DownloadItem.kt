@@ -1,6 +1,6 @@
 package com.juniperphoton.myersplash.model
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 import io.realm.RealmObject
 import io.realm.annotations.Ignore
 import io.realm.annotations.PrimaryKey

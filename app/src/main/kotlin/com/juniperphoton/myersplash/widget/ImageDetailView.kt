@@ -1,6 +1,7 @@
 package com.juniperphoton.myersplash.widget
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.ClipData
@@ -11,11 +12,6 @@ import android.graphics.Color
 import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.support.customtabs.CustomTabsIntent
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.FileProvider
-import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -25,18 +21,23 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.facebook.drawee.view.SimpleDraweeView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
-import com.juniperphoton.myersplash.extension.copyFile
 import com.juniperphoton.myersplash.extension.isLightColor
 import com.juniperphoton.myersplash.extension.toHexString
+import com.juniperphoton.myersplash.fragment.Action
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
@@ -77,22 +78,22 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     /**
      * Invoked when the display animation is started.
      */
-    var onShowing: (() -> Unit)? = null
+    var onShowing: Action? = null
 
     /**
      * Invoke when the view is fully displayed.
      */
-    var onShown: (() -> Unit)? = null
+    var onShown: Action? = null
 
     /**
      * Invoked when the view is about to hide.
      */
-    var onHiding: (() -> Unit)? = null
+    var onHiding: Action? = null
 
     /**
      * Invoked when the view is invisible to user.
      */
-    var onHidden: (() -> Unit)? = null
+    var onHidden: Action? = null
 
     @BindView(R.id.detail_root_sv)
     lateinit var detailRootScrollView: ViewGroup
@@ -315,7 +316,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
                 detailImgRL.translationX = startX * (1 - it.animatedFraction)
                 detailImgRL.translationY = it.animatedValue as Float
             }
-            addListener(object : AnimatorListeners.End() {
+            addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(a: Animator) {
                     if (!show && clickedView != null) {
                         clickedView!!.visibility = View.VISIBLE
@@ -362,7 +363,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
             addUpdateListener { animation ->
                 detailInfoRootLayout.translationY = animation.animatedValue as Float
             }
-            addListener(object : AnimatorListeners.End() {
+            addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(a: Animator) {
                     animating = true
                 }
@@ -414,7 +415,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
                 if (show) ContextCompat.getColor(context, R.color.MaskColor) else Color.TRANSPARENT)
         animator.duration = ANIMATION_DURATION_FAST_MILLIS
         animator.addUpdateListener { animation -> detailRootScrollView.background = ColorDrawable(animation.animatedValue as Int) }
-        animator.addListener(object : AnimatorListeners.End() {
+        animator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationStart(a: Animator) {
                 if (show) {
                     onShowing?.invoke()
@@ -547,25 +548,17 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     @OnClick(R.id.detail_share_fab)
     fun onClickShare() {
         val file = FileUtil.getCachedFile(clickedImage!!.listUrl!!)
-        var copiedFile: File? = null
 
-        if (file != null && file.exists()) {
-            copiedFile = File(FileUtil.sharePath, "share_${clickedImage!!.listUrl!!.hashCode()}.jpg")
-            file.copyFile(copiedFile)
-        }
-
-        if (copiedFile == null || !copiedFile.exists()) {
+        if (file == null || !file.exists()) {
             ToastService.sendShortToast(context.getString(R.string.something_wrong))
             return
         }
-
-        Pasteur.d(TAG, "copied file:$copiedFile")
 
         val shareText = String.format(SHARE_TEXT, clickedImage!!.userName, clickedImage!!.downloadUrl)
 
         val intent = Intent(Intent.ACTION_SEND)
         val contentUri = FileProvider.getUriForFile(context,
-                context.getString(R.string.authorities), copiedFile)
+                context.getString(R.string.authorities), file)
         intent.apply {
             action = Intent.ACTION_SEND
             type = "image/*"
@@ -580,6 +573,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     @OnClick(R.id.detail_download_fab)
     fun onClickDownload() {
+        AnalysisHelper.logClickDownloadInDetails()
         if (clickedImage == null) {
             return
         }
@@ -588,6 +582,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     @OnClick(R.id.detail_cancel_download_fab)
     fun onClickCancelDownload() {
+        AnalysisHelper.logClickCancelDownloadInDetails()
         if (clickedImage == null) {
             return
         }
@@ -599,6 +594,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     @OnClick(R.id.detail_set_as_fab)
     fun onClickSetAsFAB() {
+        AnalysisHelper.logClickSetAsInDetails()
         if (clickedImage == null) {
             return
         }
@@ -623,6 +619,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
      * @param itemView      clicked view
      */
     fun show(rectF: RectF, unsplashImage: UnsplashImage, itemView: View) {
+        AnalysisHelper.logToggleImageDetails()
+
         if (clickedView != null) {
             return
         }

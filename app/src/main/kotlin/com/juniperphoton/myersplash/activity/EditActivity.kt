@@ -7,12 +7,12 @@ import android.graphics.*
 import android.graphics.drawable.Animatable
 import android.net.Uri
 import android.os.Bundle
-import android.support.annotation.WorkerThread
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.annotation.WorkerThread
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -67,10 +67,10 @@ class EditActivity : BaseActivity() {
     @BindView(R.id.edit_bottom_bar)
     lateinit var bottomBar: ViewGroup
 
-    @BindView(R.id.edit_fabs_root)
-    lateinit var fabsRoot: ViewGroup
-
-    private var fileUri: Uri? = null
+    private val fileUri: Uri by lazy {
+        return@lazy intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri
+                ?: throw IllegalArgumentException("image url should not be null")
+    }
 
     private var showingPreview: Boolean = false
         set(value) {
@@ -95,29 +95,25 @@ class EditActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-
         // Reset to the initial state anyway
         flipperLayout.next(0)
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     @OnClick(R.id.edit_confirm_fab)
     fun onClickConfirm() {
+        AnalysisHelper.logApplyEdit(brightnessSeekBar.progress > 0)
         composeMask()
     }
 
     @OnClick(R.id.edit_preview_fab)
     fun onClickPreview() {
+        if (!showingPreview) {
+            AnalysisHelper.logEditShowPreview()
+        }
         showingPreview = !showingPreview
     }
 
     private fun loadImage() {
-        fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM)
-                ?: throw IllegalArgumentException("image url should not be null")
-
         previewImageView.post {
             updatePreviewImage()
         }
@@ -132,7 +128,9 @@ class EditActivity : BaseActivity() {
         })
 
         val valueAnimator = ValueAnimator.ofFloat(0f, 360f)
-        valueAnimator.addUpdateListener { animation -> progressView.rotation = animation.animatedValue as Float }
+        valueAnimator.addUpdateListener { animation ->
+            progressView.rotation = animation.animatedValue as Float
+        }
         valueAnimator.interpolator = LinearInterpolator()
         valueAnimator.duration = 1200
         valueAnimator.repeatMode = ValueAnimator.RESTART
@@ -141,18 +139,19 @@ class EditActivity : BaseActivity() {
     }
 
     private fun updatePreviewImage() {
-        val screenHeight = previewImageView.height
-
-        Pasteur.d(TAG, "pre scale: screen height:$screenHeight")
+        val resize = Math.max(previewImageView.height,
+                previewImageView.width)
 
         val request = ImageRequestBuilder.newBuilderWithSource(fileUri)
-                .setResizeOptions(ResizeOptions(screenHeight, screenHeight))
+                .setResizeOptions(ResizeOptions(resize, resize))
                 .build()
         val controller = Fresco.newDraweeControllerBuilder()
                 .setOldController(previewImageView.controller)
                 .setImageRequest(request)
                 .setControllerListener(object : SimpleControllerListener() {
-                    override fun onFinalImageSet(id: String?, imageInfo: ImageInfo?, animatable: Animatable?) {
+                    override fun onFinalImageSet(id: String?,
+                                                 imageInfo: ImageInfo?,
+                                                 animatable: Animatable?) {
                         val rect = RectF()
                         previewImageView.hierarchy.getActualImageBounds(rect)
                         previewDraweeLayout.updateContentScale(rect)
@@ -174,7 +173,7 @@ class EditActivity : BaseActivity() {
         Observable.just(fileUri)
                 .subscribeOn(Schedulers.io())
                 .map {
-                    composeMaskInternal()
+                    composeMaskInternal() ?: throw RuntimeException("Error")
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SimpleObserver<File>() {
@@ -198,7 +197,7 @@ class EditActivity : BaseActivity() {
 
     @SuppressLint("WrongThread")
     @WorkerThread
-    private fun composeMaskInternal(): File {
+    private fun composeMaskInternal(): File? {
         val opt = BitmapFactory.Options()
         opt.inJustDecodeBounds = true
 
@@ -219,7 +218,8 @@ class EditActivity : BaseActivity() {
         val bm = decodeBitmapFromFile(fileUri, opt)
                 ?: throw IllegalStateException("Can't decode file")
 
-        Pasteur.d(TAG, "file decoded, sample size:${opt.inSampleSize}, originalHeight=$originalHeight, screenH=$screenHeight")
+        Pasteur.d(TAG, "file decoded, sample size:${opt.inSampleSize}, " +
+                "originalHeight=$originalHeight, screenH=$screenHeight")
 
         Pasteur.d(TAG, "decoded size: ${bm.width} x ${bm.height}")
 
@@ -249,8 +249,10 @@ class EditActivity : BaseActivity() {
         return finalFile
     }
 
-    private fun decodeBitmapFromFile(filePath: Uri?, opt: BitmapFactory.Options?): Bitmap? {
-        val inputStream = contentResolver.openInputStream(filePath)
+    private fun decodeBitmapFromFile(fileUri: Uri?, opt: BitmapFactory.Options?): Bitmap? {
+        fileUri ?: return null
+
+        val inputStream = contentResolver.openInputStream(fileUri)
         var bm: Bitmap? = null
         inputStream.use {
             bm = BitmapFactory.decodeStream(inputStream, null, opt)

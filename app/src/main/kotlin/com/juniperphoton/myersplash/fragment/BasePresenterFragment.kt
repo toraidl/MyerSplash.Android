@@ -1,9 +1,9 @@
 package com.juniperphoton.myersplash.fragment
 
 import android.os.Bundle
-import android.support.annotation.CallSuper
-import android.support.v4.app.Fragment
 import android.view.View
+import androidx.annotation.CallSuper
+import androidx.fragment.app.Fragment
 import com.juniperphoton.myersplash.data.Contract
 import com.juniperphoton.myersplash.utils.Pasteur
 

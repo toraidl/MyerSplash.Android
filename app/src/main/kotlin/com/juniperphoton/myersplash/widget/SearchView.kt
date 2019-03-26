@@ -1,10 +1,8 @@
 package com.juniperphoton.myersplash.widget
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
-import android.support.design.widget.AppBarLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
@@ -17,17 +15,19 @@ import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.material.appbar.AppBarLayout
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.CategoryAdapter
 import com.juniperphoton.myersplash.data.DaggerRepoComponent
 import com.juniperphoton.myersplash.data.MainListPresenter
 import com.juniperphoton.myersplash.data.RepoModule
 import com.juniperphoton.myersplash.fragment.MainListFragment
-import com.juniperphoton.myersplash.utils.AnimatorListeners
 import com.juniperphoton.myersplash.utils.ToastService
 
 @Suppress("unused")
@@ -119,13 +119,13 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         val component = DaggerRepoComponent.builder().repoModule(RepoModule(context, -1, mainListFragment!!)).build()
         component.inject(presenter)
 
-        activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment)
+        activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment!!)
                 .commit()
 
-        appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+        appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val fraction = Math.abs(verticalOffset) * 1.0f / appBarLayout.height
             tagView.alpha = fraction
-        }
+        })
 
         initCategoryList()
     }
@@ -152,7 +152,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
             animating = true
             searchBtn.animate().scaleX(if (show) 1f else 0f).scaleY(if (show) 1f else 0f).setDuration(200)
                     .setStartDelay(100)
-                    .setListener(object : AnimatorListeners.End() {
+                    .setListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(a: Animator) {
                             animating = false
                         }
@@ -196,7 +196,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         mainListFragment?.scrollToTop()
         mainListFragment?.clearData()
         editText.setText("")
-        categoryList.animate()?.alpha(1f)?.setListener(object : AnimatorListeners.End() {
+        categoryList.animate()?.alpha(1f)?.setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(a: Animator?) {
                 categoryList.visibility = View.VISIBLE
             }
@@ -224,7 +224,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
         mainListFragment?.search(editText.text.toString().toLowerCase())
 
-        categoryList.animate().alpha(0f).setListener(object : AnimatorListeners.End() {
+        categoryList.animate().alpha(0f).setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(a: Animator?) {
                 categoryList.visibility = View.GONE
             }

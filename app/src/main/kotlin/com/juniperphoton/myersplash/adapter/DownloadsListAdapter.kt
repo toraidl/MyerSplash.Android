@@ -3,10 +3,10 @@ package com.juniperphoton.myersplash.adapter
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -159,10 +159,10 @@ class DownloadsListAdapter(private val context: Context) :
             this.downloadItem = item
 
             draweeView?.let {
-                var request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(item.thumbUrl))
+                val request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(item.thumbUrl))
                         .setResizeOptions(ResizeOptions(MAX_DIMENSION_PREVIEW_PX,
                                 MAX_DIMENSION_PREVIEW_PX)).build()
-                var controller = Fresco.newDraweeControllerBuilder().setImageRequest(request)
+                val controller = Fresco.newDraweeControllerBuilder().setImageRequest(request)
                         .setOldController(it.controller).build()
                 it.controller = controller
             }

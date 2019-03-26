@@ -1,9 +1,8 @@
 package com.juniperphoton.myersplash.activity
 
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.view.View
-import android.view.WindowInsets
+import androidx.appcompat.app.AlertDialog
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -40,12 +39,6 @@ class SettingsActivity : BaseActivity() {
     @BindView(R.id.clear_cache_settings)
     lateinit var clearCacheSettings: SettingsItemLayout
 
-    @BindView(R.id.recommendation_settings)
-    lateinit var recommendationSettings: SettingsItemLayout
-
-    @BindView(R.id.recommendation_preview)
-    lateinit var recommendationPreview: View
-
     private lateinit var savingStrings: Array<String>
     private lateinit var loadingStrings: Array<String>
 
@@ -58,18 +51,14 @@ class SettingsActivity : BaseActivity() {
             EventBus.getDefault().post(RefreshUIEvent())
         }
 
-        recommendationSettings.onCheckedChanged = {
-            recommendationPreview.visibility = if (it) View.VISIBLE else View.GONE
-        }
-
-        if (!recommendationSettings.checked) {
-            recommendationPreview.visibility = View.GONE
-        }
-
-        savingStrings = arrayOf(getString(R.string.settings_saving_highest), getString(R.string.settings_saving_high),
+        savingStrings = arrayOf(
+                getString(R.string.settings_saving_highest),
+                getString(R.string.settings_saving_high),
                 getString(R.string.settings_saving_medium))
 
-        loadingStrings = arrayOf(getString(R.string.settings_loading_large), getString(R.string.settings_loading_small),
+        loadingStrings = arrayOf(
+                getString(R.string.settings_loading_large),
+                getString(R.string.settings_loading_small),
                 getString(R.string.settings_loading_thumb))
 
         val savingChoice = LocalSettingHelper.getInt(this, KEY_SAVING_QUALITY, 1)

@@ -1,10 +1,13 @@
 package com.juniperphoton.myersplash.extension
 
+import android.annotation.TargetApi
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Point
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import com.juniperphoton.myersplash.R
 
 fun Context.getDpi(): Float = resources.displayMetrics.density
@@ -37,16 +40,32 @@ fun Context.getNavigationBarSize(): Point {
 
 fun Context.usingWifi(): Boolean {
     val manager = getSystemService(android.content.Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        checkWifiAPI28(manager)
+    } else {
+        checkWifiAPIPre28(manager)
+    }
+}
+
+@TargetApi(Build.VERSION_CODES.P)
+private fun checkWifiAPI28(manager: ConnectivityManager): Boolean {
+    val network = manager.activeNetwork
+    val cap = manager.getNetworkCapabilities(network)
+    return cap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+}
+
+@Suppress("DEPRECATION")
+private fun checkWifiAPIPre28(manager: ConnectivityManager): Boolean {
     val info = manager.activeNetworkInfo
     return info?.type == ConnectivityManager.TYPE_WIFI
 }
 
 @Suppress("unused")
-fun Context.getVersionCode(): Int {
+fun Context.getVersionCode(): Long {
     return try {
         val manager = packageManager
         val info = manager.getPackageInfo(packageName, 0)
-        info.versionCode
+        info.longVersionCode
     } catch (e: Exception) {
         e.printStackTrace()
         -1
@@ -58,7 +77,7 @@ fun Context.getVersionName(): String? {
     return try {
         val manager = packageManager
         val info = manager.getPackageInfo(packageName, 0)
-        "${info.versionName} Build ${info.versionCode}"
+        "${info.versionName} Build ${info.longVersionCode}"
     } catch (e: Exception) {
         null
     }

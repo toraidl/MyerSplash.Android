@@ -1,21 +1,18 @@
 package com.juniperphoton.myersplash.adapter
 
-import android.graphics.RectF
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.data.DaggerRepoComponent
 import com.juniperphoton.myersplash.data.MainListPresenter
 import com.juniperphoton.myersplash.data.RepoModule
 import com.juniperphoton.myersplash.fragment.MainListFragment
+import com.juniperphoton.myersplash.fragment.OnClickPhotoItemListener
 import com.juniperphoton.myersplash.model.UnsplashCategory
-import com.juniperphoton.myersplash.model.UnsplashImage
 
-class MainListFragmentAdapter(private var callback: ((RectF, UnsplashImage, View) -> Unit)?,
-                              fm: FragmentManager
+class MainListFragmentAdapter(private var callback: OnClickPhotoItemListener?,
+                              fm: androidx.fragment.app.FragmentManager
 ) : FragmentStatePagerAdapter(fm) {
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val o = super.instantiateItem(container, position)

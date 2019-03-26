@@ -2,13 +2,13 @@ package com.juniperphoton.myersplash.fragment
 
 import android.graphics.RectF
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
@@ -17,13 +17,13 @@ import com.juniperphoton.myersplash.data.MainContract
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashImage
-import com.juniperphoton.myersplash.utils.DownloadUtil
-import com.juniperphoton.myersplash.utils.LoadMoreListener
-import com.juniperphoton.myersplash.utils.Pasteur
-import com.juniperphoton.myersplash.utils.ToastService
+import com.juniperphoton.myersplash.utils.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+
+typealias Action = (() -> Unit)
+typealias OnClickPhotoItemListener = ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)
 
 @Suppress("unused", "unused_parameter")
 class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), MainContract.MainView {
@@ -51,9 +51,9 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     override val isBusyRefreshing: Boolean
         get() = refreshLayout.isRefreshing
 
-    var onScrollHide: (() -> Unit)? = null
-    var onScrollShow: (() -> Unit)? = null
-    var onClickPhotoItem: ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)? = null
+    var onScrollHide: Action? = null
+    var onScrollShow: Action? = null
+    var onClickPhotoItem: OnClickPhotoItemListener? = null
 
     private var loadedData: Boolean = false
     private var visible: Boolean = false
@@ -101,6 +101,8 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     }
 
     override fun refreshList(images: MutableList<UnsplashImage>, next: Int) {
+        AnalysisHelper.logRefreshList()
+
         if (next == 1 || adapter == null) {
             displayListDataInternal(images)
         } else {
@@ -189,10 +191,9 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
         refreshLayout.setOnRefreshListener {
             presenter?.refresh()
         }
-        contentRecyclerView.layoutManager = LinearLayoutManager(activity,
-                LinearLayoutManager.VERTICAL, false)
+        contentRecyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
         contentRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(list: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(list: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(list, dx, dy)
                 if (dy > SCROLL_DETECTION_FACTOR_PX) {
                     onScrollHide?.invoke()
@@ -218,6 +219,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
 
         adapter = PhotoAdapter(unsplashImages, context)
         adapter?.onClickQuickDownload = { image ->
+            AnalysisHelper.logClickDownloadInList()
             DownloadUtil.download(context, image)
         }
         adapter?.onClickPhoto = onClickPhotoItem

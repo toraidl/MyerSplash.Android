@@ -10,7 +10,7 @@ import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.cloudservice.CloudService
-import com.juniperphoton.myersplash.extension.sendScanBroadcast
+import com.juniperphoton.myersplash.extension.notifyFileUpdated
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.utils.*
 import io.reactivex.Observable
@@ -58,7 +58,7 @@ class DownloadService : Service() {
             ToastService.sendShortToast("Downloading...")
         }
 
-        var previewUri: Uri? = if (previewUrl.isNullOrEmpty()) null else {
+        val previewUri: Uri? = if (previewUrl.isNullOrEmpty()) null else {
             Uri.parse(previewUrl)
         }
 
@@ -72,8 +72,6 @@ class DownloadService : Service() {
             }
         } else {
             Log.d(TAG, "on handle intent progress")
-            NotificationUtil.showProgressNotification(getString(R.string.app_name),
-                    getString(R.string.downloading), 0, Uri.parse(downloadUrl), previewUri)
             downloadImage(downloadUrl, fileName, previewUri, isUnsplash)
         }
     }
@@ -82,7 +80,7 @@ class DownloadService : Service() {
                               previewUri: Uri?, isUnsplash: Boolean): String {
         val file = DownloadUtil.getFileToSave(fileName)
         val observer = object : DisposableObserver<ResponseBody>() {
-            internal var outputFile: File? = null
+            var outputFile: File? = null
 
             override fun onComplete() {
                 if (outputFile == null) {
@@ -102,7 +100,7 @@ class DownloadService : Service() {
                     outputFile!!.renameTo(newFile)
 
                     Log.d(TAG, "renamed file:" + newFile.absolutePath)
-                    newFile.sendScanBroadcast(App.instance)
+                    newFile.notifyFileUpdated(App.instance)
 
                     val realm = RealmCache.getInstance()
 
@@ -113,7 +111,6 @@ class DownloadService : Service() {
                         downloadItem.status = DownloadItem.DOWNLOAD_STATUS_OK
                         downloadItem.filePath = newFile.path
                         realm.commitTransaction()
-
                     }
                     scheduleToReportFinished(url, previewUri, isUnsplash, newFile)
                 }
@@ -140,10 +137,6 @@ class DownloadService : Service() {
             override fun onNext(responseBody: ResponseBody) {
                 Log.d(TAG, "outputFile download onNext,size" + responseBody.contentLength())
                 this.outputFile = DownloadUtil.writeToFile(responseBody, file!!.path) {
-                    NotificationUtil.showProgressNotification(
-                            getString(R.string.app_name),
-                            getString(R.string.downloading),
-                            it, Uri.parse(url), previewUri)
                     RealmCache.getInstance().executeTransaction { realm ->
                         val downloadItem = realm.where(DownloadItem::class.java)
                                 .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst()
@@ -156,7 +149,7 @@ class DownloadService : Service() {
         }
 
         val disposable = CloudService.downloadPhoto(url).subscribeWith(observer)
-        downloadUrlToDisposableMap.put(url, disposable)
+        downloadUrlToDisposableMap[url] = disposable
 
         return file!!.path
     }

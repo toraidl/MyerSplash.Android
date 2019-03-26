@@ -15,6 +15,7 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.isLightColor
+import com.juniperphoton.myersplash.fragment.Action
 
 @Suppress("unused")
 class DownloadRetryView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
@@ -33,8 +34,8 @@ class DownloadRetryView(context: Context, attrs: AttributeSet) : FrameLayout(con
     @BindView(R.id.delete_btn_root)
     lateinit var deleteRoot: View
 
-    var onClickDelete: (() -> Unit)? = null
-    var onClickRetry: (() -> Unit)? = null
+    var onClickDelete: Action? = null
+    var onClickRetry: Action? = null
 
     var themeColor: Int = Color.TRANSPARENT
         set(color) {
