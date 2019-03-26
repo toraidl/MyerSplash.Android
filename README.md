@@ -11,7 +11,7 @@ The project is released under MIT License.
 
 MIT License
 
-Copyright (c) 2017 JuniperPhoton
+Copyright 2019 JuniperPhoton
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
