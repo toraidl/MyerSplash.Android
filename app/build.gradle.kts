@@ -1,9 +1,5 @@
 @file:Suppress("ObjectLiteralToLambda")
 
-import com.android.build.gradle.api.ApplicationVariant
-import com.android.build.gradle.api.BaseVariantOutput
-import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -27,6 +23,7 @@ val butterKnifeVersion: String by extra
 val retrofitVersion: String by extra
 val frescoVersion: String by extra
 val constraintLayoutVersion: String by extra
+val appCenterSdkVersion: String by extra
 
 android {
     signingConfigs {
@@ -52,7 +49,9 @@ android {
         versionName = "3.0.5"
 
         val unsplashKey: String by project
+        val appcenterKey: String? by project
         buildConfigField("String", "UNSPLASH_APP_KEY", "\"$unsplashKey\"")
+        buildConfigField("String", "APP_CENTER_KEY", "\"$appcenterKey\"")
     }
 
     buildTypes {
@@ -138,4 +137,7 @@ dependencies {
 
     implementation("com.google.dagger:dagger:2.11")
     kapt("com.google.dagger:dagger-compiler:2.11")
+
+    implementation("com.microsoft.appcenter:appcenter-analytics:$appCenterSdkVersion")
+    implementation("com.microsoft.appcenter:appcenter-crashes:$appCenterSdkVersion")
 }

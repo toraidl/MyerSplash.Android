@@ -573,6 +573,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     @OnClick(R.id.detail_download_fab)
     fun onClickDownload() {
+        AnalysisHelper.logClickDownloadInDetails()
         if (clickedImage == null) {
             return
         }
@@ -581,6 +582,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     @OnClick(R.id.detail_cancel_download_fab)
     fun onClickCancelDownload() {
+        AnalysisHelper.logClickCancelDownloadInDetails()
         if (clickedImage == null) {
             return
         }
@@ -592,6 +594,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     @OnClick(R.id.detail_set_as_fab)
     fun onClickSetAsFAB() {
+        AnalysisHelper.logClickSetAsInDetails()
         if (clickedImage == null) {
             return
         }
@@ -616,6 +619,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
      * @param itemView      clicked view
      */
     fun show(rectF: RectF, unsplashImage: UnsplashImage, itemView: View) {
+        AnalysisHelper.logToggleImageDetails()
+
         if (clickedView != null) {
             return
         }
