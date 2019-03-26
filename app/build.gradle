@@ -24,14 +24,16 @@ android {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 306
-        versionName "3.0.4"
+        versionCode 350
+        versionName "3.0.5"
 
         def properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
         def unsplashKey = properties.getProperty('unsplashKey')
+        def appCenterKey = properties.getProperty('appcenterKey')
 
         buildConfigField 'String', "UNSPLASH_APP_KEY", "\"" + unsplashKey + "\""
+        buildConfigField 'String', "APP_CENTER_KEY", "\"" + appCenterKey + "\""
     }
 
     buildTypes {
@@ -82,24 +84,28 @@ dependencies {
     implementation "androidx.cardview:cardview:$androidx_version"
     implementation "androidx.browser:browser:$androidx_version"
     implementation "androidx.palette:palette:$androidx_version"
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     implementation "com.jakewharton:butterknife:${butterknife_version}"
     kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
 
-    implementation 'com.facebook.fresco:fresco:1.5.0'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.facebook.fresco:fresco:1.11.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.7'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'com.google.android:flexbox:1.1.0'
-    implementation 'com.juniperphoton:flipperlayout:1.2.1'
+    implementation 'com.juniperphoton:flipperlayout:1.3.0'
     kapt 'io.realm:realm-annotations:3.0.0'
     kapt 'io.realm:realm-annotations-processor:3.0.0'
     //dagger
     implementation 'com.google.dagger:dagger:2.11'
     kapt 'com.google.dagger:dagger-compiler:2.11'
+
+    def appCenterSdkVersion = '1.11.4'
+    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
 }

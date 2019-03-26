@@ -17,9 +17,6 @@
     <string name="settings_download_metered">Always download via metered network</string>
     <string name="settings_download_metered_title">Metered network warning</string>
 
-    <string name="settings_recommendation_content">Update every day</string>
-    <string name="settings_recommendation_title">Today highlight</string>
-
     <string name="image_desc">Desc</string>
 
     <string name="settings_saving_highest">Raw</string>

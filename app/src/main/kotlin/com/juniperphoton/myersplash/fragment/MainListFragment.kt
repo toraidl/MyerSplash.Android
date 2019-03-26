@@ -17,10 +17,7 @@ import com.juniperphoton.myersplash.data.MainContract
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashImage
-import com.juniperphoton.myersplash.utils.DownloadUtil
-import com.juniperphoton.myersplash.utils.LoadMoreListener
-import com.juniperphoton.myersplash.utils.Pasteur
-import com.juniperphoton.myersplash.utils.ToastService
+import com.juniperphoton.myersplash.utils.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -104,6 +101,8 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     }
 
     override fun refreshList(images: MutableList<UnsplashImage>, next: Int) {
+        AnalysisHelper.logRefreshList()
+
         if (next == 1 || adapter == null) {
             displayListDataInternal(images)
         } else {
@@ -220,6 +219,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
 
         adapter = PhotoAdapter(unsplashImages, context)
         adapter?.onClickQuickDownload = { image ->
+            AnalysisHelper.logClickDownloadInList()
             DownloadUtil.download(context, image)
         }
         adapter?.onClickPhoto = onClickPhotoItem

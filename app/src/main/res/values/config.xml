@@ -2,7 +2,6 @@
 <resources>
     <string name="preference_key_quick_download">QUICK_DOWNLOAD_CONFIG_NAME</string>
     <string name="preference_key_download_via_metered_network">DOWNLOAD_METERED</string>
-    <string name="preference_key_recommendation">RECOMMENDATION</string>
     <string name="preference_key_saving_quality">SAVING_QUALITY_CONFIG</string>
     <string name="preference_key_list_quality">LOADING_QUALITY_CONFIG</string>
 </resources>

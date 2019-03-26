@@ -16,6 +16,7 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
 import com.juniperphoton.myersplash.model.DownloadItem
+import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.Pasteur
 import io.realm.RealmChangeListener
 import io.realm.Sort
@@ -52,6 +53,8 @@ class ManageDownloadActivity : BaseActivity() {
         ButterKnife.bind(this)
 
         initViews()
+
+        AnalysisHelper.logEnterDownloads()
     }
 
     override fun onDestroy() {

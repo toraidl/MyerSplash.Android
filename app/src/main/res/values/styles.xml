@@ -8,7 +8,7 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:colorEdgeEffect">@android:color/black</item>
-        <item name="android:windowAnimationStyle">@style/activityAnim</item>
+        <item name="android:windowAnimationStyle">@style/ActivityAnim</item>
         <item name="android:colorForeground">#a6a6a6</item>
     </style>
 
@@ -126,7 +126,7 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="activityAnim" parent="@android:style/Animation.Activity">
+    <style name="ActivityAnim" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/in_from_right</item>
         <item name="android:activityOpenExitAnimation">@anim/out_from_left</item>
         <item name="android:activityCloseEnterAnimation">@anim/in_from_left</item>

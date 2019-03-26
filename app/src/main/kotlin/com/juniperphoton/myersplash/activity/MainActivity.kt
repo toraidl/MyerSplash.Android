@@ -23,6 +23,7 @@ import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.model.UnsplashCategory
+import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.PermissionUtil
 import com.juniperphoton.myersplash.widget.ImageDetailView
 import com.juniperphoton.myersplash.widget.PivotTitleBar
@@ -132,6 +133,7 @@ class MainActivity : BaseActivity() {
         if (show) {
             searchFab.hide()
         } else {
+            AnalysisHelper.logEnterSearch()
             searchFab.show()
         }
 
@@ -223,7 +225,10 @@ class MainActivity : BaseActivity() {
 
                 override fun onPageSelected(position: Int) {
                     pivotTitleBar.selectedItem = position
-                    tagView.text = "# ${pivotTitleBar.selectedString}"
+
+                    val title = "# ${pivotTitleBar.selectedString}"
+                    tagView.text = title
+                    AnalysisHelper.logTabSelected(title)
                 }
 
                 override fun onPageScrollStateChanged(state: Int) = Unit
