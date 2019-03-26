@@ -72,8 +72,6 @@ class DownloadService : Service() {
             }
         } else {
             Log.d(TAG, "on handle intent progress")
-            NotificationUtil.showProgressNotification(getString(R.string.app_name),
-                    getString(R.string.downloading), 0, Uri.parse(downloadUrl), previewUri)
             downloadImage(downloadUrl, fileName, previewUri, isUnsplash)
         }
     }
@@ -113,7 +111,6 @@ class DownloadService : Service() {
                         downloadItem.status = DownloadItem.DOWNLOAD_STATUS_OK
                         downloadItem.filePath = newFile.path
                         realm.commitTransaction()
-
                     }
                     scheduleToReportFinished(url, previewUri, isUnsplash, newFile)
                 }
@@ -140,10 +137,6 @@ class DownloadService : Service() {
             override fun onNext(responseBody: ResponseBody) {
                 Log.d(TAG, "outputFile download onNext,size" + responseBody.contentLength())
                 this.outputFile = DownloadUtil.writeToFile(responseBody, file!!.path) {
-                    NotificationUtil.showProgressNotification(
-                            getString(R.string.app_name),
-                            getString(R.string.downloading),
-                            it, Uri.parse(url), previewUri)
                     RealmCache.getInstance().executeTransaction { realm ->
                         val downloadItem = realm.where(DownloadItem::class.java)
                                 .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst()
