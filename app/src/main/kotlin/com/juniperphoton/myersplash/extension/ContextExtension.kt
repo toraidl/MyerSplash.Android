@@ -61,23 +61,11 @@ private fun checkWifiAPIPre28(manager: ConnectivityManager): Boolean {
 }
 
 @Suppress("unused")
-fun Context.getVersionCode(): Long {
-    return try {
-        val manager = packageManager
-        val info = manager.getPackageInfo(packageName, 0)
-        info.longVersionCode
-    } catch (e: Exception) {
-        e.printStackTrace()
-        -1
-    }
-}
-
-@Suppress("unused")
 fun Context.getVersionName(): String? {
     return try {
         val manager = packageManager
         val info = manager.getPackageInfo(packageName, 0)
-        "${info.versionName} Build ${info.longVersionCode}"
+        info.versionName
     } catch (e: Exception) {
         null
     }
