@@ -36,7 +36,7 @@ object FileUtil {
         if (cacheKey != null) {
             if (ImagePipelineFactory.getInstance().mainFileCache.hasKey(cacheKey)) {
                 val resource = ImagePipelineFactory.getInstance().mainFileCache.getResource(cacheKey)
-                localFile = (resource as FileBinaryResource).file
+                localFile = (resource as? FileBinaryResource)?.file
             }
         }
 

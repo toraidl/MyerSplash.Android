@@ -64,16 +64,6 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
         }
     }
 
-    private fun checkDownloadStatus() {
-        val image = unsplashImage ?: return
-        image.checkDownloaded()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { downloaded ->
-                    downloadRL.updateVisibility(!downloaded)
-                }
-    }
-
     fun bind(image: UnsplashImage?, pos: Int) {
         if (image == null) return
 
@@ -85,12 +75,9 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
             tryUpdateThemeColor()
         }
 
-        if (LocalSettingHelper.getBoolean(context,
-                        context.getString(R.string.preference_key_quick_download), true)) {
-            checkDownloadStatus()
-        } else {
-            downloadRL.visibility = View.GONE
-        }
+        val showDownloadButton = LocalSettingHelper.getBoolean(context,
+                context.getString(R.string.preference_key_quick_download), true)
+        downloadRL.visibility = if (showDownloadButton) View.VISIBLE else View.GONE
 
         todayTag.updateVisibility(image.showTodayTag)
         rootView.background = ColorDrawable(image.themeColor.getDarker(0.7f))
