@@ -11,6 +11,10 @@ object AnalysisHelper {
         Analytics.trackEvent("Tab selected", mapOf("Name" to name))
     }
 
+    fun logClickCopyUrl() {
+        Analytics.trackEvent("URL copied")
+    }
+
     fun logEnterDownloads() {
         Analytics.trackEvent("Enter downloads")
     }

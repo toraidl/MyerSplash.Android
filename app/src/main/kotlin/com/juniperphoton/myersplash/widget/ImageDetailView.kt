@@ -69,6 +69,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         private const val ANIMATION_DURATION_FAST_MILLIS = 300L
         private const val ANIMATION_DURATION_SLOW_MILLIS = 400L
         private const val ANIMATION_DURATION_VERY_SLOW_MILLIS = 500L
+
+        private const val URL_COPIED_DELAY_MILLIS = 2000L
     }
 
     private var listPositionY = 0f
@@ -531,6 +533,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
         copyUrlFlipperLayout.next()
 
+        AnalysisHelper.logClickCopyUrl()
+
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText(context.getString(R.string.app_name), clickedImage?.downloadUrl)
         clipboard.primaryClip = clip
@@ -538,7 +542,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         postDelayed({
             copyUrlFlipperLayout.next()
             copied = false
-        }, 2000)
+        }, URL_COPIED_DELAY_MILLIS)
     }
 
     @OnClick(R.id.detail_share_fab)
