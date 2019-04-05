@@ -12,7 +12,7 @@
     <string name="settings_quick_download">Show download button in list</string>
     <string name="settings_quick_download_title">Download shortcut</string>
 
-    <string name="settings_download_metered">Always download via metered network</string>
+    <string name="settings_download_metered">Enable this will warn you before starting download</string>
     <string name="settings_download_metered_title">Metered network warning</string>
 
     <string name="image_desc">Desc</string>

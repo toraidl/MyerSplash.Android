@@ -8,7 +8,7 @@
     <string name="settings_clean_up_cache">清理缓存</string>
     <string name="settings_quick_download">列表里显示下载按钮</string>
     <string name="settings_quick_download_title">快速下载</string>
-    <string name="settings_download_metered">允许在流量下下载</string>
+    <string name="settings_download_metered">开启后会在下载前提醒你</string>
     <string name="settings_download_metered_title">在使用按流量计费的网络下提示</string>
     <string name="image_desc">图片</string>
     <string name="settings_saving_highest">原图</string>

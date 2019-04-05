@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="preference_key_quick_download">QUICK_DOWNLOAD_CONFIG_NAME</string>
-    <string name="preference_key_download_via_metered_network">DOWNLOAD_METERED</string>
-    <string name="preference_key_saving_quality">SAVING_QUALITY_CONFIG</string>
-    <string name="preference_key_list_quality">LOADING_QUALITY_CONFIG</string>
+    <string name="preference_key_quick_download" translatable="false">QUICK_DOWNLOAD_CONFIG_NAME</string>
+    <string name="preference_key_download_via_metered_network" translatable="false">DOWNLOAD_METERED</string>
+    <string name="preference_key_saving_quality" translatable="false">SAVING_QUALITY_CONFIG</string>
+    <string name="preference_key_list_quality" translatable="false">LOADING_QUALITY_CONFIG</string>
 </resources>
