@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.widget
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -12,6 +13,7 @@ import android.graphics.Color
 import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Environment
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -56,7 +58,6 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     companion object {
         private const val TAG = "ImageDetailView"
         private const val RESULT_CODE = 10000
-        private const val SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. Download this photo: %s"
 
         private const val DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD = 0
         private const val DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING = 1
@@ -68,6 +69,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         private const val ANIMATION_DURATION_FAST_MILLIS = 300L
         private const val ANIMATION_DURATION_SLOW_MILLIS = 400L
         private const val ANIMATION_DURATION_VERY_SLOW_MILLIS = 500L
+
+        private const val URL_COPIED_DELAY_MILLIS = 2000L
     }
 
     private var listPositionY = 0f
@@ -175,6 +178,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         initDetailViews()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initDetailViews() {
         detailRootScrollView.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
@@ -325,9 +329,9 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
                         clickedImage = null
                         animating = false
                     } else {
-                        toggleDetailRLAnimation(true, false)
-                        toggleDownloadFlipperLayoutAnimation(true, false)
-                        toggleShareBtnAnimation(true, false)
+                        toggleDetailRLAnimation(show = true, oneshot = false)
+                        toggleDownloadFlipperLayoutAnimation(show = true, oneshot = false)
+                        toggleShareBtnAnimation(show = true, oneshot = false)
                     }
                 }
             })
@@ -335,17 +339,11 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         }
     }
 
-    private fun checkDownloadStatus() {
-        val image = clickedImage ?: return
-        image.checkDownloaded()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .filter {
-                    it
-                }
-                .subscribe {
-                    downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
-                }
+    private fun checkDownloadStatus(item: DownloadItem) {
+        val file = File(item.filePath)
+        if (file.exists() && file.canRead()) {
+            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
+        }
     }
 
     private val targetY: Float
@@ -535,6 +533,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
         copyUrlFlipperLayout.next()
 
+        AnalysisHelper.logClickCopyUrl()
+
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText(context.getString(R.string.app_name), clickedImage?.downloadUrl)
         clipboard.primaryClip = clip
@@ -542,7 +542,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         postDelayed({
             copyUrlFlipperLayout.next()
             copied = false
-        }, 2000)
+        }, URL_COPIED_DELAY_MILLIS)
     }
 
     @OnClick(R.id.detail_share_fab)
@@ -554,7 +554,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
             return
         }
 
-        val shareText = String.format(SHARE_TEXT, clickedImage!!.userName, clickedImage!!.downloadUrl)
+        val shareText = context.getString(R.string.share_text, clickedImage!!.userName, clickedImage!!.downloadUrl)
 
         val intent = Intent(Intent.ACTION_SEND)
         val contentUri = FileProvider.getUriForFile(context,
@@ -595,10 +595,10 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     @OnClick(R.id.detail_set_as_fab)
     fun onClickSetAsFAB() {
         AnalysisHelper.logClickSetAsInDetails()
-        if (clickedImage == null) {
+        if (associatedDownloadItem == null) {
             return
         }
-        val url = "${clickedImage!!.pathForDownload}.jpg"
+        val url = "${associatedDownloadItem!!.filePath}"
         val intent = Intent(context, EditActivity::class.java)
         intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(url)))
         context.startActivity(intent)
@@ -663,13 +663,11 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
                 DownloadItem.DOWNLOAD_STATUS_FAILED -> {
                 }
                 DownloadItem.DOWNLOAD_STATUS_OK -> {
-                    checkDownloadStatus()
+                    checkDownloadStatus(associatedDownloadItem!!)
                 }
             }
             associateWithDownloadItem(associatedDownloadItem)
         }
-
-        checkDownloadStatus()
 
         toggleMaskAnimation(true)
         toggleHeroViewAnimation(listPositionY, targetY, true)

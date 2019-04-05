@@ -11,8 +11,20 @@ object AnalysisHelper {
         Analytics.trackEvent("Tab selected", mapOf("Name" to name))
     }
 
+    fun logClickCopyUrl() {
+        Analytics.trackEvent("URL copied")
+    }
+
     fun logEnterDownloads() {
         Analytics.trackEvent("Enter downloads")
+    }
+
+    fun logDownloadSuccess(durationMs: Long) {
+        Analytics.trackEvent("Download success", mapOf("Duration" to durationMs.toString()))
+    }
+
+    fun logDownloadFailed(e: Exception, durationMs: Long) {
+        Analytics.trackEvent("Download failed", mapOf("Duration" to durationMs.toString(), "Error" to e.toString()))
     }
 
     fun logEnterSearch() {

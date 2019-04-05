@@ -93,7 +93,7 @@ class MainActivity : BaseActivity() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
             val shortcutManager = getSystemService(ShortcutManager::class.java)
             if (shortcutManager.dynamicShortcuts.size > 0) {
-                return
+                shortcutManager.removeAllDynamicShortcuts()
             }
             val intent = Intent(this, ManageDownloadActivity::class.java)
             intent.action = ManageDownloadActivity.ACTION
@@ -234,6 +234,8 @@ class MainActivity : BaseActivity() {
                 override fun onPageScrollStateChanged(state: Int) = Unit
             })
         }
+
+        tagView.text = "# ${getString(R.string.pivot_new)}"
 
         toolbarLayout.addOnOffsetChangedListener(
                 AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->

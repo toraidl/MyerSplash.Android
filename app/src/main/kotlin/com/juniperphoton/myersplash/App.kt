@@ -2,6 +2,10 @@ package com.juniperphoton.myersplash
 
 import android.app.Application
 import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory
+import com.facebook.imagepipeline.core.ImagePipelineConfig
+import com.facebook.imagepipeline.listener.RequestListener
+import com.facebook.imagepipeline.request.ImageRequest
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
@@ -17,7 +21,10 @@ class App : Application() {
         super.onCreate()
         instance = this
         Pasteur.init(BuildConfig.DEBUG)
-        Fresco.initialize(this)
+
+        val config = OkHttpImagePipelineConfigFactory.newBuilder(this, OkHttpClientAPI.createClient()).build()
+        Fresco.initialize(this, config)
+
         RealmCache.init(this)
         AppCenter.start(this, BuildConfig.APP_CENTER_KEY, Analytics::class.java, Crashes::class.java)
     }
