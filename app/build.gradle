@@ -24,7 +24,7 @@ android {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 360
+        versionCode 361
         versionName "3.0.6"
 
         def properties = new Properties()
