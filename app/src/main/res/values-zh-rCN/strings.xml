@@ -81,4 +81,6 @@
     <string name="delete_downloaded">删除下载完成的内容</string>
     <string name="delete_failed">删除下载失败的内容</string>
     <string name="share_text">从 MyerSplash app 分享来自 %s\ 的好照片。下载此照片： %s</string>
+    <string name="share_title">分享到</string>
+    <string name="email_title">发送到</string>
 </resources>

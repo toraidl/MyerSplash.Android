@@ -42,7 +42,7 @@ class AboutActivity : BaseActivity() {
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerSplash for Android ${getVersionName()} feedback")
         emailIntent.putExtra(Intent.EXTRA_TEXT, "")
 
-        startActivitySafely(intent)
+        startActivitySafely(Intent.createChooser(emailIntent, getString(R.string.email_title)))
     }
 
     @OnClick(R.id.rate_item)

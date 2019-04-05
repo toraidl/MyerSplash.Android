@@ -13,7 +13,6 @@ import android.graphics.Color
 import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Environment
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -568,7 +567,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
             putExtra(Intent.EXTRA_SUBJECT, "Share")
             putExtra(Intent.EXTRA_TEXT, shareText)
         }
-        context.startActivity(Intent.createChooser(intent, "Share"))
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_title)))
     }
 
     @OnClick(R.id.detail_download_fab)

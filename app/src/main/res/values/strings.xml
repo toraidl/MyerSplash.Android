@@ -114,5 +114,8 @@
     <string name="delete_downloaded">Delete downloaded items</string>
     <string name="delete_failed">Delete failed items</string>
 
+    <string name="share_title">Sharing</string>
+    <string name="email_title">Emailing</string>
+
     <string name="share_text">Share %s\'s amazing photo from MyerSplash app. Download this photo: %s</string>
 </resources>
