@@ -120,7 +120,7 @@ object DownloadUtil {
             return
         }
         if (!LocalSettingHelper.getBoolean(context,
-                context.getString(R.string.preference_key_download_via_metered_network), false)) {
+                context.getString(R.string.preference_key_download_via_metered_network), true)) {
             doDownload(context, image)
             return
         }
