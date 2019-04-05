@@ -6,6 +6,8 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 /**
  * @author JuniperPhoton @ Zhihu Inc.
@@ -34,16 +36,29 @@ object MediaStoreExtensions {
         return uri
     }
 
-    private fun transfer(cr: ContentResolver, srcFile: File, outUri: Uri) {
-        val outputStream = cr.openOutputStream(outUri)
-        val inputStream = cr.openInputStream(Uri.fromFile(srcFile))
-        outputStream?.use { outs ->
-            inputStream?.use { ins ->
-                val bytes = ByteArray(1024)
-                while (ins.read(bytes) > 0) {
-                    outs.write(bytes)
+    private fun transfer(cr: ContentResolver, srcFile: File, outUri: Uri): Boolean {
+        val outputFileDescriptor = cr.openFileDescriptor(
+                outUri, "w")?.fileDescriptor ?: return false
+
+        val inputFileDescriptor = cr.openFileDescriptor(
+                Uri.fromFile(srcFile), "r")?.fileDescriptor ?: return false
+
+        try {
+            val fos = FileOutputStream(outputFileDescriptor)
+            val fis = FileInputStream(inputFileDescriptor)
+
+            val outputChannel = fos.channel
+            val inputChannel = fis.channel
+
+            outputChannel.use { oc ->
+                inputChannel.use { ic ->
+                    ic.transferTo(0, ic.size(), oc)
                 }
             }
+        } catch (e: Exception) {
+            return false
         }
+
+        return true
     }
 }

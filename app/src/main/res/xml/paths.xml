@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Paths>
     <cache-path
-        name="sharedImages"
-        path="" />
+            name="sharedImages"
+            path=""/>
     <external-files-path
-        name="downloaded"
-        path="Pictures/MyerSplash/" />
+            name="downloaded"
+            path="Pictures/MyerSplash/"/>
 </Paths>

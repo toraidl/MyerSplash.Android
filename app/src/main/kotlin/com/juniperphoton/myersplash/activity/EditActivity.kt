@@ -71,8 +71,8 @@ class EditActivity : BaseActivity() {
     lateinit var bottomBar: ViewGroup
 
     private val fileUri: Uri by lazy {
-        return@lazy intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri
-                ?: throw IllegalArgumentException("image url should not be null")
+        val uri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri ?: intent.data
+        return@lazy uri ?: throw IllegalArgumentException("image url should not be null")
     }
 
     private var showingPreview: Boolean = false

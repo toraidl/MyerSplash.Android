@@ -20,19 +20,19 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:alpha="1"
-            android:text="NEW"/>
+            android:text="@string/pivot_new"/>
 
         <TextView
             android:id="@+id/pivot_item_1"
             style="@style/PivotItem"
             android:alpha="0.3"
-            android:text="FEATURED"/>
+            android:text="@string/pivot_featured"/>
 
         <TextView
             android:id="@+id/pivot_item_2"
             style="@style/PivotItem"
             android:alpha="0.3"
-            android:text="HIGHLIGHTS"/>
+            android:text="@string/pivot_highlights"/>
     </LinearLayout>
 
     <ImageView

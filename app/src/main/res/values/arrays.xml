@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="delete_options">
-        <item>Delete downloading items</item>
-        <item>Delete downloaded items</item>
-        <item>Delete failed items</item>
+        <item>@string/delete_downloading</item>
+        <item>@string/delete_downloaded</item>
+        <item>@string/delete_failed</item>
     </string-array>
     <string-array name="thanks_array">
         <item>Kotlin</item>
@@ -27,6 +27,6 @@
         <item>Dusk</item>
         <item>Mountain</item>
         <item>Galaxy</item>
-        <item>Autumn</item>
+        <item>Spring</item>
     </string-array>
 </resources>

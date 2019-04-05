@@ -4,10 +4,7 @@ import android.graphics.Color
 import com.google.gson.annotations.SerializedName
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
-import io.reactivex.Observable
-import java.io.File
 import java.io.Serializable
 
 @Suppress("unused")
@@ -48,9 +45,6 @@ class UnsplashImage : Serializable {
     var showTodayTag: Boolean = false
         internal set
 
-    val pathForDownload: String
-        get() = FileUtil.galleryPath + File.separator + fileNameForDownload
-
     val fileNameForDownload: String
         get() = "${user!!.name} - $id - $tagForDownloadUrl"
 
@@ -90,20 +84,6 @@ class UnsplashImage : Serializable {
                 else -> null
             }
         }
-
-    fun checkDownloaded(): Observable<Boolean> {
-        return Observable.create { s ->
-            try {
-                val path = "$pathForDownload.jpg"
-                val file = File(path)
-                val existed = file.exists()
-                s.onNext(existed)
-                s.onComplete()
-            } catch (e: Exception) {
-                s.onError(e)
-            }
-        }
-    }
 
     private val tagForDownloadUrl: String
         get() {

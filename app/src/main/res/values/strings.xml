@@ -2,8 +2,6 @@
     <string name="app_name">MyerSplash</string>
     <string name="settings_title">SETTINGS</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="appbar_scrolling_view_behavior" translatable="false">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
 
     <string name="settings_credit_content">Photos are from Unsplash, an amazing website providing free high-resolution photos.</string>
@@ -14,7 +12,7 @@
     <string name="settings_quick_download">Show download button in list</string>
     <string name="settings_quick_download_title">Download shortcut</string>
 
-    <string name="settings_download_metered">Always download via metered network</string>
+    <string name="settings_download_metered">Enable this will warn you before starting download</string>
     <string name="settings_download_metered_title">Metered network warning</string>
 
     <string name="image_desc">Desc</string>
@@ -32,12 +30,15 @@
     <string name="feedback">FEEDBACK</string>
     <string name="give_me_a_rate">Give me a rate</string>
     <string name="like_this_app">LIKE THIS APP</string>
-    <string name="myer">Myer</string>
-    <string name="splash">Splash</string>
-    <string name="for_windows_amp_android"><![CDATA[for Windows 10 & Android]]></string>
+    <string name="myer" translatable="false">Myer</string>
+    <string name="splash" translatable="false">Splash</string>
+    <string name="for_windows_amp_android" translatable="false"><![CDATA[for Windows 10 & Android]]></string>
     <string name="search">SEARCH PHOTOS</string>
     <string name="searchLowercase">Search</string>
     <string name="downloadLowercase">Downloads</string>
+    <string name="settingsLowercase">Settings</string>
+    <string name="aboutLowercase">About</string>
+
     <string name="random">Random</string>
 
     <string name="search_in_english">Search in English</string>
@@ -45,14 +46,14 @@
     <string name="search_by_other_keywords">SEARCH BY OTHER KEYWORDS</string>
     <string name="return_to_content">RETURN TO %s</string>
     <string name="set_as_wallpaper">EDIT AND SET AS</string>
-    <string name="search_action">android.myersplash.action.search</string>
-    <string name="random_action">android.myersplash.action.search</string>
-    <string name="buy_me_a_drink">Treat me a drink via Alipay</string>
+    <string name="search_action" translatable="false">android.myersplash.action.search</string>
+    <string name="random_action" translatable="false">android.myersplash.action.search</string>
+    <string name="buy_me_a_drink" translatable="false">Treat me a drink via Alipay</string>
     <string name="downloads">DOWNLOADS</string>eat
     <string name="no_downloads">NO DOWNLOADS</string>
     <string name="cleanup_downloads_list">Clean up downloads list</string>
     <string name="the_will_only_clear_the_list_in_app">The will only clear the list in app</string>
-    <string name="zero_size">0 MB</string>
+    <string name="zero_size" translatable="false">0 MB</string>
     <string name="clear_options">CLEAR OPTIONS</string>
     <string name="personalization">PERSONALIZATION</string>
     <string name="quality">QUALITY</string>
@@ -75,7 +76,7 @@
     <string name="something_wrong">Something went wrong :-(</string>
     <string name="copy_url">COPY URL</string>
     <string name="failed_to_download">Failed to download :(</string>
-    <string name="uh_oh">Uh oh :-(</string>
+    <string name="uh_oh" translatable="false">Uh oh :-(</string>
     <string name="no_items_please_try_again">Something went wrong</string>
     <string name="retry">RETRY</string>
     <string name="downloads_title">DOWNLOADS</string>
@@ -83,12 +84,12 @@
     <string name="contribute_your_code">Contribute your code</string>
     <string name="follow_me_on_twitter">Follow me on Twitter</string>
 
-    <string name="alipay_url_code">aex09127b4dbo4o7fbvcyb0</string>
-    <string name="official_web_url">http://juniperphoton.net/myersplash</string>
-    <string name="email_url">dengweichao@hotmail.com</string>
-    <string name="github_url">https://github.com/JuniperPhoton/MyerSplashAndroid</string>
-    <string name="twitter_url">https://twitter.com/juniperphoton</string>
-    <string name="weibo_url">
+    <string name="alipay_url_code" translatable="false">aex09127b4dbo4o7fbvcyb0</string>
+    <string name="official_web_url" translatable="false">http://juniperphoton.net/myersplash</string>
+    <string name="email_url" translatable="false">dengweichao@hotmail.com</string>
+    <string name="github_url" translatable="false">https://github.com/JuniperPhoton/MyerSplashAndroid</string>
+    <string name="twitter_url" translatable="false">https://twitter.com/juniperphoton</string>
+    <string name="weibo_url" translatable="false">
         https://weibo.com/photon
     </string>
     <string name="dim_the_brightness">DIMMING</string>
@@ -100,9 +101,18 @@
 
     <string name="photo_by">photo by</string>
     <string name="recommended_by">recommended by</string>
-    <string name="author_default_name">JuniperPhoton</string>
+    <string name="author_default_name" translatable="false">JuniperPhoton</string>
     <string name="loading">Loading…</string>
     <string name="end">The End</string>
     <string name="recommended_tag">TODAY</string>
     <string name="copied_tag">COPIED</string>
+    <string name="pivot_new">NEW</string>
+    <string name="pivot_featured">FEATURED</string>
+    <string name="pivot_highlights">HIGHLIGHTS</string>
+
+    <string name="delete_downloading">Delete downloading items</string>
+    <string name="delete_downloaded">Delete downloaded items</string>
+    <string name="delete_failed">Delete failed items</string>
+
+    <string name="share_text">Share %s\'s amazing photo from MyerSplash app. Download this photo: %s</string>
 </resources>
