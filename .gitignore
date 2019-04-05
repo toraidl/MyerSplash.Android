@@ -50,3 +50,4 @@ captures/
 *.jks
 Banner.psd
 .idea/
+app/release/
