@@ -17,7 +17,7 @@
         <com.juniperphoton.myersplash.widget.CommonTitleBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="SETTINGS"/>
+            app:title="@string/settings_title"/>
 
         <ScrollView
             android:layout_width="match_parent"
