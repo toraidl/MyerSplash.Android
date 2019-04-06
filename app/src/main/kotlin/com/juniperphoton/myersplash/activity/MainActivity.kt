@@ -12,12 +12,8 @@ import android.os.PersistableBundle
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.viewpager.widget.ViewPager
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
@@ -25,9 +21,8 @@ import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.PermissionUtil
-import com.juniperphoton.myersplash.widget.ImageDetailView
 import com.juniperphoton.myersplash.widget.PivotTitleBar
-import com.juniperphoton.myersplash.widget.SearchView
+import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 
 class MainActivity : BaseActivity() {
@@ -51,31 +46,9 @@ class MainActivity : BaseActivity() {
     private var fabPositionX: Int = 0
     private var fabPositionY: Int = 0
 
-    @BindView(R.id.toolbar_layout)
-    lateinit var toolbarLayout: AppBarLayout
-
-    @BindView(R.id.pivot_title_bar)
-    lateinit var pivotTitleBar: PivotTitleBar
-
-    @BindView(R.id.view_pager)
-    lateinit var viewPager: ViewPager
-
-    @BindView(R.id.tag_view)
-    lateinit var tagView: TextView
-
-    @BindView(R.id.detail_view)
-    lateinit var imageDetailView: ImageDetailView
-
-    @BindView(R.id.search_fab)
-    lateinit var searchFab: FloatingActionButton
-
-    @BindView(R.id.search_view)
-    lateinit var searchView: SearchView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        ButterKnife.bind(this)
 
         handleShortcutsAction()
 
@@ -190,7 +163,7 @@ class MainActivity : BaseActivity() {
         }
 
         searchFab.setOnClickListener {
-            toggleSearchView(true, true)
+            toggleSearchView(show = true, useAnimation = true)
         }
 
         pivotTitleBar.apply {
@@ -271,7 +244,7 @@ class MainActivity : BaseActivity() {
             when (action) {
                 ACTION_SEARCH -> {
                     handleShortcut = true
-                    toolbarLayout.post { toggleSearchView(true, false) }
+                    toolbarLayout.post { toggleSearchView(show = true, useAnimation = false) }
                 }
                 ACTION_DOWNLOADS -> {
                     val intent = Intent(this, ManageDownloadActivity::class.java)

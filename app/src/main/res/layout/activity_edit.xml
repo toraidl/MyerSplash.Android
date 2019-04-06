@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <com.juniperphoton.myersplash.widget.edit.PreviewDraweeLayout
-        android:id="@+id/edit_image_preview_layout"
+        android:id="@+id/previewDraweeLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -16,14 +16,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/edit_image_preview"
+            android:id="@+id/previewImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:actualImageScaleType="centerInside"/>
     </com.juniperphoton.myersplash.widget.edit.PreviewDraweeLayout>
 
     <View
-        android:id="@+id/edit_mask"
+        android:id="@+id/maskView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:alpha="0"
@@ -34,12 +34,12 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <FrameLayout
-        android:id="@+id/edit_home_preview"
+        android:id="@+id/homePreview"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_above="@+id/edit_bottom_bar"
+        android:layout_above="@+id/bottomBar"
         android:alpha="0"
-        app:layout_constraintBottom_toTopOf="@id/edit_bottom_bar"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -63,7 +63,7 @@
     </FrameLayout>
 
     <LinearLayout
-        android:id="@+id/edit_bottom_bar"
+        android:id="@+id/bottomBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/HalfBlack"
@@ -90,7 +90,7 @@
             android:layout_margin="12dp">
 
             <TextView
-                android:id="@+id/edit_progress_text"
+                android:id="@+id/progressText"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
@@ -101,7 +101,7 @@
                 android:textStyle="bold"/>
 
             <SeekBar
-                android:id="@+id/edit_seek_bar_brightness"
+                android:id="@+id/brightnessSeekBar"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_gravity="center_vertical"
@@ -117,12 +117,12 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="12dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/edit_bottom_bar"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/edit_bottom_bar">
+        app:layout_constraintTop_toTopOf="@id/bottomBar">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/edit_preview_fab"
+            android:id="@+id/editPreviewFab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -132,7 +132,7 @@
             app:fabSize="mini"/>
 
         <com.juniperphoton.flipperlayout.FlipperLayout
-            android:id="@+id/edit_flipper_layout"
+            android:id="@+id/flipperLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:defaultIndex="0"
@@ -141,7 +141,7 @@
             app:tapToFlip="false">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/edit_confirm_fab"
+                android:id="@+id/editConfirmFab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/small_download_ok"
@@ -161,7 +161,7 @@
                     app:fabSize="normal"/>
 
                 <com.juniperphoton.myersplash.widget.RingProgressView
-                    android:id="@+id/edit_progress_ring"
+                    android:id="@+id/progressView"
                     style="@style/DefaultRingProgress"
                     app:custom_progress="30"/>
             </FrameLayout>

@@ -4,14 +4,8 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
@@ -20,6 +14,7 @@ import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.Pasteur
 import io.realm.RealmChangeListener
 import io.realm.Sort
+import kotlinx.android.synthetic.main.activity_manage_download.*
 import java.util.*
 
 @Suppress("unused")
@@ -28,15 +23,6 @@ class ManageDownloadActivity : BaseActivity() {
         private const val TAG = "ManageDownloadActivity"
         const val ACTION = "action.downloads"
     }
-
-    @BindView(R.id.downloads_list)
-    lateinit var downloadsList: RecyclerView
-
-    @BindView(R.id.no_item_view)
-    lateinit var noItemView: TextView
-
-    @BindView(R.id.downloads_more_fab)
-    lateinit var moreFab: FloatingActionButton
 
     private var adapter: DownloadsListAdapter? = null
 
@@ -50,11 +36,10 @@ class ManageDownloadActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manage_download)
-        ButterKnife.bind(this)
 
         initViews()
-
         AnalysisHelper.logEnterDownloads()
+        moreFab.setOnClickListener(this)
     }
 
     override fun onDestroy() {
@@ -63,8 +48,15 @@ class ManageDownloadActivity : BaseActivity() {
         super.onDestroy()
     }
 
-    @OnClick(R.id.downloads_more_fab)
-    internal fun onClickMore() {
+    override fun onClickView(v: View) {
+        when (v.id) {
+            R.id.moreFab -> {
+                onClickMore()
+            }
+        }
+    }
+
+    private fun onClickMore() {
         AlertDialog.Builder(this).setTitle(R.string.clear_options_title)
                 .setItems(R.array.delete_options) { _, i ->
                     val deleteStatus = when (i) {

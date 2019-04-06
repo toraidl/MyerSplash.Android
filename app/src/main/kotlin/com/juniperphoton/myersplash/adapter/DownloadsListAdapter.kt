@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.SimpleDraweeView
 import com.facebook.imagepipeline.common.ResizeOptions
@@ -89,31 +87,16 @@ class DownloadsListAdapter(private val context: Context) :
     }
 
     inner class DownloadItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        @BindView(R.id.row_download_item_dv)
-        @JvmField
-        var draweeView: SimpleDraweeView? = null
-
-        @BindView(R.id.row_download_flipper_layout)
-        @JvmField
-        var flipperLayout: FlipperLayout? = null
-
-        @BindView(R.id.row_downloading_view)
-        @JvmField
-        var downloadingView: DownloadingView? = null
-
-        @BindView(R.id.row_download_retry_view)
-        @JvmField
-        var downloadRetryView: DownloadRetryView? = null
-
-        @BindView(R.id.row_download_complete_view)
-        @JvmField
-        var downloadCompleteView: DownloadCompleteView? = null
+        private var draweeView: SimpleDraweeView? = itemView.findViewById(R.id.row_download_item_dv)
+        private var flipperLayout: FlipperLayout? = itemView.findViewById(R.id.row_download_flipper_layout)
+        private var downloadingView: DownloadingView? = itemView.findViewById(R.id.row_downloading_view)
+        private var downloadRetryView: DownloadRetryView? = itemView.findViewById(R.id.row_download_retry_view)
+        private var downloadCompleteView: DownloadCompleteView? = itemView.findViewById(R.id.row_download_complete_view)
 
         private var downloadItem: DownloadItem? = null
 
         init {
-            ButterKnife.bind(this, itemView)
-            downloadRetryView?.onClickDelete = onDelete@ {
+            downloadRetryView?.onClickDelete = onDelete@{
                 val item = downloadItem ?: return@onDelete
                 try {
                     data.removeAt(adapterPosition)
@@ -130,7 +113,7 @@ class DownloadsListAdapter(private val context: Context) :
                 }
             }
 
-            downloadRetryView?.onClickRetry = onRetry@ {
+            downloadRetryView?.onClickRetry = onRetry@{
                 val item = downloadItem ?: return@onRetry
 
                 DownloadItemTransactionUtil.updateStatus(item,
@@ -143,7 +126,7 @@ class DownloadsListAdapter(private val context: Context) :
                 context.startService(intent)
             }
 
-            downloadingView?.onClickCancel = onCancel@ {
+            downloadingView?.onClickCancel = onCancel@{
                 val item = downloadItem ?: return@onCancel
                 DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED)
                 flipperLayout?.next(item.status)

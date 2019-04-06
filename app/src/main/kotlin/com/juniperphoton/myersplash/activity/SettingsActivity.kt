@@ -3,9 +3,6 @@ package com.juniperphoton.myersplash.activity
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.core.ImagePipelineFactory
 import com.juniperphoton.myersplash.App
@@ -14,12 +11,12 @@ import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import com.juniperphoton.myersplash.utils.ToastService
-import com.juniperphoton.myersplash.widget.SettingsItemLayout
 import io.realm.Realm
+import kotlinx.android.synthetic.main.activity_settings.*
 import org.greenrobot.eventbus.EventBus
 
 @Suppress("unused", "unused_parameter")
-class SettingsActivity : BaseActivity() {
+class SettingsActivity : BaseActivity(), View.OnClickListener {
     companion object {
         private const val TAG = "SettingsActivity"
 
@@ -27,25 +24,12 @@ class SettingsActivity : BaseActivity() {
         private val KEY_LIST_QUALITY = App.instance.getString(R.string.preference_key_list_quality)
     }
 
-    @BindView(R.id.quick_download_settings)
-    lateinit var quickDownloadSettings: SettingsItemLayout
-
-    @BindView(R.id.saving_quality_settings)
-    lateinit var savingQualitySettings: SettingsItemLayout
-
-    @BindView(R.id.loading_quality_settings)
-    lateinit var loadingQualitySettings: SettingsItemLayout
-
-    @BindView(R.id.clear_cache_settings)
-    lateinit var clearCacheSettings: SettingsItemLayout
-
     private lateinit var savingStrings: Array<String>
     private lateinit var loadingStrings: Array<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        ButterKnife.bind(this)
 
         quickDownloadSettings.onCheckedChanged = {
             EventBus.getDefault().post(RefreshUIEvent())
@@ -66,48 +50,66 @@ class SettingsActivity : BaseActivity() {
 
         val loadingChoice = LocalSettingHelper.getInt(this, KEY_LIST_QUALITY, 0)
         loadingQualitySettings.content = loadingStrings[loadingChoice]
+
+        clearCacheSettings.setOnClickListener(this)
+        settingClearDatabase.setOnClickListener(this)
+        savingQualitySettings.setOnClickListener(this)
+        loadingQualitySettings.setOnClickListener(this)
     }
 
-    @OnClick(R.id.clear_cache_settings)
-    fun clearUp(view: View) {
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.clearCacheSettings -> {
+                clearUp()
+            }
+            R.id.settingClearDatabase -> {
+                clearDatabase()
+            }
+            R.id.savingQualitySettings -> {
+                setSavingQuality()
+            }
+            R.id.loadingQualitySettings -> {
+                setLoadingQuality()
+            }
+        }
+    }
+
+    private fun clearUp() {
         Fresco.getImagePipeline().clearCaches()
         ToastService.sendShortToast("All clear :D")
         clearCacheSettings.content = "0 MB"
         EventBus.getDefault().post(RefreshUIEvent())
     }
 
-    @OnClick(R.id.setting_clear_database)
-    fun clearDatabase(view: View) {
+    private fun clearDatabase() {
         ToastService.sendShortToast("All clear :D")
         RealmCache.getInstance().executeTransaction(Realm::deleteAll)
     }
 
-    @OnClick(R.id.saving_quality_settings)
-    internal fun setSavingQuality(view: View) {
+    private fun setSavingQuality() {
         val choice = LocalSettingHelper.getInt(this, KEY_SAVING_QUALITY, 1)
-
-        val builder = AlertDialog.Builder(this@SettingsActivity)
-        builder.setTitle(getString(R.string.settings_saving_quality))
-        builder.setSingleChoiceItems(savingStrings, choice) { dialog, which ->
-            LocalSettingHelper.putInt(this@SettingsActivity, KEY_SAVING_QUALITY, which)
-            dialog.dismiss()
-            savingQualitySettings.content = savingStrings[which]
+        AlertDialog.Builder(this@SettingsActivity).apply {
+            setTitle(getString(R.string.settings_saving_quality))
+            setSingleChoiceItems(savingStrings, choice) { dialog, which ->
+                LocalSettingHelper.putInt(this@SettingsActivity, KEY_SAVING_QUALITY, which)
+                dialog.dismiss()
+                savingQualitySettings.content = savingStrings[which]
+            }
+            show()
         }
-        builder.show()
     }
 
-    @OnClick(R.id.loading_quality_settings)
-    internal fun setLoadingQuality(view: View) {
+    private fun setLoadingQuality() {
         val choice = LocalSettingHelper.getInt(this, KEY_LIST_QUALITY, 0)
-
-        val builder = AlertDialog.Builder(this@SettingsActivity)
-        builder.setTitle(getString(R.string.settings_loading_quality))
-        builder.setSingleChoiceItems(loadingStrings, choice) { dialog, which ->
-            LocalSettingHelper.putInt(this@SettingsActivity, KEY_LIST_QUALITY, which)
-            dialog.dismiss()
-            loadingQualitySettings.content = loadingStrings[which]
+        AlertDialog.Builder(this@SettingsActivity).apply {
+            setTitle(getString(R.string.settings_loading_quality))
+            setSingleChoiceItems(loadingStrings, choice) { dialog, which ->
+                LocalSettingHelper.putInt(this@SettingsActivity, KEY_LIST_QUALITY, which)
+                dialog.dismiss()
+                loadingQualitySettings.content = loadingStrings[which]
+            }
+            show()
         }
-        builder.show()
     }
 
     override fun onResume() {
