@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 
@@ -36,13 +34,11 @@ class CategoryAdapter(private val context: Context,
     }
 
     inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        @BindView(R.id.category_text)
-        lateinit var categoryName: TextView
+        private var categoryName: TextView = itemView.findViewById(R.id.category_text)
 
         private var category: String? = null
 
         init {
-            ButterKnife.bind(this, itemView)
             itemView.setOnClickListener {
                 category?.let { c ->
                     onClickItem?.invoke(c)
