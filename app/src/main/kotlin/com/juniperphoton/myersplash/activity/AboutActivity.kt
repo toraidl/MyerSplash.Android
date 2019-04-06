@@ -3,13 +3,11 @@ package com.juniperphoton.myersplash.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
+import android.view.View
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getVersionName
 import com.juniperphoton.myersplash.extension.startActivitySafely
+import kotlinx.android.synthetic.main.activity_about.*
 
 @Suppress("unused")
 class AboutActivity : BaseActivity() {
@@ -17,24 +15,48 @@ class AboutActivity : BaseActivity() {
         resources.getDimensionPixelSize(R.dimen.about_thanks_item_margin)
     }
 
-    @BindView(R.id.version_text_view)
-    lateinit var versionTextView: TextView
+    private val idToUrl = mapOf(
+            R.id.githubItem to R.string.github_url,
+            R.id.weiboItem to R.string.weibo_url,
+            R.id.twitterItem to R.string.twitter_url
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_about)
-        ButterKnife.bind(this)
 
         updateVersion()
+
+        emailItem.setOnClickListener(this)
+        githubItem.setOnClickListener(this)
+        weiboItem.setOnClickListener(this)
+        twitterItem.setOnClickListener(this)
+        rateItem.setOnClickListener(this)
+    }
+
+    override fun onClickView(v: View) {
+        super.onClickView(v)
+        when (v.id) {
+            R.id.emailItem -> {
+                onClickEmail()
+            }
+            R.id.githubItem,
+            R.id.weiboItem,
+            R.id.twitterItem -> {
+                onClickUrl(getString(idToUrl.getValue(v.id)))
+            }
+            R.id.rateItem -> {
+                onClickRate()
+            }
+        }
     }
 
     private fun updateVersion() {
         versionTextView.text = getVersionName()
     }
 
-    @OnClick(R.id.email_item)
-    internal fun onClickEmail() {
+    private fun onClickEmail() {
         val emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.type = "message/rfc822"
         emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email_url)))
@@ -45,30 +67,14 @@ class AboutActivity : BaseActivity() {
         startActivitySafely(Intent.createChooser(emailIntent, getString(R.string.email_title)))
     }
 
-    @OnClick(R.id.rate_item)
-    internal fun onClickRate() {
+    private fun onClickUrl(url: String) {
+        val uri = Uri.parse(url)
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        startActivitySafely(intent)
+    }
+
+    private fun onClickRate() {
         val uri = Uri.parse("market://details?id=$packageName")
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        startActivitySafely(intent)
-    }
-
-    @OnClick(R.id.github_item)
-    internal fun onClickGitHub() {
-        val uri = Uri.parse(getString(R.string.github_url))
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        startActivitySafely(intent)
-    }
-
-    @OnClick(R.id.twitter_item)
-    internal fun onClickTwitter() {
-        val uri = Uri.parse(getString(R.string.twitter_url))
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        startActivitySafely(intent)
-    }
-
-    @OnClick(R.id.weibo_item)
-    internal fun onClickWeibo() {
-        val uri = Uri.parse(getString(R.string.weibo_url))
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivitySafely(intent)
     }

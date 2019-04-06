@@ -10,30 +10,23 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
-import android.widget.TextView
 import androidx.annotation.WorkerThread
 import androidx.core.content.FileProvider
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.backends.pipeline.PipelineDraweeController
-import com.facebook.drawee.view.SimpleDraweeView
 import com.facebook.imagepipeline.common.ResizeOptions
 import com.facebook.imagepipeline.image.ImageInfo
 import com.facebook.imagepipeline.request.ImageRequestBuilder
-import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getScreenHeight
 import com.juniperphoton.myersplash.utils.*
-import com.juniperphoton.myersplash.widget.edit.PreviewDraweeLayout
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_edit.*
 import java.io.File
 import java.io.FileOutputStream
 
@@ -42,33 +35,6 @@ class EditActivity : BaseActivity() {
         private const val TAG = "EditActivity"
         private const val SAVED_FILE_NAME = "final_dim_image.jpg"
     }
-
-    @BindView(R.id.edit_seek_bar_brightness)
-    lateinit var brightnessSeekBar: SeekBar
-
-    @BindView(R.id.edit_image_preview)
-    lateinit var previewImageView: SimpleDraweeView
-
-    @BindView(R.id.edit_image_preview_layout)
-    lateinit var previewDraweeLayout: PreviewDraweeLayout
-
-    @BindView(R.id.edit_mask)
-    lateinit var maskView: View
-
-    @BindView(R.id.edit_flipper_layout)
-    lateinit var flipperLayout: FlipperLayout
-
-    @BindView(R.id.edit_progress_ring)
-    lateinit var progressView: View
-
-    @BindView(R.id.edit_home_preview)
-    lateinit var homePreview: View
-
-    @BindView(R.id.edit_progress_text)
-    lateinit var progressText: TextView
-
-    @BindView(R.id.edit_bottom_bar)
-    lateinit var bottomBar: ViewGroup
 
     private val fileUri: Uri by lazy {
         val uri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri ?: intent.data
@@ -84,10 +50,11 @@ class EditActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
-        ButterKnife.bind(this)
 
         loadImage()
         initView()
+        editConfirmFab.setOnClickListener(this)
+        editPreviewFab.setOnClickListener(this)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -102,14 +69,23 @@ class EditActivity : BaseActivity() {
         flipperLayout.next(0)
     }
 
-    @OnClick(R.id.edit_confirm_fab)
-    fun onClickConfirm() {
+    override fun onClickView(v: View) {
+        when (v.id) {
+            R.id.editConfirmFab -> {
+                onClickConfirm()
+            }
+            R.id.editPreviewFab -> {
+                onClickPreview()
+            }
+        }
+    }
+
+    private fun onClickConfirm() {
         AnalysisHelper.logApplyEdit(brightnessSeekBar.progress > 0)
         composeMask()
     }
 
-    @OnClick(R.id.edit_preview_fab)
-    fun onClickPreview() {
+    private fun onClickPreview() {
         if (!showingPreview) {
             AnalysisHelper.logEditShowPreview()
         }
@@ -175,7 +151,7 @@ class EditActivity : BaseActivity() {
             val intent = IntentUtil.getSetAsWallpaperIntent(uri)
             startActivity(intent)
         } catch (e: IllegalArgumentException) {
-            val bm = MediaStore.Images.Media.getBitmap(contentResolver, uri);
+            val bm = MediaStore.Images.Media.getBitmap(contentResolver, uri)
             WallpaperManager.getInstance(this).setBitmap(bm)
         }
     }

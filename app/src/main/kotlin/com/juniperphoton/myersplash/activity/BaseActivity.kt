@@ -14,7 +14,7 @@ import com.juniperphoton.myersplash.extension.getStatusBarHeight
 import com.juniperphoton.myersplash.extension.updateDimensions
 import com.juniperphoton.myersplash.utils.Pasteur
 
-abstract class BaseActivity : AppCompatActivity(), View.OnApplyWindowInsetsListener {
+abstract class BaseActivity : AppCompatActivity(), View.OnApplyWindowInsetsListener, View.OnClickListener {
     companion object {
         private const val TAG = "BaseActivity"
     }
@@ -77,6 +77,12 @@ abstract class BaseActivity : AppCompatActivity(), View.OnApplyWindowInsetsListe
     }
 
     open fun onApplySystemInsets(top: Int, bottom: Int) = Unit
+
+    override fun onClick(v: View) {
+        onClickView(v)
+    }
+
+    open fun onClickView(v: View) = Unit
 
     override fun onApplyWindowInsets(v: View, insets: WindowInsets): WindowInsets {
         Pasteur.info(TAG, "height: ${insets.systemWindowInsetBottom}")

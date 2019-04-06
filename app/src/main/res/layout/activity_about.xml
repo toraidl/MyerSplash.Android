@@ -21,6 +21,7 @@
 
             <androidx.legacy.widget.Space
                 android:id="@+id/top_space"
+                app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/about_space"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -79,7 +80,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/about_title_layout"/>
 
             <TextView
-                android:id="@+id/version_text_view"
+                android:id="@+id/versionTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -102,7 +103,7 @@
                 android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/version_text_view">
+                app:layout_constraintTop_toBottomOf="@+id/versionTextView">
 
                 <TextView
                     style="@style/AboutSubTitleTextView"
@@ -130,26 +131,26 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:id="@+id/email_item"
+                        android:id="@+id/emailItem"
                         style="@style/AboutContactItem"
                         android:contentDescription="@string/image_desc"
                         android:src="@drawable/ic_email"/>
 
                     <ImageView
-                        android:id="@+id/github_item"
+                        android:id="@+id/githubItem"
                         style="@style/AboutContactItem"
                         android:contentDescription="@string/image_desc"
                         android:src="@drawable/ic_github_icon"/>
 
                     <ImageView
-                        android:id="@+id/twitter_item"
+                        android:id="@+id/twitterItem"
                         style="@style/AboutContactItem"
                         android:contentDescription="@string/image_desc"
                         android:scaleType="centerCrop"
                         android:src="@drawable/ic_twitter"/>
 
                     <ImageView
-                        android:id="@+id/weibo_item"
+                        android:id="@+id/weiboItem"
                         style="@style/AboutContactItem"
                         android:contentDescription="@string/image_desc"
                         android:src="@drawable/ic_weibo_social_logo"/>
@@ -161,7 +162,7 @@
                     android:text="@string/like_this_app"/>
 
                 <TextView
-                    android:id="@+id/rate_item"
+                    android:id="@+id/rateItem"
                     style="@style/AboutSubContentTextView"
                     android:layout_gravity="center"
                     android:background="@drawable/ripple_large_round_rect"
