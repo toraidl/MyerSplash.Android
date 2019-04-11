@@ -1,20 +1,21 @@
 package com.juniperphoton.myersplash.utils
 
 import com.juniperphoton.myersplash.cloudservice.CloudService
-import okhttp3.ResponseBody
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
+/**
+ * Report download behavior to Unsplash server.
+ */
 object DownloadReporter {
     private const val TAG = "DownloadReporter"
 
     fun report(downloadLocation: String?) {
         val url = downloadLocation ?: return
 
-        CloudService.reportDownload(url)
-                .subscribe(object : ResponseObserver<ResponseBody>() {
-                    override fun onNext(data: ResponseBody) {
-                        super.onNext(data)
-                        Pasteur.info(TAG, "successfully report $url")
-                    }
-                })
+        GlobalScope.launch {
+            CloudService.reportDownload(url)
+            Pasteur.info(TAG, "successfully report $url")
+        }
     }
 }
