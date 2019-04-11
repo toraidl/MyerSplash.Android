@@ -37,16 +37,12 @@ import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.extension.isLightColor
-import com.juniperphoton.myersplash.extension.toHexString
 import com.juniperphoton.myersplash.fragment.Action
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
-import io.reactivex.MaybeObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import io.realm.RealmChangeListener
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -169,6 +165,9 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     private var animating: Boolean = false
     private var copied: Boolean = false
+
+    private val job = Job()
+    private val scope = CoroutineScope(Dispatchers.Main) + job
 
     init {
         LayoutInflater.from(context).inflate(R.layout.detail_content, this, true)
@@ -443,31 +442,13 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         toggleShareBtnAnimation(false, oneshot)
     }
 
-    private var disposable: Disposable? = null
-
-    private fun extractThemeColor(image: UnsplashImage) {
-        PaletteUtil.extractThemeColorFromUnsplashImage(image)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : MaybeObserver<Int> {
-                    override fun onSuccess(color: Int) {
-                        image.color = color.toHexString()
-                        updateThemeColor(color)
-                    }
-
-                    override fun onComplete() {
-                        updateThemeColor(Color.BLACK)
-                    }
-
-                    override fun onSubscribe(d: Disposable) {
-                        disposable = d
-                    }
-
-                    override fun onError(e: Throwable) {
-                        e.printStackTrace()
-                        onComplete()
-                    }
-                })
+    private fun extractThemeColor(image: UnsplashImage) = scope.launch {
+        val color = image.extractThemeColor()
+        if (color != Int.MIN_VALUE) {
+            updateThemeColor(color)
+        } else {
+            updateThemeColor(Color.BLACK)
+        }
     }
 
     private fun updateThemeColor(themeColor: Int) {
@@ -676,7 +657,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
      * Try to hide this view. If this view is fully displayed to user.
      */
     fun tryHide(): Boolean {
-        disposable?.dispose()
+        job.cancel()
         if (associatedDownloadItem?.isValid == true) {
             associatedDownloadItem!!.removeChangeListener(realmChangeListener)
             associatedDownloadItem = null

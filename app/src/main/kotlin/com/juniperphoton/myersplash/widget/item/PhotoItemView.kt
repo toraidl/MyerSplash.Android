@@ -20,9 +20,10 @@ import com.juniperphoton.myersplash.extension.updateVisibility
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import com.juniperphoton.myersplash.utils.extractThemeColor
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 typealias OnClickPhotoListener = ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)
 typealias OnClickQuickDownloadListener = ((image: UnsplashImage) -> Unit)
@@ -49,7 +50,9 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
     var onBind: OnBindListener? = null
 
     private var unsplashImage: UnsplashImage? = null
+
     private var job: Job? = null
+    private val scope = CoroutineScope(Dispatchers.Main)
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -103,16 +106,13 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
     }
 
     private fun tryUpdateThemeColor() {
-        job = GlobalScope.launch(Dispatchers.Main) {
+        job = scope.launch {
             try {
-                val colorJob = async {
-                    unsplashImage?.extractThemeColor()
-                }
-                val color = colorJob.await() ?: return@launch
+                val color = unsplashImage?.extractThemeColor() ?: Int.MIN_VALUE
                 if (color != Int.MIN_VALUE) {
                     unsplashImage?.color = color.toHexString()
                 }
-            } catch (e: CancellationException) {
+            } catch (e: Exception) {
                 // ignore cancellation
             }
         }
