@@ -10,10 +10,6 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import com.juniperphoton.myersplash.R
 
-fun Context.getDpi(): Float = resources.displayMetrics.density
-
-fun Context.getDimenInPixel(valueInDP: Int): Int = (valueInDP * getDpi()).toInt()
-
 fun Context.getScreenWidth(): Int = resources.displayMetrics.widthPixels
 
 fun Context.getScreenHeight(): Int = resources.displayMetrics.heightPixels
@@ -51,7 +47,7 @@ fun Context.usingWifi(): Boolean {
 private fun checkWifiAPI28(manager: ConnectivityManager): Boolean {
     val network = manager.activeNetwork
     val cap = manager.getNetworkCapabilities(network)
-    return cap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+    return cap?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: return false
 }
 
 @Suppress("DEPRECATION")
