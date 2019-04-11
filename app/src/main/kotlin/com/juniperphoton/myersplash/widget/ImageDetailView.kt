@@ -530,7 +530,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         val file = FileUtil.getCachedFile(clickedImage!!.listUrl!!)
 
         if (file == null || !file.exists()) {
-            ToastService.sendShortToast(context.getString(R.string.something_wrong))
+            Toaster.sendShortToast(context.getString(R.string.something_wrong))
             return
         }
 

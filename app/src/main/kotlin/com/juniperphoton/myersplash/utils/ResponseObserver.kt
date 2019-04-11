@@ -16,10 +16,10 @@ open class ResponseObserver<T> : DisposableObserver<T>() {
         e.printStackTrace()
         when (e) {
             is SocketTimeoutException -> {
-                ToastService.sendShortToast(R.string.timeout)
+                Toaster.sendShortToast(R.string.timeout)
             }
             is APIException -> {
-                ToastService.sendShortToast(R.string.failed_to_send_request)
+                Toaster.sendShortToast(R.string.failed_to_send_request)
             }
             else -> onUnknownError(e)
         }

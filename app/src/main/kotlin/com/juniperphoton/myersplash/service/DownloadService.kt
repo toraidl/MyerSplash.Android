@@ -54,7 +54,7 @@ class DownloadService : Service() {
         val previewUrl = intent.getStringExtra(Params.PREVIEW_URI)
         val isUnsplash = intent.getBooleanExtra(Params.IS_UNSPLASH_WALLPAPER, true)
         if (!isUnsplash) {
-            ToastService.sendShortToast("Downloading...")
+            Toaster.sendShortToast("Downloading...")
         }
 
         val previewUri: Uri? = if (previewUrl.isNullOrEmpty()) null else {
@@ -67,7 +67,7 @@ class DownloadService : Service() {
             if (subscriber != null) {
                 subscriber.dispose()
                 NotificationUtil.cancelNotification(Uri.parse(downloadUrl))
-                ToastService.sendShortToast(getString(R.string.cancelled_download))
+                Toaster.sendShortToast(getString(R.string.cancelled_download))
             }
         } else {
             Pasteur.d(TAG, "on handle intent progress")

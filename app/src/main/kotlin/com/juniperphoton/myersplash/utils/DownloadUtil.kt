@@ -83,7 +83,7 @@ object DownloadUtil {
             }
         } catch (e: Exception) {
             // Catch any other exceptions, normally we don't expect this happened.
-            ToastService.sendShortToast(e.message)
+            Toaster.sendShortToast(e.message)
             null
         }
     }
@@ -116,7 +116,7 @@ object DownloadUtil {
      */
     fun download(context: Activity, image: UnsplashImage) {
         if (!PermissionUtil.check(context)) {
-            ToastService.sendShortToast(context.getString(R.string.no_permission))
+            Toaster.sendShortToast(context.getString(R.string.no_permission))
             return
         }
         if (!LocalSettingHelper.getBoolean(context,
@@ -171,7 +171,7 @@ object DownloadUtil {
             position = downloadItems[0].position + 1
         }
 
-        ToastService.sendShortToast(context.getString(R.string.downloading_in_background))
+        Toaster.sendShortToast(context.getString(R.string.downloading_in_background))
 
         val item = DownloadItem(image.id!!, image.listUrl!!, image.downloadUrl!!,
                 image.fileNameForDownload)
