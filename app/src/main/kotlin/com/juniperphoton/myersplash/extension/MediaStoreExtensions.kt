@@ -26,6 +26,8 @@ object MediaStoreExtensions {
         values.put(MediaStore.Images.Media.DESCRIPTION, desc)
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg") //todo extract mime types
         values.put(MediaStore.MediaColumns.SIZE, file.length())
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+        values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
 
         val uri = cr.insert(EXTERNAL_CONTENT_URI, values) ?: return null
 
