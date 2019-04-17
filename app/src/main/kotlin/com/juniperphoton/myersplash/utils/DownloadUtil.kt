@@ -13,10 +13,12 @@ import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.service.DownloadService
 import io.realm.Sort
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import org.greenrobot.eventbus.EventBus
-import java.io.*
-import java.util.*
+import java.io.File
+import java.io.FileOutputStream
 
 @Suppress("unused_parameter")
 object DownloadUtil {
@@ -26,64 +28,45 @@ object DownloadUtil {
      * Write [body] to a file of [fileUri].
      * @param onProgress will be invoked when the progress has been updated.
      */
-    fun writeToFile(body: ResponseBody, fileUri: String, onProgress: ((Int) -> Unit)?): File? {
-        return try {
+    suspend fun writeToFile(body: ResponseBody,
+                            fileUri: String,
+                            onProgress: ((Int) -> Unit)?): File? = withContext(Dispatchers.IO) {
+        return@withContext try {
             val fileToSave = File(fileUri)
 
-            var inputStream: InputStream? = null
-            var outputStream: OutputStream? = null
+            val inputStream = body.byteStream()
+            val outputStream = FileOutputStream(fileToSave)
 
-            try {
-                val startTime = Date().time
+            inputStream.use { `is` ->
+                outputStream.use { os ->
+                    val buffer = ByteArray(2048)
 
-                inputStream = body.byteStream()
-                outputStream = FileOutputStream(fileToSave)
+                    val fileSize = body.contentLength()
+                    var fileSizeDownloaded: Long = 0
 
-                val buffer = ByteArray(4096)
+                    var progressToReport = 0
 
-                val fileSize = body.contentLength()
-                var fileSizeDownloaded: Long = 0
+                    while (true) {
+                        val read = `is`.read(buffer)
+                        if (read == -1) {
+                            break
+                        }
 
-                var progressToReport = 0
+                        os.write(buffer, 0, read)
+                        fileSizeDownloaded += read.toLong()
 
-                while (true) {
-                    val read = inputStream!!.read(buffer)
-                    if (read == -1) {
-                        break
+                        val progress = (fileSizeDownloaded / fileSize.toDouble() * 100).toInt()
+                        if (progress - progressToReport >= 5) {
+                            progressToReport = progress
+                            onProgress?.invoke(progressToReport)
+                        }
                     }
 
-                    outputStream.write(buffer, 0, read)
-                    fileSizeDownloaded += read.toLong()
-
-                    val progress = (fileSizeDownloaded / fileSize.toDouble() * 100).toInt()
-                    if (progress - progressToReport >= 5) {
-                        progressToReport = progress
-                        onProgress?.invoke(progressToReport)
-                    }
-                }
-                val endTime = Date().time
-
-                Pasteur.debug(TAG, "time spend=" + (endTime - startTime).toString())
-
-                outputStream.flush()
-
-                fileToSave
-            } catch (e0: InterruptedIOException) {
-                null
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            } finally {
-                try {
-                    inputStream?.close()
-                    outputStream?.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
+                    fileToSave
                 }
             }
         } catch (e: Exception) {
-            // Catch any other exceptions, normally we don't expect this happened.
-            Toaster.sendShortToast(e.message)
+            e.printStackTrace()
             null
         }
     }
@@ -120,7 +103,7 @@ object DownloadUtil {
             return
         }
         if (!LocalSettingHelper.getBoolean(context,
-                context.getString(R.string.preference_key_download_via_metered_network), true)) {
+                        context.getString(R.string.preference_key_download_via_metered_network), true)) {
             doDownload(context, image)
             return
         }

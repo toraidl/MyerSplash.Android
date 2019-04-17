@@ -10,18 +10,18 @@ import retrofit2.http.Url
 
 interface PhotoService {
     @GET
-    fun getPhotos(@Url url: String,
-                  @Query("page") page: Int,
-                  @Query("per_page") per_page: Int): Deferred<MutableList<UnsplashImage>>
+    fun getPhotosAsync(@Url url: String,
+                       @Query("page") page: Int,
+                       @Query("per_page") per_page: Int): Deferred<MutableList<UnsplashImage>>
 
     @GET
-    fun getFeaturedPhotos(@Url url: String,
-                          @Query("page") page: Int,
-                          @Query("per_page") per_page: Int): Deferred<MutableList<UnsplashFeaturedImage>>
+    fun getFeaturedPhotosAsync(@Url url: String,
+                               @Query("page") page: Int,
+                               @Query("per_page") per_page: Int): Deferred<MutableList<UnsplashFeaturedImage>>
 
     @GET
-    fun searchPhotosByQuery(@Url url: String,
-                            @Query("page") page: Int,
-                            @Query("per_page") per_page: Int,
-                            @Query("query") query: String): Deferred<SearchResult>
+    fun searchPhotosByQueryAsync(@Url url: String,
+                                 @Query("page") page: Int,
+                                 @Query("per_page") per_page: Int,
+                                 @Query("query") query: String): Deferred<SearchResult>
 }

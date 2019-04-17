@@ -6,9 +6,8 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.juniperphoton.myersplash.data.MainListPresenter.Companion.DEFAULT_PAGING
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.model.UnsplashImageFactory
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeout
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
@@ -29,6 +28,9 @@ object CloudService {
     private const val DEFAULT_TIMEOUT = 10
     private const val DEFAULT_REQUEST_COUNT = 10
     private const val DEFAULT_HIGHLIGHTS_COUNT = 60
+
+    private const val DOWNLOAD_TIMEOUT_MS = 30_000L
+    private const val HIGHLIGHTS_DELAY_MS = 200L
 
     private const val TAG = "CloudService"
 
@@ -74,24 +76,24 @@ object CloudService {
     }
 
     suspend fun getPhotos(url: String,
-                          page: Int): MutableList<UnsplashImage> = withContext(Dispatchers.IO) {
-        val list = photoService.getPhotos(url, page, DEFAULT_REQUEST_COUNT).await()
+                          page: Int): MutableList<UnsplashImage> {
+        val list = photoService.getPhotosAsync(url, page, DEFAULT_REQUEST_COUNT).await()
         if (page == DEFAULT_PAGING) {
             list.add(0, UnsplashImageFactory.createTodayImage())
         }
-        return@withContext list
+        return list
     }
 
     suspend fun getFeaturedPhotos(url: String,
-                                  page: Int): MutableList<UnsplashImage> = withContext(Dispatchers.IO) {
+                                  page: Int): MutableList<UnsplashImage> {
         val mutableList = mutableListOf<UnsplashImage>()
-        return@withContext photoService
-                .getFeaturedPhotos(url, page, DEFAULT_REQUEST_COUNT).await().mapTo(mutableList) {
+        return photoService
+                .getFeaturedPhotosAsync(url, page, DEFAULT_REQUEST_COUNT).await().mapTo(mutableList) {
                     it.image!!
                 }
     }
 
-    suspend fun getHighlightsPhotos(page: Int): MutableList<UnsplashImage> = withContext(Dispatchers.IO) {
+    suspend fun getHighlightsPhotos(page: Int): MutableList<UnsplashImage> {
         val calendar = Calendar.getInstance(TimeZone.getDefault())
         calendar.add(Calendar.DATE, -(page - 1) * DEFAULT_HIGHLIGHTS_COUNT)
 
@@ -107,25 +109,25 @@ object CloudService {
             calendar.add(Calendar.DATE, -1)
         }
 
-        delay(200)
+        delay(HIGHLIGHTS_DELAY_MS)
 
-        return@withContext list
+        return list
     }
 
     suspend fun searchPhotos(url: String,
                              page: Int,
-                             query: String): MutableList<UnsplashImage> = withContext(Dispatchers.IO) {
-        return@withContext photoService
-                .searchPhotosByQuery(url, page, DEFAULT_REQUEST_COUNT, query).await().list!!
+                             query: String): MutableList<UnsplashImage> {
+        return photoService
+                .searchPhotosByQueryAsync(url, page, DEFAULT_REQUEST_COUNT, query).await().list!!
     }
 
-    fun downloadPhoto(url: String): Observable<ResponseBody> {
-        return downloadService
-                .downloadFileWithDynamicUrlSync(url).timeout(30, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.io())
+    suspend fun downloadPhoto(url: String): ResponseBody {
+        return withTimeout(DOWNLOAD_TIMEOUT_MS) {
+            downloadService.downloadFileAsync(url).await()
+        }
     }
 
-    suspend fun reportDownload(url: String): ResponseBody = withContext(Dispatchers.IO) {
-        return@withContext downloadService.reportDownload(url).await()
+    suspend fun reportDownload(url: String): ResponseBody {
+        return downloadService.reportDownloadAsync(url).await()
     }
 }
