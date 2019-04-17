@@ -83,4 +83,6 @@
     <string name="share_text">从 MyerSplash app 分享来自 %s\ 的好照片。下载此照片： %s</string>
     <string name="share_title">分享到</string>
     <string name="email_title">发送到</string>
+    <string name="search_empty_hint">请输入关键字搜索</string>
+    <string name="all_clear">清理完毕</string>
 </resources>

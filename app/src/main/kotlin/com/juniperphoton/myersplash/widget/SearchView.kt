@@ -216,7 +216,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     fun onClickSearch() {
         hideKeyboard()
         if (editText.text.toString().isEmpty()) {
-            Toaster.sendShortToast("Input the keyword to search.")
+            Toaster.sendShortToast(R.string.search_empty_hint)
             return
         }
         resultRoot.visibility = View.VISIBLE

@@ -50,7 +50,7 @@ class DownloadService : Service() {
         val previewUrl = intent.getStringExtra(Params.PREVIEW_URI)
         val isUnsplash = intent.getBooleanExtra(Params.IS_UNSPLASH_WALLPAPER, true)
         if (!isUnsplash) {
-            Toaster.sendShortToast("Downloading...")
+            Toaster.sendShortToast(R.string.downloading)
         }
 
         val previewUri: Uri? = if (previewUrl.isNullOrEmpty()) null else {
