@@ -655,7 +655,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
      * Try to hide this view. If this view is fully displayed to user.
      */
     fun tryHide(): Boolean {
-        job.cancel()
+        cancel()
         if (associatedDownloadItem?.isValid == true) {
             associatedDownloadItem!!.removeChangeListener(realmChangeListener)
             associatedDownloadItem = null
