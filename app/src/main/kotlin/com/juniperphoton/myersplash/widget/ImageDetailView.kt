@@ -49,7 +49,8 @@ import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 
 @Suppress("unused")
-class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
+class ImageDetailView(context: Context, attrs: AttributeSet
+) : FrameLayout(context, attrs), CoroutineScope by MainScope() {
     companion object {
         private const val TAG = "ImageDetailView"
         private const val RESULT_CODE = 10000
@@ -165,9 +166,6 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     private var animating: Boolean = false
     private var copied: Boolean = false
-
-    private val job = Job()
-    private val scope = CoroutineScope(Dispatchers.Main) + job
 
     init {
         LayoutInflater.from(context).inflate(R.layout.detail_content, this, true)
@@ -442,7 +440,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         toggleShareBtnAnimation(false, oneshot)
     }
 
-    private fun extractThemeColor(image: UnsplashImage) = scope.launch {
+    private fun extractThemeColor(image: UnsplashImage) = launch {
         val color = image.extractThemeColor()
         if (color != Int.MIN_VALUE) {
             updateThemeColor(color)
