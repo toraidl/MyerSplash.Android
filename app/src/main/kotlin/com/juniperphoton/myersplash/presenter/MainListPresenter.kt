@@ -1,10 +1,14 @@
-package com.juniperphoton.myersplash.data
+package com.juniperphoton.myersplash.presenter
 
-import com.juniperphoton.myersplash.cloudservice.CloudService
+import com.juniperphoton.myersplash.api.CloudService
+import com.juniperphoton.myersplash.contract.MainContract
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.utils.Pasteur
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 open class MainListPresenter : MainContract.MainPresenter, CoroutineScope by MainScope() {

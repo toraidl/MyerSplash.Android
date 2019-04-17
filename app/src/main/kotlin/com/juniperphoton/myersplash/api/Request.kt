@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash.cloudservice
+package com.juniperphoton.myersplash.api
 
 object Request {
     private const val MY_DOMAIN = "juniperphoton.dev"

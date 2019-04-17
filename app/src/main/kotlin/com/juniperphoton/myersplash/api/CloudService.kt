@@ -1,11 +1,12 @@
-package com.juniperphoton.myersplash.cloudservice
+package com.juniperphoton.myersplash.api
 
 import android.annotation.SuppressLint
 import android.util.Log
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.juniperphoton.myersplash.data.MainListPresenter.Companion.DEFAULT_PAGING
+import com.juniperphoton.myersplash.BuildConfig
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.model.UnsplashImageFactory
+import com.juniperphoton.myersplash.presenter.MainListPresenter.Companion.DEFAULT_PAGING
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
 import okhttp3.OkHttpClient
@@ -38,27 +39,29 @@ object CloudService {
 
     private val retrofit: Retrofit
     private val photoService: PhotoService
-    private val downloadService: DownloadService
+    private val ioService: IOService
     private val builder: OkHttpClient.Builder = OkHttpClient.Builder()
 
     init {
-        val ctx = SSLContext.getInstance("SSL")
+        if (BuildConfig.DEBUG) {
+            val ctx = SSLContext.getInstance("SSL")
 
-        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
-            override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+                override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
 
-            @SuppressLint("TrustAllX509TrustManager")
-            @Throws(CertificateException::class)
-            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) = Unit
+                @SuppressLint("TrustAllX509TrustManager")
+                @Throws(CertificateException::class)
+                override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) = Unit
 
-            @SuppressLint("TrustAllX509TrustManager")
-            @Throws(CertificateException::class)
-            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) = Unit
-        })
+                @SuppressLint("TrustAllX509TrustManager")
+                @Throws(CertificateException::class)
+                override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) = Unit
+            })
 
-        ctx.init(null, trustAllCerts, SecureRandom())
+            ctx.init(null, trustAllCerts, SecureRandom())
 
-        builder.sslSocketFactory(ctx.socketFactory)
+            builder.sslSocketFactory(ctx.socketFactory)
+        }
 
         builder.connectTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
                 .addInterceptor(CustomInterceptor())
@@ -72,7 +75,7 @@ object CloudService {
                 .build()
 
         photoService = retrofit.create(PhotoService::class.java)
-        downloadService = retrofit.create(DownloadService::class.java)
+        ioService = retrofit.create(IOService::class.java)
     }
 
     suspend fun getPhotos(url: String,
@@ -123,11 +126,11 @@ object CloudService {
 
     suspend fun downloadPhoto(url: String): ResponseBody {
         return withTimeout(DOWNLOAD_TIMEOUT_MS) {
-            downloadService.downloadFileAsync(url).await()
+            ioService.downloadFileAsync(url).await()
         }
     }
 
     suspend fun reportDownload(url: String): ResponseBody {
-        return downloadService.reportDownloadAsync(url).await()
+        return ioService.reportDownloadAsync(url).await()
     }
 }

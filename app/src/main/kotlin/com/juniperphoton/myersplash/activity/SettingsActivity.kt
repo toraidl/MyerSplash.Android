@@ -7,7 +7,7 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.core.ImagePipelineFactory
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.RealmCache
+import com.juniperphoton.myersplash.db.RealmCache
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import com.juniperphoton.myersplash.utils.Toaster

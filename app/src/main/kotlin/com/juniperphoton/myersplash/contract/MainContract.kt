@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash.data
+package com.juniperphoton.myersplash.contract
 
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashCategory

@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash
+package com.juniperphoton.myersplash.db
 
 import android.content.Context
 import io.realm.DynamicRealm

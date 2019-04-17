@@ -2,7 +2,7 @@ package com.juniperphoton.myersplash.model
 
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.cloudservice.Request
+import com.juniperphoton.myersplash.api.Request
 import java.text.SimpleDateFormat
 import java.util.*
 

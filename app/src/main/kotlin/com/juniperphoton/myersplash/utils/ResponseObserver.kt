@@ -2,7 +2,7 @@ package com.juniperphoton.myersplash.utils
 
 import androidx.annotation.CallSuper
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.cloudservice.APIException
+import com.juniperphoton.myersplash.api.APIException
 import io.reactivex.observers.DisposableObserver
 import java.net.SocketTimeoutException
 

@@ -7,8 +7,8 @@ import android.os.Binder
 import android.os.IBinder
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.RealmCache
-import com.juniperphoton.myersplash.cloudservice.CloudService
+import com.juniperphoton.myersplash.api.CloudService
+import com.juniperphoton.myersplash.db.RealmCache
 import com.juniperphoton.myersplash.extension.notifyFileUpdated
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.utils.*
@@ -22,7 +22,7 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
     override fun onBind(intent: Intent?): IBinder = binder
 
     companion object {
-        private const val TAG = "DownloadService"
+        private const val TAG = "IOService"
     }
 
     private var binder: LocalBinder = LocalBinder()

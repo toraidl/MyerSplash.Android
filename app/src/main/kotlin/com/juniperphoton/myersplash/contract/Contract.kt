@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash.data
+package com.juniperphoton.myersplash.contract
 
 interface Contract {
     interface BasePresenter {

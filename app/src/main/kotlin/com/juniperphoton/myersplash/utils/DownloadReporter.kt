@@ -1,6 +1,6 @@
 package com.juniperphoton.myersplash.utils
 
-import com.juniperphoton.myersplash.cloudservice.CloudService
+import com.juniperphoton.myersplash.api.CloudService
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 

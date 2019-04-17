@@ -1,6 +1,6 @@
 package com.juniperphoton.myersplash.model
 
-import com.juniperphoton.myersplash.cloudservice.Request
+import com.juniperphoton.myersplash.api.Request
 
 @Suppress("unused")
 class UnsplashCategory {

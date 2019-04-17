@@ -33,8 +33,8 @@ import com.facebook.drawee.view.SimpleDraweeView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.activity.EditActivity
+import com.juniperphoton.myersplash.db.RealmCache
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.extension.isLightColor
 import com.juniperphoton.myersplash.fragment.Action
@@ -42,7 +42,10 @@ import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
 import io.realm.RealmChangeListener
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode

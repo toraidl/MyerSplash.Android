@@ -1,7 +1,5 @@
 package com.juniperphoton.myersplash.api
 
-import com.juniperphoton.myersplash.cloudservice.CloudService
-import com.juniperphoton.myersplash.cloudservice.Request
 import com.juniperphoton.myersplash.model.UnsplashImageFactory
 import org.junit.Test
 import java.util.*

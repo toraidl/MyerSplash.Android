@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
+import com.juniperphoton.myersplash.db.RealmCache
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.Pasteur

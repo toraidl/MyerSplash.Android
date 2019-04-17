@@ -6,7 +6,7 @@
         android:shortcutShortLabel="@string/searchLowercase">
         <intent
             android:action="action.search"
-            android:targetClass="com.juniperphoton.myersplash.activity.MainActivity"
+            android:targetClass="com.juniperphoton.myersplash.MainActivity"
             android:targetPackage="com.juniperphoton.myersplash"/>
     </shortcut>
 </shortcuts>
