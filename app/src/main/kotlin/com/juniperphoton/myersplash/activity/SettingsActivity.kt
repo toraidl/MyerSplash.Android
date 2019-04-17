@@ -76,13 +76,13 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
 
     private fun clearUp() {
         Fresco.getImagePipeline().clearCaches()
-        Toaster.sendShortToast("All clear :D")
+        Toaster.sendShortToast(R.string.all_clear)
         clearCacheSettings.content = "0 MB"
         EventBus.getDefault().post(RefreshUIEvent())
     }
 
     private fun clearDatabase() {
-        Toaster.sendShortToast("All clear :D")
+        Toaster.sendShortToast(R.string.all_clear)
         RealmCache.getInstance().executeTransaction(Realm::deleteAll)
     }
 
