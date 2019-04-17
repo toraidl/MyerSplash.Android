@@ -28,7 +28,7 @@ import com.juniperphoton.myersplash.data.DaggerRepoComponent
 import com.juniperphoton.myersplash.data.MainListPresenter
 import com.juniperphoton.myersplash.data.RepoModule
 import com.juniperphoton.myersplash.fragment.MainListFragment
-import com.juniperphoton.myersplash.utils.ToastService
+import com.juniperphoton.myersplash.utils.Toaster
 
 @Suppress("unused")
 class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
@@ -216,7 +216,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     fun onClickSearch() {
         hideKeyboard()
         if (editText.text.toString().isEmpty()) {
-            ToastService.sendShortToast("Input the keyword to search.")
+            Toaster.sendShortToast(R.string.search_empty_hint)
             return
         }
         resultRoot.visibility = View.VISIBLE

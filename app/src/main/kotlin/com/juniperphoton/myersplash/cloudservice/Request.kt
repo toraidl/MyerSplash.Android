@@ -1,7 +1,8 @@
 package com.juniperphoton.myersplash.cloudservice
 
 object Request {
-    const val MY_DOMAIN = "juniperphoton.dev"
+    private const val MY_DOMAIN = "juniperphoton.dev"
+
     const val BASE_URL = "https://api.unsplash.com/"
     const val PHOTO_URL = "https://api.unsplash.com/photos?"
     const val FEATURED_PHOTO_URL = "https://api.unsplash.com/collections/featured?"

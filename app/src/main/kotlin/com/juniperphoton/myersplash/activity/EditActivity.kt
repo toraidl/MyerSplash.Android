@@ -169,7 +169,7 @@ class EditActivity : BaseActivity() {
                         flipperLayout.next()
                         super.onError(e)
                         if (e is OutOfMemoryError) {
-                            ToastService.sendShortToast(resources.getString(R.string.oom_toast))
+                            Toaster.sendShortToast(resources.getString(R.string.oom_toast))
                         }
                     }
 

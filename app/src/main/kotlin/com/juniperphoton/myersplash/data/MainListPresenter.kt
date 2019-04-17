@@ -3,12 +3,8 @@ package com.juniperphoton.myersplash.data
 import com.juniperphoton.myersplash.cloudservice.CloudService
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashCategory
-import com.juniperphoton.myersplash.model.UnsplashImage
-import com.juniperphoton.myersplash.model.UnsplashImageFactory
 import com.juniperphoton.myersplash.utils.Pasteur
-import com.juniperphoton.myersplash.utils.ResponseObserver
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableObserver
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 open class MainListPresenter : MainContract.MainPresenter {
@@ -19,17 +15,19 @@ open class MainListPresenter : MainContract.MainPresenter {
 
     private var nextPage: Int = DEFAULT_PAGING
     private var refreshing: Boolean = false
-    private var disposableList = CompositeDisposable()
 
     @Inject
     override lateinit var category: UnsplashCategory
     @Inject
     lateinit var mainView: MainContract.MainView
 
+    private val job = Job()
+    private val scope = CoroutineScope(Dispatchers.Main) + job
+
     override var query: String? = null
 
     override fun stop() {
-        disposableList.dispose()
+        job.cancel()
     }
 
     override fun start() = Unit
@@ -63,51 +61,38 @@ open class MainListPresenter : MainContract.MainPresenter {
         loadPhotoList(DEFAULT_PAGING)
     }
 
-    private fun setSignalOfEnd() {
+    private fun refreshFinished() {
         refreshing = false
         mainView.setRefreshing(false)
     }
 
-    private fun getObserver(): DisposableObserver<MutableList<UnsplashImage>> {
-        return object : ResponseObserver<MutableList<UnsplashImage>>() {
-            override fun onFinish() {
-                setSignalOfEnd()
-            }
-
-            override fun onError(e: Throwable) {
-                super.onError(e)
-                mainView.updateNoItemVisibility()
-                mainView.setRefreshing(false)
-            }
-
-            override fun onNext(data: MutableList<UnsplashImage>) {
-                if (category.id == UnsplashCategory.NEW_CATEGORY_ID && nextPage == DEFAULT_PAGING) {
-                    data.add(0, UnsplashImageFactory.createTodayImage())
-                }
-                mainView.refreshList(data, nextPage)
-            }
-        }
-    }
-
-    private fun loadPhotoList(next: Int) {
+    // We ignore the returned Job because we have plus the scope with the [job] member,
+    // so when [job] is cancelled, the job returned here is cancelled too.
+    private fun loadPhotoList(next: Int) = scope.launch {
         nextPage = next
         refreshing = true
 
         mainView.setRefreshing(next == DEFAULT_PAGING)
 
-        category.let {
-            val o = when (it.id) {
+        val category = category
+        try {
+            val list = when (category.id) {
                 UnsplashCategory.NEW_CATEGORY_ID ->
-                    CloudService.getPhotos(it.requestUrl!!, next)
+                    CloudService.getPhotos(category.requestUrl!!, next)
                 UnsplashCategory.FEATURED_CATEGORY_ID ->
-                    CloudService.getFeaturedPhotos(it.requestUrl!!, next)
+                    CloudService.getFeaturedPhotos(category.requestUrl!!, next)
                 UnsplashCategory.HIGHLIGHTS_CATEGORY_ID ->
                     CloudService.getHighlightsPhotos(next)
                 UnsplashCategory.SEARCH_ID ->
-                    CloudService.searchPhotos(it.requestUrl!!, next, query!!)
+                    CloudService.searchPhotos(category.requestUrl!!, next, query!!)
                 else -> throw IllegalArgumentException("unknown category id")
             }
-            disposableList.add(o.subscribeWith(getObserver()))
+            mainView.refreshList(list, nextPage)
+            refreshFinished()
+        } catch (e: Exception) {
+            mainView.updateNoItemVisibility()
+            mainView.setRefreshing(false)
+            throw e
         }
     }
 }

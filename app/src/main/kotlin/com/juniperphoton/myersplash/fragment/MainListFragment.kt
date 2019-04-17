@@ -89,11 +89,11 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     }
 
     override fun showToast(text: String) {
-        ToastService.sendShortToast(text)
+        Toaster.sendShortToast(text)
     }
 
     override fun showToast(textId: Int) {
-        ToastService.sendShortToast(textId)
+        Toaster.sendShortToast(textId)
     }
 
     override fun search(query: String) {

@@ -6,7 +6,7 @@ import android.os.Looper
 import android.widget.Toast
 import com.juniperphoton.myersplash.App
 
-object ToastService {
+object Toaster {
     private var handler = Handler(Looper.getMainLooper())
 
     fun sendShortToast(str: String?) {

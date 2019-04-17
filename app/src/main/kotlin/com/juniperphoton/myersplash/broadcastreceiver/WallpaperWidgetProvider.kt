@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.util.Log
 import android.widget.RemoteViews
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
@@ -16,7 +15,7 @@ import com.juniperphoton.myersplash.extension.getLengthInKB
 import com.juniperphoton.myersplash.model.UnsplashImageFactory
 import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.*
-import okhttp3.ResponseBody
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class WallpaperWidgetProvider : AppWidgetProvider() {
@@ -24,10 +23,12 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
         private const val TAG = "WallpaperWidgetProvider"
     }
 
-    override fun onUpdate(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
+    override fun onUpdate(context: Context?,
+                          appWidgetManager: AppWidgetManager?,
+                          appWidgetIds: IntArray?) = runBlocking {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         if (appWidgetIds == null || context == null) {
-            return
+            return@runBlocking
         }
         Pasteur.debug(TAG, "onUpdate")
 
@@ -36,30 +37,20 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
             AppWidgetUtil.doWithWidgetId {
                 updateWidget(App.instance, it, file.absolutePath)
             }
-            return
+            return@runBlocking
         }
 
-        val observer = object : ResponseObserver<ResponseBody>() {
-            var outputFile: File? = null
-
-            override fun onUnknownError(e: Throwable) {
-                e.printStackTrace()
-            }
-
-            override fun onComplete() {
-                outputFile?.let {
-                    AppWidgetUtil.doWithWidgetId { id ->
-                        updateWidget(App.instance, id, outputFile!!.absolutePath)
-                    }
+        try {
+            val data = CloudService.downloadPhoto(UnsplashImageFactory.TODAY_THUMB_URL)
+            val outputFile = DownloadUtil.writeToFile(data, file.path, null)
+            outputFile?.let {
+                AppWidgetUtil.doWithWidgetId { id ->
+                    updateWidget(App.instance, id, it.absolutePath)
                 }
             }
-
-            override fun onNext(data: ResponseBody) {
-                outputFile = DownloadUtil.writeToFile(data, file.path, null)
-            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-
-        CloudService.downloadPhoto(UnsplashImageFactory.TODAY_THUMB_URL).subscribeWith(observer)
     }
 
     private fun updateWidget(context: Context, widgetId: Int, filePath: String) {
@@ -69,13 +60,15 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
         val bm = BitmapFactory.decodeFile(filePath)
         remoteViews.setImageViewBitmap(R.id.widget_center_image, bm)
 
-        Log.d(TAG, "pending to download: $UnsplashImageFactory.DOWNLOAD_URL")
+        Pasteur.debug(TAG, "pending to download: $UnsplashImageFactory.DOWNLOAD_URL")
 
-        val intent = Intent(context, DownloadService::class.java)
-        intent.putExtra(Params.URL_KEY, UnsplashImageFactory.TODAY_DOWNLOAD_URL)
-        intent.putExtra(Params.NAME_KEY, UnsplashImageFactory.TODAY_DATE_STRING)
-        intent.putExtra(Params.PREVIEW_URI, filePath)
-        intent.putExtra(Params.IS_UNSPLASH_WALLPAPER, false)
+        val intent = Intent(context, DownloadService::class.java).apply {
+            putExtra(Params.URL_KEY, UnsplashImageFactory.TODAY_DOWNLOAD_URL)
+            putExtra(Params.NAME_KEY, UnsplashImageFactory.TODAY_DATE_STRING)
+            putExtra(Params.PREVIEW_URI, filePath)
+            putExtra(Params.IS_UNSPLASH_WALLPAPER, false)
+        }
+
         val pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         remoteViews.setOnClickPendingIntent(R.id.widget_download_btn, pendingIntent)
 

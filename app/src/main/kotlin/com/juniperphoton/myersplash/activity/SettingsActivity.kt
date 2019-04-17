@@ -10,7 +10,7 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
-import com.juniperphoton.myersplash.utils.ToastService
+import com.juniperphoton.myersplash.utils.Toaster
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_settings.*
 import org.greenrobot.eventbus.EventBus
@@ -76,13 +76,13 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
 
     private fun clearUp() {
         Fresco.getImagePipeline().clearCaches()
-        ToastService.sendShortToast("All clear :D")
+        Toaster.sendShortToast(R.string.all_clear)
         clearCacheSettings.content = "0 MB"
         EventBus.getDefault().post(RefreshUIEvent())
     }
 
     private fun clearDatabase() {
-        ToastService.sendShortToast("All clear :D")
+        Toaster.sendShortToast(R.string.all_clear)
         RealmCache.getInstance().executeTransaction(Realm::deleteAll)
     }
 
