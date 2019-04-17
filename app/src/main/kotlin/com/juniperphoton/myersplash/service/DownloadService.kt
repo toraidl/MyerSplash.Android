@@ -12,14 +12,11 @@ import com.juniperphoton.myersplash.cloudservice.CloudService
 import com.juniperphoton.myersplash.extension.notifyFileUpdated
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.utils.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
 
-class DownloadService : Service() {
+class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.IO) {
     private class LocalBinder : Binder()
 
     override fun onBind(intent: Intent?): IBinder = binder
@@ -33,14 +30,17 @@ class DownloadService : Service() {
     // A map storing download url to downloading disposable object
     private val downloadUrlToJobMap = HashMap<String, Job>()
 
-    private val scope = CoroutineScope(Dispatchers.Main)
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Pasteur.info(TAG, "on start command")
         intent?.let {
             onHandleIntent(it)
         }
         return START_NOT_STICKY
+    }
+
+    override fun onDestroy() {
+        cancel()
+        super.onDestroy()
     }
 
     private fun onHandleIntent(intent: Intent) {
@@ -73,7 +73,7 @@ class DownloadService : Service() {
 
     private fun downloadImage(url: String, fileName: String,
                               previewUri: Uri?, isUnsplash: Boolean) {
-        val job = scope.launch {
+        val job = launch {
             val file = DownloadUtil.getFileToSave(fileName)
             try {
                 val responseBody = CloudService.downloadPhoto(url)
