@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash.cloudservice
+package com.juniperphoton.myersplash.api
 
 import android.net.Uri
 import com.juniperphoton.myersplash.BuildConfig

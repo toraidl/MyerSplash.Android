@@ -20,16 +20,14 @@ import com.juniperphoton.myersplash.extension.updateVisibility
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import com.juniperphoton.myersplash.utils.extractThemeColor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 typealias OnClickPhotoListener = ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)
 typealias OnClickQuickDownloadListener = ((image: UnsplashImage) -> Unit)
 typealias OnBindListener = ((View, Int) -> Unit)
 
-class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs), View.OnClickListener {
+class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs
+), View.OnClickListener, CoroutineScope by MainScope() {
     @BindView(R.id.row_photo_iv)
     lateinit var simpleDraweeView: SimpleDraweeView
 
@@ -51,9 +49,6 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
 
     private var unsplashImage: UnsplashImage? = null
 
-    private var job: Job? = null
-    private val scope = CoroutineScope(Dispatchers.Main)
-
     override fun onFinishInflate() {
         super.onFinishInflate()
         ButterKnife.bind(this, this)
@@ -70,7 +65,7 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
     fun bind(image: UnsplashImage?, pos: Int) {
         if (image == null) return
 
-        job?.cancel()
+        cancel()
 
         unsplashImage = image
 
@@ -106,7 +101,7 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
     }
 
     private fun tryUpdateThemeColor() {
-        job = scope.launch {
+        launch {
             try {
                 val color = unsplashImage?.extractThemeColor() ?: Int.MIN_VALUE
                 if (color != Int.MIN_VALUE) {

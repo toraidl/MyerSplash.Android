@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash.activity
+package com.juniperphoton.myersplash
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -14,7 +14,8 @@ import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
-import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.activity.BaseActivity
+import com.juniperphoton.myersplash.activity.ManageDownloadActivity
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.extension.pow

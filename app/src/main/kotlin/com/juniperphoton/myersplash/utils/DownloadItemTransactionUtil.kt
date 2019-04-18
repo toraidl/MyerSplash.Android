@@ -1,6 +1,6 @@
 package com.juniperphoton.myersplash.utils
 
-import com.juniperphoton.myersplash.RealmCache
+import com.juniperphoton.myersplash.db.RealmCache
 import com.juniperphoton.myersplash.model.DownloadItem
 
 /**

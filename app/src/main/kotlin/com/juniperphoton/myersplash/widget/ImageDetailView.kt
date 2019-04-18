@@ -33,8 +33,8 @@ import com.facebook.drawee.view.SimpleDraweeView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.activity.EditActivity
+import com.juniperphoton.myersplash.db.RealmCache
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.extension.isLightColor
 import com.juniperphoton.myersplash.fragment.Action
@@ -42,14 +42,18 @@ import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
 import io.realm.RealmChangeListener
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 
 @Suppress("unused")
-class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
+class ImageDetailView(context: Context, attrs: AttributeSet
+) : FrameLayout(context, attrs), CoroutineScope by MainScope() {
     companion object {
         private const val TAG = "ImageDetailView"
         private const val RESULT_CODE = 10000
@@ -165,9 +169,6 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     private var animating: Boolean = false
     private var copied: Boolean = false
-
-    private val job = Job()
-    private val scope = CoroutineScope(Dispatchers.Main) + job
 
     init {
         LayoutInflater.from(context).inflate(R.layout.detail_content, this, true)
@@ -442,7 +443,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         toggleShareBtnAnimation(false, oneshot)
     }
 
-    private fun extractThemeColor(image: UnsplashImage) = scope.launch {
+    private fun extractThemeColor(image: UnsplashImage) = launch {
         val color = image.extractThemeColor()
         if (color != Int.MIN_VALUE) {
             updateThemeColor(color)
@@ -657,7 +658,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
      * Try to hide this view. If this view is fully displayed to user.
      */
     fun tryHide(): Boolean {
-        job.cancel()
+        cancel()
         if (associatedDownloadItem?.isValid == true) {
             associatedDownloadItem!!.removeChangeListener(realmChangeListener)
             associatedDownloadItem = null

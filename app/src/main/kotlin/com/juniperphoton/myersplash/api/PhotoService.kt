@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash.cloudservice
+package com.juniperphoton.myersplash.api
 
 import com.juniperphoton.myersplash.model.SearchResult
 import com.juniperphoton.myersplash.model.UnsplashFeaturedImage

@@ -6,7 +6,7 @@ import android.content.Intent
 import androidx.appcompat.app.AlertDialog
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.RealmCache
+import com.juniperphoton.myersplash.db.RealmCache
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.extension.usingWifi
 import com.juniperphoton.myersplash.model.DownloadItem

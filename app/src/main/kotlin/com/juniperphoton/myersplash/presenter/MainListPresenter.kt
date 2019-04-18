@@ -1,13 +1,17 @@
-package com.juniperphoton.myersplash.data
+package com.juniperphoton.myersplash.presenter
 
-import com.juniperphoton.myersplash.cloudservice.CloudService
+import com.juniperphoton.myersplash.api.CloudService
+import com.juniperphoton.myersplash.contract.MainContract
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.utils.Pasteur
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-open class MainListPresenter : MainContract.MainPresenter {
+open class MainListPresenter : MainContract.MainPresenter, CoroutineScope by MainScope() {
     companion object {
         const val DEFAULT_PAGING = 1
         private const val TAG = "MainListPresenter"
@@ -21,13 +25,10 @@ open class MainListPresenter : MainContract.MainPresenter {
     @Inject
     lateinit var mainView: MainContract.MainView
 
-    private val job = Job()
-    private val scope = CoroutineScope(Dispatchers.Main) + job
-
     override var query: String? = null
 
     override fun stop() {
-        job.cancel()
+        cancel()
     }
 
     override fun start() = Unit
@@ -68,7 +69,7 @@ open class MainListPresenter : MainContract.MainPresenter {
 
     // We ignore the returned Job because we have plus the scope with the [job] member,
     // so when [job] is cancelled, the job returned here is cancelled too.
-    private fun loadPhotoList(next: Int) = scope.launch {
+    private fun loadPhotoList(next: Int) = launch {
         nextPage = next
         refreshing = true
 

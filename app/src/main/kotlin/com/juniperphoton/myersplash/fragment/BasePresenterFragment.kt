@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
-import com.juniperphoton.myersplash.data.Contract
+import com.juniperphoton.myersplash.contract.Contract
 import com.juniperphoton.myersplash.utils.Pasteur
 
 abstract class BasePresenterFragment<T : Contract.BasePresenter?> : Fragment(), Contract.BaseView<T?> {

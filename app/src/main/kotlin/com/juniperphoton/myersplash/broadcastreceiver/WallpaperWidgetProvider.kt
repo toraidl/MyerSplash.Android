@@ -8,9 +8,9 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.widget.RemoteViews
 import com.juniperphoton.myersplash.App
+import com.juniperphoton.myersplash.MainActivity
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.activity.MainActivity
-import com.juniperphoton.myersplash.cloudservice.CloudService
+import com.juniperphoton.myersplash.api.CloudService
 import com.juniperphoton.myersplash.extension.getLengthInKB
 import com.juniperphoton.myersplash.model.UnsplashImageFactory
 import com.juniperphoton.myersplash.service.DownloadService

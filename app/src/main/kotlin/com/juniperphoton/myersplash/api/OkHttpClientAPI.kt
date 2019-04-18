@@ -1,8 +1,7 @@
-package com.juniperphoton.myersplash
+package com.juniperphoton.myersplash.api
 
 import com.juniperphoton.myersplash.utils.AnalysisHelper
 import okhttp3.OkHttpClient
-import java.lang.Exception
 
 object OkHttpClientAPI {
     fun createClient(): OkHttpClient {

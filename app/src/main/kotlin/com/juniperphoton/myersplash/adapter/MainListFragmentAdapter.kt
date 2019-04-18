@@ -4,12 +4,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.juniperphoton.myersplash.App
-import com.juniperphoton.myersplash.data.DaggerRepoComponent
-import com.juniperphoton.myersplash.data.MainListPresenter
-import com.juniperphoton.myersplash.data.RepoModule
+import com.juniperphoton.myersplash.contract.DaggerRepoComponent
+import com.juniperphoton.myersplash.contract.RepoModule
 import com.juniperphoton.myersplash.fragment.MainListFragment
 import com.juniperphoton.myersplash.fragment.OnClickPhotoItemListener
 import com.juniperphoton.myersplash.model.UnsplashCategory
+import com.juniperphoton.myersplash.presenter.MainListPresenter
 
 class MainListFragmentAdapter(private var callback: OnClickPhotoItemListener?,
                               fm: androidx.fragment.app.FragmentManager

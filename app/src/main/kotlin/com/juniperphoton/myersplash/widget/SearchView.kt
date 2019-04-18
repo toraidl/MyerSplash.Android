@@ -24,10 +24,10 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.appbar.AppBarLayout
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.CategoryAdapter
-import com.juniperphoton.myersplash.data.DaggerRepoComponent
-import com.juniperphoton.myersplash.data.MainListPresenter
-import com.juniperphoton.myersplash.data.RepoModule
+import com.juniperphoton.myersplash.contract.DaggerRepoComponent
+import com.juniperphoton.myersplash.contract.RepoModule
 import com.juniperphoton.myersplash.fragment.MainListFragment
+import com.juniperphoton.myersplash.presenter.MainListPresenter
 import com.juniperphoton.myersplash.utils.Toaster
 
 @Suppress("unused")

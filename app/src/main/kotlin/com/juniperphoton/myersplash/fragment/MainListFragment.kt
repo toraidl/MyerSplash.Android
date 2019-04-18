@@ -13,7 +13,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.PhotoAdapter
-import com.juniperphoton.myersplash.data.MainContract
+import com.juniperphoton.myersplash.contract.MainContract
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashImage

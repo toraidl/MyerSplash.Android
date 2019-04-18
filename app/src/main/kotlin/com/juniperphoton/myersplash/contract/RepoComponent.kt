@@ -1,5 +1,6 @@
-package com.juniperphoton.myersplash.data
+package com.juniperphoton.myersplash.contract
 
+import com.juniperphoton.myersplash.presenter.MainListPresenter
 import dagger.Component
 
 @Component(modules = [(RepoModule::class)])

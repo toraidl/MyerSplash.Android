@@ -3,9 +3,8 @@ package com.juniperphoton.myersplash
 import android.app.Application
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory
-import com.facebook.imagepipeline.core.ImagePipelineConfig
-import com.facebook.imagepipeline.listener.RequestListener
-import com.facebook.imagepipeline.request.ImageRequest
+import com.juniperphoton.myersplash.api.OkHttpClientAPI
+import com.juniperphoton.myersplash.db.RealmCache
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics

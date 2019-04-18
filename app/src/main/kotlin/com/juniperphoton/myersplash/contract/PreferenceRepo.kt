@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash.data
+package com.juniperphoton.myersplash.contract
 
 import android.content.Context
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
