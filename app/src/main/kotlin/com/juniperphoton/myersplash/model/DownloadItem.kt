@@ -1,11 +1,13 @@
 package com.juniperphoton.myersplash.model
 
 import androidx.annotation.IntDef
-import io.realm.RealmObject
-import io.realm.annotations.Ignore
-import io.realm.annotations.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 
-open class DownloadItem() : RealmObject() {
+@Entity(tableName = "download_item")
+open class DownloadItem() {
     companion object {
         const val DOWNLOAD_STATUS_INVALID = -1
         const val DOWNLOAD_STATUS_DOWNLOADING = 0
@@ -13,25 +15,24 @@ open class DownloadItem() : RealmObject() {
         const val DOWNLOAD_STATUS_OK = 2
 
         const val DISPLAY_STATUS_NOT_SPECIFIED = -1
-
-        const val ID_KEY = "id"
-        const val DOWNLOAD_URL = "downloadUrl"
-        const val STATUS_KEY = "status"
-        const val POSITION_KEY = "position"
     }
 
     @IntDef(DOWNLOAD_STATUS_DOWNLOADING, DOWNLOAD_STATUS_OK, DOWNLOAD_STATUS_FAILED)
     @Retention(AnnotationRetention.SOURCE)
     annotation class DownloadStatus
 
+    @ColumnInfo(name = "thumb_url")
     var thumbUrl: String? = null
 
+    @ColumnInfo(name = "download_url")
     var downloadUrl: String? = null
 
     @PrimaryKey
-    open var id: String? = null
+    @ColumnInfo(name = "id")
+    lateinit var id: String
 
-    open var progress: Int = 0
+    @ColumnInfo(name = "progress")
+    var progress: Int = 0
         set(value) {
             field = value
             if (this.progress >= 100) {
@@ -39,11 +40,21 @@ open class DownloadItem() : RealmObject() {
             }
         }
 
-    open var color: Int = 0
-    open var status: Int = 0
-    open var filePath: String? = null
-    open var fileName: String? = null
-    open var position: Int = 0
+    @ColumnInfo(name = "create_time")
+    var createTime: Long = System.currentTimeMillis()
+
+    @ColumnInfo(name = "color")
+    var color: Int = 0
+
+    @DownloadStatus
+    @ColumnInfo(name = "status")
+    var status: Int = 0
+
+    @ColumnInfo(name = "file_path")
+    var filePath: String? = null
+
+    @ColumnInfo(name = "file_name")
+    var fileName: String? = null
 
     @Ignore
     open var lastStatus = DISPLAY_STATUS_NOT_SPECIFIED
@@ -58,5 +69,9 @@ open class DownloadItem() : RealmObject() {
 
     open fun syncStatus() {
         lastStatus = status
+    }
+
+    override fun toString(): String {
+        return "DownloadItem(thumbUrl=$thumbUrl, id='$id', progress=$progress, status=$status, filePath=$filePath)"
     }
 }

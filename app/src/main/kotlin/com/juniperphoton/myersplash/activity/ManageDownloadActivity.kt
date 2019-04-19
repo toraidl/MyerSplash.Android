@@ -1,51 +1,50 @@
 package com.juniperphoton.myersplash.activity
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
-import com.juniperphoton.myersplash.db.RealmCache
 import com.juniperphoton.myersplash.model.DownloadItem
+import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.AnalysisHelper
-import com.juniperphoton.myersplash.utils.Pasteur
-import io.realm.RealmChangeListener
-import io.realm.Sort
+import com.juniperphoton.myersplash.utils.Params
+import com.juniperphoton.myersplash.viewmodel.DownloadListViewModel
 import kotlinx.android.synthetic.main.activity_manage_download.*
-import java.util.*
+import kotlinx.coroutines.runBlocking
 
 @Suppress("unused")
-class ManageDownloadActivity : BaseActivity() {
+class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.Callback {
     companion object {
         private const val TAG = "ManageDownloadActivity"
+        private const val SPAN = 2
         const val ACTION = "action.downloads"
     }
 
-    private var adapter: DownloadsListAdapter? = null
+    private lateinit var adapter: DownloadsListAdapter
+    private lateinit var viewModel: DownloadListViewModel
 
-    private var itemStatusChangedListener = RealmChangeListener<DownloadItem> { item ->
-        Pasteur.d(TAG, "onChange")
-        if (item.isValid) {
-            adapter?.updateItem(item)
-        }
-    }
+    private val deleteOptionsMap = mapOf(
+            0 to DownloadItem.DOWNLOAD_STATUS_DOWNLOADING,
+            1 to DownloadItem.DOWNLOAD_STATUS_OK,
+            2 to DownloadItem.DOWNLOAD_STATUS_FAILED
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manage_download)
 
+        viewModel = ViewModelProviders.of(this).get(DownloadListViewModel::class.java)
+
         initViews()
         AnalysisHelper.logEnterDownloads()
         moreFab.setOnClickListener(this)
-    }
-
-    override fun onDestroy() {
-        RealmCache.getInstance().removeAllChangeListeners()
-        RealmCache.getInstance().close()
-        super.onDestroy()
     }
 
     override fun onClickView(v: View) {
@@ -59,64 +58,28 @@ class ManageDownloadActivity : BaseActivity() {
     private fun onClickMore() {
         AlertDialog.Builder(this).setTitle(R.string.clear_options_title)
                 .setItems(R.array.delete_options) { _, i ->
-                    val deleteStatus = when (i) {
-                        0 -> DownloadItem.DOWNLOAD_STATUS_DOWNLOADING
-                        1 -> DownloadItem.DOWNLOAD_STATUS_OK
-                        2 -> DownloadItem.DOWNLOAD_STATUS_FAILED
-                        else -> DownloadItem.DOWNLOAD_STATUS_INVALID
+                    runBlocking {
+                        viewModel.deleteByStatus(
+                                deleteOptionsMap[i] ?: DownloadItem.DOWNLOAD_STATUS_INVALID)
                     }
-                    deleteFromRealm(deleteStatus)
                 }
                 .setPositiveButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
                 .create()
                 .show()
     }
 
-    private fun deleteFromRealm(status: Int) {
-        RealmCache.getInstance().executeTransaction {
-            it.where(DownloadItem::class.java)
-                    .equalTo(DownloadItem.STATUS_KEY, status)
-                    .findAll()
-                    .forEach { item ->
-                        item.removeAllChangeListeners()
-                        item.deleteFromRealm()
-                    }
-            initViews()
-        }
-    }
-
     private fun updateNoItemVisibility() {
-        if ((adapter?.data?.size ?: 0) > 0) {
-            noItemView.visibility = View.GONE
-        } else {
-            noItemView.visibility = View.VISIBLE
-        }
+        noItemView.visibility = if (adapter.data.isEmpty()) View.GONE else View.VISIBLE
     }
 
-    private fun initViews() {
-        val downloadItems = ArrayList<DownloadItem>()
+    private fun initViews() = runBlocking {
+        adapter = DownloadsListAdapter(this@ManageDownloadActivity)
+        adapter.callback = this@ManageDownloadActivity
 
-        RealmCache.getInstance()
-                .where(DownloadItem::class.java)
-                .findAllSorted(DownloadItem.POSITION_KEY, Sort.DESCENDING)
-                .forEach {
-                    downloadItems.add(it)
-                }
-
-        downloadItems.forEach {
-            it.addChangeListener(itemStatusChangedListener)
-        }
-
-        if (adapter == null) {
-            adapter = DownloadsListAdapter(this)
-        }
-
-        adapter!!.refreshItems(downloadItems)
-
-        val layoutManager = GridLayoutManager(this, 2).apply {
+        val layoutManager = GridLayoutManager(this@ManageDownloadActivity, SPAN).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return if (position == adapter!!.itemCount - 1) 2 else 1
+                    return if (position == adapter.itemCount - 1) 2 else 1
                 }
             }
         }
@@ -126,8 +89,52 @@ class ManageDownloadActivity : BaseActivity() {
 
         // We don't change the item animator so we cast it directly
         (downloadsList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-
         updateNoItemVisibility()
+
+        viewModel.downloadItems.observe(this@ManageDownloadActivity, Observer { items ->
+            adapter.refresh(items)
+        })
+    }
+
+    override fun onClickRetry(item: DownloadItem) {
+        runBlocking {
+            viewModel.resetItemStatus(item.id)
+            adapter.updateItem(item)
+
+            val intent = Intent(this@ManageDownloadActivity, DownloadService::class.java).apply {
+                putExtra(Params.NAME_KEY, item.fileName)
+                putExtra(Params.URL_KEY, item.downloadUrl)
+            }
+            startService(intent)
+        }
+    }
+
+    override fun onClickDelete(item: DownloadItem) {
+        runBlocking {
+            viewModel.deleteItem(item.id)
+            adapter.updateItem(item)
+
+            val intent = Intent(this@ManageDownloadActivity, DownloadService::class.java).apply {
+                putExtra(Params.CANCELED_KEY, true)
+                putExtra(Params.URL_KEY, item.downloadUrl)
+            }
+
+            startService(intent)
+        }
+    }
+
+    override fun onClickCancel(item: DownloadItem) {
+        runBlocking {
+            viewModel.updateItemStatus(item.id, DownloadItem.DOWNLOAD_STATUS_FAILED)
+            adapter.updateItem(item)
+
+            val intent = Intent(this@ManageDownloadActivity, DownloadService::class.java).apply {
+                putExtra(Params.CANCELED_KEY, true)
+                putExtra(Params.URL_KEY, item.downloadUrl)
+            }
+
+            startService(intent)
+        }
     }
 
     override fun onApplySystemInsets(top: Int, bottom: Int) {

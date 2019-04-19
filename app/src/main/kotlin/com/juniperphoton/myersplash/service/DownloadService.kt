@@ -8,9 +8,8 @@ import android.os.IBinder
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.api.CloudService
-import com.juniperphoton.myersplash.db.RealmCache
+import com.juniperphoton.myersplash.db.AppDatabase
 import com.juniperphoton.myersplash.extension.notifyFileUpdated
-import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.utils.*
 import kotlinx.coroutines.*
 import java.io.File
@@ -30,6 +29,8 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
     // A map storing download url to downloading disposable object
     private val downloadUrlToJobMap = HashMap<String, Job>()
 
+    private val dao = AppDatabase.instance.userDao()
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Pasteur.info(TAG, "on start command")
         intent?.let {
@@ -39,12 +40,29 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
     }
 
     override fun onDestroy() {
+        Pasteur.w(TAG, "on destroy, cancel all, size: ${downloadUrlToJobMap.size}")
         cancel()
         super.onDestroy()
     }
 
+    private fun checkStatus() = runBlocking {
+        withContext(Dispatchers.IO) {
+            Pasteur.info(TAG, "checking status, thread: ${Thread.currentThread()}")
+            dao.markAllFailed()
+        }
+    }
+
     private fun onHandleIntent(intent: Intent) {
-        val canceled = intent.getBooleanExtra(Params.CANCELED_KEY, false)
+        if (intent.getBooleanExtra(Params.CHECK_STATUS, false)) {
+            checkStatus()
+            if (downloadUrlToJobMap.isEmpty()) {
+                Pasteur.w(TAG, "about to stop self")
+                stopSelf()
+            }
+            return
+        }
+
+        val cancelJob = intent.getBooleanExtra(Params.CANCELED_KEY, false)
         val downloadUrl = intent.getStringExtra(Params.URL_KEY)
         val fileName = intent.getStringExtra(Params.NAME_KEY)
         val previewUrl = intent.getStringExtra(Params.PREVIEW_URI)
@@ -57,11 +75,12 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
             Uri.parse(previewUrl)
         }
 
-        if (canceled) {
+        if (cancelJob) {
             Pasteur.d(TAG, "on handle intent cancelled")
             val job = downloadUrlToJobMap[downloadUrl]
             if (job != null) {
                 job.cancel()
+                Pasteur.info(TAG, "job cancelled")
                 NotificationUtil.cancelNotification(Uri.parse(downloadUrl))
                 Toaster.sendShortToast(getString(R.string.cancelled_download))
             }
@@ -79,13 +98,7 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
                 val responseBody = CloudService.downloadPhoto(url)
                 Pasteur.d(TAG, "outputFile download onNext, size=${responseBody.contentLength()}, thread: ${Thread.currentThread()}")
                 val success = DownloadUtil.writeToFile(responseBody, file!!.path) {
-                    RealmCache.getInstance().executeTransaction { realm ->
-                        val downloadItem = realm.where(DownloadItem::class.java)
-                                .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst()
-                        if (downloadItem != null) {
-                            downloadItem.progress = it
-                        }
-                    }
+                    dao.setProgress(url, it)
                 } != null
 
                 if (!success) {
@@ -97,7 +110,7 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
                 Pasteur.d(TAG, getString(R.string.completed))
             } catch (e: Exception) {
                 e.printStackTrace()
-                Pasteur.d(TAG, "on handle intent error ${e.message}, url $url, thread ${Thread.currentThread()}")
+                Pasteur.d(TAG, "on handle intent error $e, url $url, thread ${Thread.currentThread()}")
                 onError(url, fileName, null)
             }
         }
@@ -113,15 +126,7 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
         Pasteur.d(TAG, "renamed file:" + newFile.absolutePath)
         newFile.notifyFileUpdated(App.instance)
 
-        val realm = RealmCache.getInstance()
-        val downloadItem = realm.where(DownloadItem::class.java)
-                .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst()
-        if (downloadItem != null) {
-            realm.executeTransaction {
-                downloadItem.status = DownloadItem.DOWNLOAD_STATUS_OK
-                downloadItem.filePath = newFile.path
-            }
-        }
+        dao.setSuccess(url, newFile.path)
 
         NotificationUtil.showCompleteNotification(Uri.parse(url), previewUri,
                 if (isUnsplash) null else newFile.absolutePath)
@@ -130,12 +135,6 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
     private fun onError(url: String, fileName: String, previewUri: Uri?) {
         NotificationUtil.showErrorNotification(Uri.parse(url), fileName,
                 url, previewUri)
-        RealmCache.getInstance().executeTransaction { realm ->
-            val downloadItem = realm.where(DownloadItem::class.java)
-                    .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst()
-            if (downloadItem != null) {
-                downloadItem.status = DownloadItem.DOWNLOAD_STATUS_FAILED
-            }
-        }
+        dao.setFailed(url)
     }
 }

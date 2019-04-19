@@ -1,19 +1,19 @@
 package com.juniperphoton.myersplash.utils
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AlertDialog
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.db.RealmCache
+import com.juniperphoton.myersplash.db.AppDatabase
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.extension.usingWifi
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.service.DownloadService
-import io.realm.Sort
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import org.greenrobot.eventbus.EventBus
@@ -97,14 +97,10 @@ object DownloadUtil {
      * Start downloading the [image].
      * @param context used to check network status
      */
-    fun download(context: Activity, image: UnsplashImage) {
-        if (!PermissionUtil.check(context)) {
-            Toaster.sendShortToast(context.getString(R.string.no_permission))
-            return
-        }
+    fun download(context: Context, image: UnsplashImage) {
         if (!LocalSettingHelper.getBoolean(context,
                         context.getString(R.string.preference_key_download_via_metered_network), true)) {
-            doDownload(context, image)
+            downloadInternal(context, image)
             return
         }
         if (!context.usingWifi()) {
@@ -113,29 +109,16 @@ object DownloadUtil {
             builder.setMessage(R.string.wifi_attention_content)
             builder.setPositiveButton(R.string.download) { dialog, _ ->
                 dialog.dismiss()
-                doDownload(context, image)
+                downloadInternal(context, image)
             }
             builder.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
             builder.create().show()
         } else {
-            doDownload(context, image)
+            downloadInternal(context, image)
         }
     }
 
-    /**
-     * Get the realm object of [DownloadItem] given its [id].
-     */
-    fun getDownloadItemById(id: String?): DownloadItem? {
-        val realm = RealmCache.getInstance()
-        realm.beginTransaction()
-        val item = realm.where(DownloadItem::class.java)
-                .equalTo(DownloadItem.ID_KEY, id)
-                .findFirst()
-        realm.commitTransaction()
-        return item
-    }
-
-    private fun doDownload(context: Context, image: UnsplashImage) {
+    private fun downloadInternal(context: Context, image: UnsplashImage) {
         var previewFile: File? = null
         image.listUrl?.let {
             previewFile = FileUtil.getCachedFile(it)
@@ -144,23 +127,20 @@ object DownloadUtil {
         startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!, previewFile?.path)
         persistDownloadItem(context, image)
         EventBus.getDefault().post(DownloadStartedEvent(image.id))
+        Toaster.sendShortToast(context.getString(R.string.downloading_in_background))
     }
 
     private fun persistDownloadItem(context: Context, image: UnsplashImage) {
-        val downloadItems = RealmCache.getInstance().where(DownloadItem::class.java)
-                .findAllSorted(DownloadItem.POSITION_KEY, Sort.DESCENDING)
-        var position = 0
-        if (downloadItems.size > 0) {
-            position = downloadItems[0].position + 1
+        GlobalScope.launch(Dispatchers.IO) {
+            val dao = AppDatabase.instance.userDao()
+            val existed = dao.getById(image.id!!)
+            if (existed.value == null) {
+                val item = DownloadItem(image.id!!, image.listUrl!!, image.downloadUrl!!,
+                        image.fileNameForDownload)
+                item.color = image.themeColor
+                AppDatabase.instance.userDao().insertAll(item)
+            }
         }
-
-        Toaster.sendShortToast(context.getString(R.string.downloading_in_background))
-
-        val item = DownloadItem(image.id!!, image.listUrl!!, image.downloadUrl!!,
-                image.fileNameForDownload)
-        item.position = position
-        item.color = image.themeColor
-        RealmCache.getInstance().executeTransaction { realm -> realm.copyToRealmOrUpdate(item) }
     }
 
     private fun startDownloadService(context: Context, name: String, url: String, previewUrl: String? = null) {

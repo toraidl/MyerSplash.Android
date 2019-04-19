@@ -20,7 +20,9 @@ import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.model.UnsplashCategory
+import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.AnalysisHelper
+import com.juniperphoton.myersplash.utils.Params
 import com.juniperphoton.myersplash.utils.PermissionUtil
 import com.juniperphoton.myersplash.widget.PivotTitleBar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -60,6 +62,14 @@ class MainActivity : BaseActivity() {
 
         initShortcuts()
         initMainViews()
+        startServiceToCheck()
+    }
+
+    private fun startServiceToCheck() {
+        val intent = Intent(this, DownloadService::class.java).apply {
+            putExtra(Params.CHECK_STATUS, true)
+        }
+        startService(intent)
     }
 
     private fun initShortcuts() {
@@ -91,16 +101,7 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        imageDetailView.registerEventBus()
-        searchView.registerEventBus()
-
         PermissionUtil.checkAndRequest(this@MainActivity)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        imageDetailView.unregisterEventBus()
-        searchView.unregisterEventBus()
     }
 
     private fun toggleSearchView(show: Boolean, useAnimation: Boolean) {
