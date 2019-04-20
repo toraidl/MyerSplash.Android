@@ -25,8 +25,8 @@ android {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 390
-        versionName "3.1.1"
+        versionCode 392
+        versionName "3.1.2"
 
         def properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -51,13 +51,6 @@ android {
                     "APP_NAME": "MyerSplash"
             ]
             signingConfig signingConfigs.release
-
-            android.applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "myersplash_release_build.${defaultConfig.versionName}" +
-                            ".${defaultConfig.versionCode}.apk"
-                }
-            }
         }
     }
 

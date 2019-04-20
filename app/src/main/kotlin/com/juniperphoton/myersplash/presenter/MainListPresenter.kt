@@ -93,7 +93,6 @@ open class MainListPresenter : MainContract.MainPresenter, CoroutineScope by Mai
         } catch (e: Exception) {
             mainView.updateNoItemVisibility()
             mainView.setRefreshing(false)
-            throw e
         }
     }
 }

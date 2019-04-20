@@ -22,7 +22,7 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
     override fun onBind(intent: Intent?): IBinder = binder
 
     companion object {
-        private const val TAG = "IOService"
+        private const val TAG = "DownloadService"
     }
 
     private var binder: LocalBinder = LocalBinder()
