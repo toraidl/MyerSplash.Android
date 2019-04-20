@@ -4,7 +4,7 @@ An Android app that allows you to browse and download high-quality wallpaper fro
 
 ![](./assets/hero.jpg)
 
-The project is built under **Kotlin** + **Retrofit** + **RxJava** + **Realm** and so on. Feel free to communicate and PR.
+The project is built under **Kotlin** + **Coroutine** + **Retrofit** + **RxJava** + **Realm** and so on. Feel free to communicate and PR.
 
 ## License 
 The project is released under MIT License.
