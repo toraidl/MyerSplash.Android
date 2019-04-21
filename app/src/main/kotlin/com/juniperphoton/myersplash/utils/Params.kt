@@ -6,4 +6,5 @@ object Params {
     const val PREVIEW_URI = "PREVIEW_URI"
     const val IS_UNSPLASH_WALLPAPER = "IS_UNSPLASH_WALLPAPER"
     const val CANCELED_KEY = "CANCELED"
+    const val CHECK_STATUS = "CHECK_STATUS"
 }

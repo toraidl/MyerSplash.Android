@@ -173,13 +173,13 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
     fun onShowing() {
         mainListFragment?.registerEvent()
-        toggleSearchButtons(false, false)
+        toggleSearchButtons(false, animation = false)
     }
 
     fun onHiding() {
         mainListFragment?.unregisterEvent()
         hideKeyboard()
-        toggleSearchButtons(false, false)
+        toggleSearchButtons(false, animation = false)
         tagView.animate().alpha(0f).setDuration(100).start()
     }
 
@@ -238,12 +238,4 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     }
 
     fun tryHide(): Boolean = detailView.tryHide()
-
-    fun registerEventBus() {
-        detailView.registerEventBus()
-    }
-
-    fun unregisterEventBus() {
-        detailView.unregisterEventBus()
-    }
 }

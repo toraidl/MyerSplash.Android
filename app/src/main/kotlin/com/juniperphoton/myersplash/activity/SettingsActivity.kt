@@ -7,16 +7,16 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.core.ImagePipelineFactory
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.db.RealmCache
+import com.juniperphoton.myersplash.db.AppDatabase
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import com.juniperphoton.myersplash.utils.Toaster
-import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_settings.*
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 
 @Suppress("unused", "unused_parameter")
-class SettingsActivity : BaseActivity(), View.OnClickListener {
+class SettingsActivity : BaseActivity(), View.OnClickListener, CoroutineScope by MainScope() {
     companion object {
         private const val TAG = "SettingsActivity"
 
@@ -57,7 +57,7 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
         loadingQualitySettings.setOnClickListener(this)
     }
 
-    override fun onClick(v: View) {
+    override fun onClick(v: View) = runBlocking {
         when (v.id) {
             R.id.clearCacheSettings -> {
                 clearUp()
@@ -81,9 +81,9 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
         EventBus.getDefault().post(RefreshUIEvent())
     }
 
-    private fun clearDatabase() {
+    private suspend fun clearDatabase() = withContext(Dispatchers.IO) {
         Toaster.sendShortToast(R.string.all_clear)
-        RealmCache.getInstance().executeTransaction(Realm::deleteAll)
+        AppDatabase.instance.clearAllTables()
     }
 
     private fun setSavingQuality() {
