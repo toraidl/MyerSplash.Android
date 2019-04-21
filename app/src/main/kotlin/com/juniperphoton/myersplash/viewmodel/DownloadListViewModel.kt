@@ -19,7 +19,7 @@ class DownloadListViewModel(application: Application
         get() = repository.downloadItems
 
     init {
-        val dao = AppDatabase.instance.userDao()
+        val dao = AppDatabase.instance.downloadItemDao()
         repository = DownloadItemsRepo(dao)
     }
 

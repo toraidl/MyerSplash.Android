@@ -29,7 +29,7 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
     // A map storing download url to downloading disposable object
     private val downloadUrlToJobMap = HashMap<String, Job>()
 
-    private val dao = AppDatabase.instance.userDao()
+    private val dao = AppDatabase.instance.downloadItemDao()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Pasteur.info(TAG, "on start command")

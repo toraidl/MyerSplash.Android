@@ -19,5 +19,5 @@ abstract class AppDatabase : RoomDatabase() {
         }
     }
 
-    abstract fun userDao(): DownloadItemDao
+    abstract fun downloadItemDao(): DownloadItemDao
 }

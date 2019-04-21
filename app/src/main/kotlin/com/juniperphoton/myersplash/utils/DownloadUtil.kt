@@ -132,13 +132,13 @@ object DownloadUtil {
 
     private fun persistDownloadItem(context: Context, image: UnsplashImage) {
         GlobalScope.launch(Dispatchers.IO) {
-            val dao = AppDatabase.instance.userDao()
+            val dao = AppDatabase.instance.downloadItemDao()
             val existed = dao.getById(image.id!!)
             if (existed.value == null) {
                 val item = DownloadItem(image.id!!, image.listUrl!!, image.downloadUrl!!,
                         image.fileNameForDownload)
                 item.color = image.themeColor
-                AppDatabase.instance.userDao().insertAll(item)
+                AppDatabase.instance.downloadItemDao().insertAll(item)
             }
         }
     }

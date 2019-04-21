@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import com.juniperphoton.myersplash.model.DownloadItem
 
 class DetailImageRepo {
-    private val dao = AppDatabase.instance.userDao()
+    private val dao = AppDatabase.instance.downloadItemDao()
 
     fun retrieveAssociatedItem(id: String): LiveData<DownloadItem> {
         return dao.getById(id)
