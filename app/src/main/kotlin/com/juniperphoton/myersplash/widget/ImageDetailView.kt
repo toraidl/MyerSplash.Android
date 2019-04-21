@@ -48,6 +48,12 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.io.File
 
+private fun FlipperLayout.updateIndex(index: Int) {
+    if (displayIndex != index) {
+        next(index)
+    }
+}
+
 @Suppress("unused")
 class ImageDetailView(context: Context, attrs: AttributeSet
 ) : FrameLayout(context, attrs), ImageDetailViewContract, CoroutineScope by MainScope() {
@@ -284,7 +290,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
     private fun toggleHeroViewAnimation(startY: Float, endY: Float, show: Boolean) {
         if (!show) {
-            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+            downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
         } else {
             detailImgRL.translationX = 0f
         }
@@ -320,7 +326,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         val file = File(item.filePath)
         if (file.exists() && file.canRead()) {
             Pasteur.info(TAG, "checkDownloadStatus, set ok")
-            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
+            downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
         }
     }
 
@@ -494,7 +500,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     @OnClick(R.id.detail_cancel_download_fab)
     fun onClickCancelDownload() {
         if (viewModel.cancelDownload()) {
-            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+            downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
         }
     }
 
@@ -583,16 +589,16 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
         listPositionY = rectF.top
 
-        viewModel.associatedDownloadItem.observe(context as AppCompatActivity, Observer { item ->
+        viewModel.associatedDownloadItem?.observe(context as AppCompatActivity, Observer { item ->
             Pasteur.info(TAG, "observe on new value: $item")
             when (item?.status) {
                 DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> {
                     progressView.progress = item.progress
-                    if (downloadFlipperLayout.displayIndex != DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING) {
-                        downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
-                    }
+                    downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
                 }
-                DownloadItem.DOWNLOAD_STATUS_FAILED -> downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+                DownloadItem.DOWNLOAD_STATUS_FAILED -> {
+                    downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+                }
                 DownloadItem.DOWNLOAD_STATUS_OK -> checkDownloadStatus(item)
             }
         })

@@ -29,8 +29,13 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
     var viewContract: ImageDetailViewContract? = null
     var unsplashImage: UnsplashImage? = null
 
-    val associatedDownloadItem: LiveData<DownloadItem>
-        get() = repo.retrieveAssociatedItem(unsplashImage?.id ?: "")
+    var associatedDownloadItem: LiveData<DownloadItem>? = null
+        get() {
+            if (field == null) {
+                field = repo.retrieveAssociatedItem(unsplashImage?.id ?: "")
+            }
+            return field
+        }
 
     fun navigateToAuthorPage() {
         unsplashImage?.userHomePage?.let {
@@ -81,12 +86,13 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
     fun setAs() {
         val item = associatedDownloadItem
         AnalysisHelper.logClickSetAsInDetails()
-        val url = "${item.value?.filePath}"
+        val url = "${item?.value?.filePath}"
         viewContract?.launchEditActivity(Uri.fromFile(File(url)))
     }
 
     fun onHide(lifecycleOwner: LifecycleOwner) {
-        associatedDownloadItem.removeObservers(lifecycleOwner)
+        associatedDownloadItem?.removeObservers(lifecycleOwner)
+        associatedDownloadItem = null
         unsplashImage = null
     }
 }
