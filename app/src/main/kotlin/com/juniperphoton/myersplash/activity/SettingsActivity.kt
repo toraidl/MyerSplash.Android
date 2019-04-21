@@ -112,8 +112,16 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
+    private fun updateCacheSize() {
+        var length = ImagePipelineFactory.getInstance().mainFileCache.size / 1024f / 1024
+        if (length < 0f) {
+            length = 0f
+        }
+        clearCacheSettings.content = "${String.format("%.2f", length)} MB"
+    }
+
     override fun onResume() {
         super.onResume()
-        clearCacheSettings.content = "${ImagePipelineFactory.getInstance().mainFileCache.size / 1024 / 1024} MB"
+        updateCacheSize()
     }
 }
