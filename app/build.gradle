@@ -34,6 +34,12 @@ android {
 
         buildConfigField 'String', "UNSPLASH_APP_KEY", "\"" + unsplashKey + "\""
         buildConfigField 'String', "APP_CENTER_KEY", "\"" + appCenterKey + "\""
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
