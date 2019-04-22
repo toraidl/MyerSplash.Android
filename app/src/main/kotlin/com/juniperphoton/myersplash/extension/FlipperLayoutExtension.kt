@@ -1,0 +1,9 @@
+package com.juniperphoton.myersplash.extension
+
+import com.juniperphoton.flipperlayout.FlipperLayout
+
+fun FlipperLayout.updateIndex(index: Int) {
+    if (displayIndex != index) {
+        next(index)
+    }
+}

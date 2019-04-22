@@ -19,9 +19,11 @@ import com.facebook.drawee.backends.pipeline.PipelineDraweeController
 import com.facebook.imagepipeline.common.ResizeOptions
 import com.facebook.imagepipeline.image.ImageInfo
 import com.facebook.imagepipeline.request.ImageRequestBuilder
+import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getScreenHeight
+import com.juniperphoton.myersplash.extension.updateIndex
 import com.juniperphoton.myersplash.utils.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -29,6 +31,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_edit.*
 import java.io.File
 import java.io.FileOutputStream
+import java.util.concurrent.TimeUnit
 
 class EditActivity : BaseActivity() {
     companion object {
@@ -66,7 +69,7 @@ class EditActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         // Reset to the initial state anyway
-        flipperLayout.next(0)
+        flipperLayout.updateIndex(0)
     }
 
     override fun onClickView(v: View) {
@@ -158,11 +161,19 @@ class EditActivity : BaseActivity() {
 
     private fun composeMask() {
         flipperLayout.next()
+
         Observable.just(fileUri)
                 .subscribeOn(Schedulers.io())
                 .map {
                     composeMaskInternal() ?: throw RuntimeException("Error")
                 }
+                .delay(FlipperLayout.DEFAULT_DURATION_MILLIS * 2, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .map {
+                    flipperLayout.next()
+                    it
+                }
+                .delay(FlipperLayout.DEFAULT_DURATION_MILLIS * 3, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SimpleObserver<File>() {
                     override fun onError(e: Throwable) {

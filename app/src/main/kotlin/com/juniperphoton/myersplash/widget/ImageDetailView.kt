@@ -35,6 +35,7 @@ import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.extension.isLightColor
+import com.juniperphoton.myersplash.extension.updateIndex
 import com.juniperphoton.myersplash.fragment.Action
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
@@ -49,12 +50,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.io.File
-
-private fun FlipperLayout.updateIndex(index: Int) {
-    if (displayIndex != index) {
-        next(index)
-    }
-}
 
 @Suppress("unused")
 class ImageDetailView(context: Context, attrs: AttributeSet
