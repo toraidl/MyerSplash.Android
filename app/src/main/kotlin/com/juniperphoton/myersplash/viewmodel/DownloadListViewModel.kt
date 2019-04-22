@@ -2,10 +2,10 @@ package com.juniperphoton.myersplash.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import com.juniperphoton.myersplash.db.AppDatabase
 import com.juniperphoton.myersplash.db.DownloadItemsRepo
 import com.juniperphoton.myersplash.model.DownloadItem
+import io.reactivex.Flowable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -15,7 +15,7 @@ class DownloadListViewModel(application: Application
 ) : AndroidViewModel(application), CoroutineScope by CoroutineScope(Dispatchers.Main) {
     private val repository: DownloadItemsRepo
 
-    val downloadItems: LiveData<List<DownloadItem>>
+    val downloadItems: Flowable<List<DownloadItem>>
         get() = repository.downloadItems
 
     init {

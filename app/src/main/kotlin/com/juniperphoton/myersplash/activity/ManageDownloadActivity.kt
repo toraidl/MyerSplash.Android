@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -15,7 +15,11 @@ import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.Params
+import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.viewmodel.DownloadListViewModel
+import com.trello.rxlifecycle3.android.lifecycle.kotlin.bindUntilEvent
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_manage_download.*
 import kotlinx.coroutines.runBlocking
 
@@ -91,9 +95,13 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.Callback {
         (downloadsList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         updateNoItemVisibility()
 
-        viewModel.downloadItems.observe(this@ManageDownloadActivity, Observer { items ->
-            adapter.refresh(items)
-        })
+        viewModel.downloadItems.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .bindUntilEvent(this@ManageDownloadActivity, Lifecycle.Event.ON_DESTROY)
+                .subscribe { items ->
+                    Pasteur.info(TAG, "refresh items: ${items.size}")
+                    adapter.refresh(items)
+                }
     }
 
     override fun onClickRetry(item: DownloadItem) {

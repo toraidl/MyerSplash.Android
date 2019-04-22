@@ -1,12 +1,12 @@
 package com.juniperphoton.myersplash.db
 
-import androidx.lifecycle.LiveData
 import com.juniperphoton.myersplash.model.DownloadItem
+import io.reactivex.Flowable
 
 class DetailImageRepo {
     private val dao = AppDatabase.instance.downloadItemDao()
 
-    fun retrieveAssociatedItem(id: String): LiveData<DownloadItem> {
+    fun retrieveAssociatedItem(id: String): Flowable<DownloadItem> {
         return dao.getById(id)
     }
 

@@ -1,11 +1,11 @@
 package com.juniperphoton.myersplash.db
 
-import androidx.lifecycle.LiveData
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.DownloadItemDao
+import io.reactivex.Flowable
 
 class DownloadItemsRepo(private val dao: DownloadItemDao) {
-    val downloadItems: LiveData<List<DownloadItem>>
+    val downloadItems: Flowable<List<DownloadItem>>
         get() = dao.getAll()
 
     fun deleteByStatus(status: Int) {

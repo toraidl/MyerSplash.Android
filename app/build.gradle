@@ -127,4 +127,8 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
     kapt "android.arch.lifecycle:compiler:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version"
+
+    def rx_life_cycle = "3.0.0"
+    implementation "com.trello.rxlifecycle3:rxlifecycle:$rx_life_cycle"
+    implementation "com.trello.rxlifecycle3:rxlifecycle-android-lifecycle-kotlin:$rx_life_cycle"
 }

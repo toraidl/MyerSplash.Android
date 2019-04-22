@@ -25,7 +25,6 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -42,6 +41,9 @@ import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
 import com.juniperphoton.myersplash.view.ImageDetailViewContract
 import com.juniperphoton.myersplash.viewmodel.ImageDetailViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -547,6 +549,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_title)))
     }
 
+    private var disposable: Disposable? = null
+
     /**
      * Show detailed image
      * @param rectF         rect of original image position
@@ -589,19 +593,26 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
         listPositionY = rectF.top
 
-        viewModel.associatedDownloadItem?.observe(context as AppCompatActivity, Observer { item ->
-            Pasteur.info(TAG, "observe on new value: $item")
-            when (item?.status) {
-                DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> {
-                    progressView.progress = item.progress
-                    downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
+        disposable = viewModel.associatedDownloadItem?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.distinctUntilChanged { prev, current ->
+                    val equals = prev == current
+                    Pasteur.info(TAG, "equals: $equals")
+                    equals
                 }
-                DownloadItem.DOWNLOAD_STATUS_FAILED -> {
-                    downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+                ?.subscribe { item ->
+                    Pasteur.info(TAG, "observe on new value: $item")
+                    when (item?.status) {
+                        DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> {
+                            progressView.progress = item.progress
+                            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
+                        }
+                        DownloadItem.DOWNLOAD_STATUS_FAILED -> {
+                            downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+                        }
+                        DownloadItem.DOWNLOAD_STATUS_OK -> checkDownloadStatus(item)
+                    }
                 }
-                DownloadItem.DOWNLOAD_STATUS_OK -> checkDownloadStatus(item)
-            }
-        })
 
         toggleMaskAnimation(true)
         toggleHeroViewAnimation(listPositionY, targetY, true)
@@ -612,6 +623,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet
      */
     fun tryHide(): Boolean {
         cancel()
+        disposable?.dispose()
+        disposable = null
         viewModel.onHide(context as AppCompatActivity)
         if (detailRootScrollView.visibility == View.VISIBLE) {
             hideDetailPanel()

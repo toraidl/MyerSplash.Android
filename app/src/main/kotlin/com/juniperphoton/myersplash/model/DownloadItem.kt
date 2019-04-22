@@ -74,4 +74,36 @@ open class DownloadItem() {
     override fun toString(): String {
         return "DownloadItem(thumbUrl=$thumbUrl, id='$id', progress=$progress, status=$status, filePath=$filePath)"
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is DownloadItem) return false
+
+        if (thumbUrl != other.thumbUrl) return false
+        if (downloadUrl != other.downloadUrl) return false
+        if (id != other.id) return false
+        if (progress != other.progress) return false
+        if (createTime != other.createTime) return false
+        if (color != other.color) return false
+        if (status != other.status) return false
+        if (filePath != other.filePath) return false
+        if (fileName != other.fileName) return false
+        if (lastStatus != other.lastStatus) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = thumbUrl?.hashCode() ?: 0
+        result = 31 * result + (downloadUrl?.hashCode() ?: 0)
+        result = 31 * result + id.hashCode()
+        result = 31 * result + progress
+        result = 31 * result + createTime.hashCode()
+        result = 31 * result + color
+        result = 31 * result + status
+        result = 31 * result + (filePath?.hashCode() ?: 0)
+        result = 31 * result + (fileName?.hashCode() ?: 0)
+        result = 31 * result + lastStatus
+        return result
+    }
 }

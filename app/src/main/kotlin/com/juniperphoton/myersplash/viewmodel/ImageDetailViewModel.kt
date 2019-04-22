@@ -8,7 +8,6 @@ import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.db.DetailImageRepo
@@ -19,6 +18,7 @@ import com.juniperphoton.myersplash.utils.DownloadUtil
 import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.Toaster
 import com.juniperphoton.myersplash.view.ImageDetailViewContract
+import io.reactivex.Flowable
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -29,12 +29,16 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
     var viewContract: ImageDetailViewContract? = null
     var unsplashImage: UnsplashImage? = null
 
-    var associatedDownloadItem: LiveData<DownloadItem>? = null
+    private var prevItem: DownloadItem? = null
+
+    var associatedDownloadItem: Flowable<DownloadItem>? = null
         get() {
             if (field == null) {
                 field = repo.retrieveAssociatedItem(unsplashImage?.id ?: "")
             }
-            return field
+            return field?.doOnNext {
+                prevItem = it
+            }
         }
 
     fun navigateToAuthorPage() {
@@ -84,14 +88,12 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
     }
 
     fun setAs() {
-        val item = associatedDownloadItem
         AnalysisHelper.logClickSetAsInDetails()
-        val url = "${item?.value?.filePath}"
+        val url = "${prevItem?.filePath}"
         viewContract?.launchEditActivity(Uri.fromFile(File(url)))
     }
 
     fun onHide(lifecycleOwner: LifecycleOwner) {
-        associatedDownloadItem?.removeObservers(lifecycleOwner)
         associatedDownloadItem = null
         unsplashImage = null
     }

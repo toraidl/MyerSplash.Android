@@ -6,48 +6,52 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
+import io.reactivex.Flowable
 
 @Dao
-interface DownloadItemDao {
+abstract class DownloadItemDao {
     @Query("SELECT * FROM download_item ORDER BY create_time DESC")
-    fun getAll(): LiveData<List<DownloadItem>>
+    abstract fun getAll(): Flowable<List<DownloadItem>>
 
     @Query("SELECT * FROM download_item WHERE id=:id")
-    fun getById(id: String): LiveData<DownloadItem>
+    abstract fun getById(id: String): Flowable<DownloadItem>
+
+    @Query("SELECT COUNT(id) FROM download_item WHERE id=:id")
+    abstract fun getCountById(id: String): Int
 
     @Query("SELECT * FROM download_item WHERE download_url=:url")
-    fun getByUrl(url: String): LiveData<DownloadItem>
+    abstract fun getByUrl(url: String): LiveData<DownloadItem>
 
     @Query("UPDATE download_item SET status=:status WHERE id=:id")
-    fun setStatusById(id: String, status: Int)
+    abstract fun setStatusById(id: String, status: Int)
 
     @Query("UPDATE download_item SET status=:status WHERE download_url=:url")
-    fun setStatusByUrl(url: String, status: Int)
+    abstract fun setStatusByUrl(url: String, status: Int)
 
     @Query("UPDATE download_item SET status=${DownloadItem.DOWNLOAD_STATUS_OK}, file_path=:path, progress=1 WHERE download_url=:url")
-    fun setSuccess(url: String?, path: String?)
+    abstract fun setSuccess(url: String?, path: String?)
 
     @Query("UPDATE download_item SET status=${DownloadItem.DOWNLOAD_STATUS_FAILED}, file_path=null, progress=0 WHERE download_url=:url")
-    fun setFailed(url: String?)
+    abstract fun setFailed(url: String?)
 
     @Query("UPDATE download_item SET progress=:progress WHERE download_url=:url")
-    fun setProgress(url: String, progress: Int)
+    abstract fun setProgress(url: String, progress: Int)
 
     @Query("DELETE FROM download_item WHERE id=:id")
-    fun deleteById(id: String)
+    abstract fun deleteById(id: String)
 
     @Insert(onConflict = REPLACE)
-    fun insertAll(vararg items: DownloadItem)
+    abstract fun insertAll(vararg items: DownloadItem)
 
     @Delete
-    fun delete(item: DownloadItem)
+    abstract fun delete(item: DownloadItem)
 
     @Query("DELETE FROM download_item WHERE status=:status")
-    fun deleteByStatus(status: Int)
+    abstract fun deleteByStatus(status: Int)
 
     @Query("UPDATE download_item SET status=${DownloadItem.DOWNLOAD_STATUS_DOWNLOADING}, progress=0 WHERE id=:id")
-    fun resetStatus(id: String)
+    abstract fun resetStatus(id: String)
 
     @Query("UPDATE download_item SET status=${DownloadItem.DOWNLOAD_STATUS_FAILED}, progress=0 WHERE status!=${DownloadItem.DOWNLOAD_STATUS_OK}")
-    fun markAllFailed()
+    abstract fun markAllFailed()
 }
