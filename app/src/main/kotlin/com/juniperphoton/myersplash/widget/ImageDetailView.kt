@@ -20,6 +20,7 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
@@ -36,6 +37,7 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.extension.isLightColor
 import com.juniperphoton.myersplash.extension.updateIndex
+import com.juniperphoton.myersplash.extension.usingWifi
 import com.juniperphoton.myersplash.fragment.Action
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
@@ -491,7 +493,23 @@ class ImageDetailView(context: Context, attrs: AttributeSet
             Toaster.sendShortToast(context.getString(R.string.no_permission))
             return
         }
-        viewModel.download()
+
+        val warn = !LocalSettingHelper.getBoolean(context,
+                context.getString(R.string.preference_key_download_via_metered_network), true)
+
+        if (warn || !context.usingWifi()) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle(R.string.attention)
+            builder.setMessage(R.string.wifi_attention_content)
+            builder.setPositiveButton(R.string.download) { dialog, _ ->
+                dialog.dismiss()
+                viewModel.download()
+            }
+            builder.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
+            builder.create().show()
+        } else {
+            viewModel.download()
+        }
     }
 
     @OnClick(R.id.detail_cancel_download_fab)

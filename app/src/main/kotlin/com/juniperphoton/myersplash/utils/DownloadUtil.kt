@@ -98,27 +98,6 @@ object DownloadUtil {
      * @param context used to check network status
      */
     fun download(context: Context, image: UnsplashImage) {
-        if (!LocalSettingHelper.getBoolean(context,
-                        context.getString(R.string.preference_key_download_via_metered_network), true)) {
-            downloadInternal(context, image)
-            return
-        }
-        if (!context.usingWifi()) {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle(R.string.attention)
-            builder.setMessage(R.string.wifi_attention_content)
-            builder.setPositiveButton(R.string.download) { dialog, _ ->
-                dialog.dismiss()
-                downloadInternal(context, image)
-            }
-            builder.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
-            builder.create().show()
-        } else {
-            downloadInternal(context, image)
-        }
-    }
-
-    private fun downloadInternal(context: Context, image: UnsplashImage) {
         var previewFile: File? = null
         image.listUrl?.let {
             previewFile = FileUtil.getCachedFile(it)
