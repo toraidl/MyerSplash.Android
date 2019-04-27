@@ -81,7 +81,7 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
         }
     }
 
-    private val onTouchListener = View.OnTouchListener { v, event ->
+    private val onTouchListener = OnTouchListener { v, event ->
         when (v) {
             item0 -> touchingViewIndex = 0
             item1 -> touchingViewIndex = 1
