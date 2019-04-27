@@ -1,5 +1,6 @@
 package com.juniperphoton.myersplash.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.util.AttributeSet
@@ -18,6 +19,7 @@ import com.juniperphoton.myersplash.activity.SettingsActivity
 typealias OnItemSelectedListener = ((Int) -> Unit)
 
 @Suppress("UNUSED")
+@SuppressLint("ClickableViewAccessibility")
 class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     companion object {
         const val DEFAULT_SELECTED = 0

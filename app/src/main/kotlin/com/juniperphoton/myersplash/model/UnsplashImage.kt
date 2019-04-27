@@ -87,8 +87,7 @@ class UnsplashImage : Serializable {
 
     private val tagForDownloadUrl: String
         get() {
-            val choice = LocalSettingHelper.getInt(App.instance, savingQualitySettingsKey, 1)
-            return when (choice) {
+            return when (LocalSettingHelper.getInt(App.instance, savingQualitySettingsKey, 1)) {
                 0 -> "raw"
                 1 -> "regular"
                 2 -> "small"

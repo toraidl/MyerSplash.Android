@@ -7,7 +7,6 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LifecycleOwner
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.db.DetailImageRepo
@@ -93,7 +92,7 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
         viewContract?.launchEditActivity(Uri.fromFile(File(url)))
     }
 
-    fun onHide(lifecycleOwner: LifecycleOwner) {
+    fun onHide() {
         associatedDownloadItem = null
         unsplashImage = null
     }

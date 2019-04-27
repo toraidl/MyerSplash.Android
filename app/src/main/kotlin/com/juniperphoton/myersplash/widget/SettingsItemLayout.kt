@@ -15,6 +15,12 @@ import com.juniperphoton.myersplash.utils.LocalSettingHelper
 typealias OnCheckedListener = ((Boolean) -> Unit)
 
 class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
+    private var checked: Boolean
+        get() = compoundButton.isChecked
+        set(checked) {
+            compoundButton.isChecked = checked
+        }
+
     @BindView(R.id.settings_item_title)
     lateinit var titleTextView: TextView
 
@@ -29,20 +35,16 @@ class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(co
 
     var onCheckedChanged: OnCheckedListener? = null
 
-    var checked: Boolean
-        get() = compoundButton.isChecked
-        set(checked) {
-            compoundButton.isChecked = checked
-        }
-
     var title: String = ""
         set(value) {
             titleTextView.text = value
+            field = value
         }
 
     var content: String = ""
         set(value) {
             contentTextView.text = value
+            field = value
         }
 
     var preferenceKey: String? = null

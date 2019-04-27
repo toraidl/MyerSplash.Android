@@ -7,8 +7,9 @@ import com.juniperphoton.myersplash.broadcastreceiver.WallpaperWidgetProvider
 
 object AppWidgetUtil {
     fun doWithWidgetId(block: ((Int) -> Unit)) {
-        val ids = AppWidgetManager.getInstance(App.instance)
-                .getAppWidgetIds(ComponentName(App.instance, WallpaperWidgetProvider::class.java))
+        val context = App.instance
+        val ids = AppWidgetManager.getInstance(context)
+                .getAppWidgetIds(ComponentName(context, WallpaperWidgetProvider::class.java))
         ids.forEach {
             block.invoke(it)
         }

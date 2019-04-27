@@ -1,7 +1,6 @@
 package com.juniperphoton.myersplash.db
 
 import com.juniperphoton.myersplash.model.DownloadItem
-import com.juniperphoton.myersplash.model.DownloadItemDao
 import io.reactivex.Flowable
 
 class DownloadItemsRepo(private val dao: DownloadItemDao) {

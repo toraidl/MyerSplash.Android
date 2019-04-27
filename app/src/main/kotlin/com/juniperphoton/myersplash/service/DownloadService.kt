@@ -16,16 +16,12 @@ import java.io.File
 import java.util.*
 
 class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.IO) {
-    private class LocalBinder : Binder()
-
-    override fun onBind(intent: Intent?): IBinder = binder
-
     companion object {
         private const val TAG = "DownloadService"
     }
 
-    private var binder: LocalBinder = LocalBinder()
-
+    override fun onBind(intent: Intent?): IBinder? = null
+    
     // A map storing download url to downloading disposable object
     private val downloadUrlToJobMap = HashMap<String, Job>()
 

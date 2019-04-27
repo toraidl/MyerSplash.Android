@@ -49,6 +49,7 @@ class DownloadingView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     var progress: Int = 0
         set(value) {
+            field = value
             progressView.progress = value
             progressTV.text = "$value%"
         }

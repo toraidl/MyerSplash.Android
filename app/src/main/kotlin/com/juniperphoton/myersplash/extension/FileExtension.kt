@@ -4,11 +4,6 @@ import android.content.Context
 import com.juniperphoton.myersplash.utils.Pasteur
 import java.io.File
 
-fun File.getFolderLengthInMb(): Long {
-    if (!exists()) return 0
-    return listFiles().map(File::length).sum() / 1024 / 1024
-}
-
 fun File.getLengthInKB(): Long = length() / 1024 / 1024
 
 fun File.notifyFileUpdated(ctx: Context) {

@@ -35,7 +35,7 @@ fun Context.getNavigationBarSize(): Point {
 }
 
 fun Context.usingWifi(): Boolean {
-    val manager = getSystemService(android.content.Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val manager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
         checkWifiAPI28(manager)
     } else {

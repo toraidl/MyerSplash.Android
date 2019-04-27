@@ -6,6 +6,10 @@ import okhttp3.Interceptor
 import okhttp3.Response
 
 class CustomInterceptor : Interceptor {
+    companion object {
+        private const val CLIENT_ID = "client_id"
+    }
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val builder = request.newBuilder()
@@ -14,7 +18,7 @@ class CustomInterceptor : Interceptor {
         val ub = Uri.parse(original).buildUpon()
 
         if (original.startsWith(Request.BASE_URL)) {
-            ub.appendQueryParameter("client_id", BuildConfig.UNSPLASH_APP_KEY)
+            ub.appendQueryParameter(CLIENT_ID, BuildConfig.UNSPLASH_APP_KEY)
         }
 
         builder.url(ub.build().toString())
