@@ -47,10 +47,7 @@ import com.juniperphoton.myersplash.viewmodel.ImageDetailViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.File
 
 @Suppress("unused")
@@ -609,9 +606,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         disposable = viewModel.associatedDownloadItem?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.distinctUntilChanged { prev, current ->
-                    val equals = prev == current
-                    Pasteur.info(TAG, "equals: $equals")
-                    equals
+                    prev == current
                 }
                 ?.subscribe { item ->
                     Pasteur.info(TAG, "observe on new value: $item")
@@ -623,7 +618,10 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                         DownloadItem.DOWNLOAD_STATUS_FAILED -> {
                             downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
                         }
-                        DownloadItem.DOWNLOAD_STATUS_OK -> checkDownloadStatus(item)
+                        DownloadItem.DOWNLOAD_STATUS_OK -> runBlocking {
+                            delay(FlipperLayout.DEFAULT_DURATION_MILLIS)
+                            checkDownloadStatus(item)
+                        }
                     }
                 }
 
