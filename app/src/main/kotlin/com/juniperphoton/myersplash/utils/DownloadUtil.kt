@@ -2,12 +2,11 @@ package com.juniperphoton.myersplash.utils
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AlertDialog
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.db.AppDatabase
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
-import com.juniperphoton.myersplash.extension.usingWifi
+import com.juniperphoton.myersplash.extension.useWith
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.service.DownloadService
@@ -37,34 +36,31 @@ object DownloadUtil {
             val inputStream = body.byteStream()
             val outputStream = FileOutputStream(fileToSave)
 
-            inputStream.use { `is` ->
-                outputStream.use { os ->
-                    val buffer = ByteArray(2048)
+            inputStream.useWith(outputStream) { `is`, os ->
+                val buffer = ByteArray(2048)
 
-                    val fileSize = body.contentLength()
-                    var fileSizeDownloaded: Long = 0
+                val fileSize = body.contentLength()
+                var fileSizeDownloaded: Long = 0
 
-                    var progressToReport = 0
+                var progressToReport = 0
 
-                    while (true) {
-                        val read = `is`.read(buffer)
-                        if (read == -1) {
-                            break
-                        }
-
-                        os.write(buffer, 0, read)
-                        fileSizeDownloaded += read.toLong()
-
-                        val progress = (fileSizeDownloaded / fileSize.toDouble() * 100).toInt()
-                        if (progress - progressToReport >= 5) {
-                            progressToReport = progress
-                            onProgress?.invoke(progressToReport)
-                        }
+                while (true) {
+                    val read = `is`.read(buffer)
+                    if (read == -1) {
+                        break
                     }
 
-                    fileToSave
+                    os.write(buffer, 0, read)
+                    fileSizeDownloaded += read.toLong()
+
+                    val progress = (fileSizeDownloaded / fileSize.toDouble() * 100).toInt()
+                    if (progress - progressToReport >= 5) {
+                        progressToReport = progress
+                        onProgress?.invoke(progressToReport)
+                    }
                 }
             }
+            return@withContext fileToSave
         } catch (e: Exception) {
             e.printStackTrace()
             null
