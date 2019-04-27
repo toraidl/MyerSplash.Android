@@ -14,7 +14,6 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.AboutActivity
 import com.juniperphoton.myersplash.activity.ManageDownloadActivity
 import com.juniperphoton.myersplash.activity.SettingsActivity
-import com.juniperphoton.myersplash.model.UnsplashCategory
 
 typealias OnItemSelectedListener = ((Int) -> Unit)
 

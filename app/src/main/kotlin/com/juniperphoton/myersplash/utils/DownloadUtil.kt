@@ -5,7 +5,6 @@ import android.content.Intent
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.db.AppDatabase
-import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.extension.useWith
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
@@ -15,7 +14,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
-import org.greenrobot.eventbus.EventBus
 import java.io.File
 import java.io.FileOutputStream
 
@@ -101,7 +99,6 @@ object DownloadUtil {
         DownloadReporter.report(image.downloadLocationLink)
         startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!, previewFile?.path)
         persistDownloadItem(context, image)
-        EventBus.getDefault().post(DownloadStartedEvent(image.id))
         Toaster.sendShortToast(context.getString(R.string.downloading_in_background))
     }
 
