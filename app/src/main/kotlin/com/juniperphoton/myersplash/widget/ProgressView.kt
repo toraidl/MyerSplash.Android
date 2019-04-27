@@ -13,6 +13,12 @@ import com.juniperphoton.myersplash.extension.use
 
 @Suppress("unused")
 class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+    companion object {
+        private const val ANIMATION_DURATION_MS = 300L
+    }
+
+    private val paint = Paint()
+
     var color: Int = 0
     var progress: Int = 0
         set(value) {
@@ -29,7 +35,7 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
     fun animateProgressTo(progress: Int) {
         val animator = ValueAnimator.ofInt(this.progress, progress)
-        animator.duration = 300
+        animator.duration = ANIMATION_DURATION_MS
         animator.addUpdateListener { valueAnimator -> this.progress = (valueAnimator.animatedValue as Int) }
         animator.start()
     }
@@ -37,7 +43,6 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
 
-        val paint = Paint()
         paint.color = color
 
         val width = width

@@ -22,11 +22,11 @@ object UnsplashImageFactory {
         return SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(date)
     }
 
-    fun createFullDownloadUrl(date: Date): String {
+    private fun createFullDownloadUrl(date: Date): String {
         return "${Request.AUTO_CHANGE_WALLPAPER}${createDateString(date)}.jpg"
     }
 
-    fun createThumbDownloadUrl(date: Date): String {
+    private fun createThumbDownloadUrl(date: Date): String {
         return "${Request.AUTO_CHANGE_WALLPAPER_THUMB}${createDateString(date)}.jpg"
     }
 

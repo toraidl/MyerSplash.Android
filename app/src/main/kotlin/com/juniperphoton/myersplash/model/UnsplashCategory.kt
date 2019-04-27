@@ -11,31 +11,31 @@ class UnsplashCategory {
         const val SEARCH_ID = 10003
         const val RANDOM_CATEGORY_ID = 10004
 
-        const val FEATURE = "Featured"
-        const val NEW = "New"
-        const val HIGHLIGHTS = "Highlights"
+        private const val FEATURE = "Featured"
+        private const val NEW = "New"
+        private const val HIGHLIGHTS = "Highlights"
 
         val featuredCategory: UnsplashCategory
             get() {
                 return UnsplashCategory().apply {
-                    id = UnsplashCategory.FEATURED_CATEGORY_ID
-                    title = UnsplashCategory.FEATURE
+                    id = FEATURED_CATEGORY_ID
+                    title = FEATURE
                 }
             }
 
         val newCategory: UnsplashCategory
             get() {
                 return UnsplashCategory().apply {
-                    id = UnsplashCategory.NEW_CATEGORY_ID
-                    title = UnsplashCategory.NEW
+                    id = NEW_CATEGORY_ID
+                    title = NEW
                 }
             }
 
         val highlightCategory: UnsplashCategory
             get() {
                 return UnsplashCategory().apply {
-                    id = UnsplashCategory.HIGHLIGHTS_CATEGORY_ID
-                    title = UnsplashCategory.HIGHLIGHTS
+                    id = HIGHLIGHTS_CATEGORY_ID
+                    title = HIGHLIGHTS
                 }
             }
 

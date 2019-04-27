@@ -234,7 +234,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     @OnClick(R.id.detail_clear_btn)
     fun onClickClear() {
         editText.setText("")
-        toggleSearchButtons(false, true)
+        toggleSearchButtons(show = false, animation = true)
     }
 
     fun tryHide(): Boolean = detailView.tryHide()

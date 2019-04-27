@@ -21,7 +21,6 @@ import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -636,7 +635,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         cancel()
         disposable?.dispose()
         disposable = null
-        viewModel.onHide(context as AppCompatActivity)
+        viewModel.onHide()
         if (detailRootScrollView.visibility == View.VISIBLE) {
             hideDetailPanel()
             return true

@@ -24,7 +24,8 @@ object AnalysisHelper {
     }
 
     fun logDownloadFailed(e: Exception, durationMs: Long) {
-        Analytics.trackEvent("Download failed", mapOf("Duration" to durationMs.toString(), "Error" to e.toString()))
+        Analytics.trackEvent("Download failed",
+                mapOf("Duration" to durationMs.toString(), "Error" to e.toString()))
     }
 
     fun logEnterSearch() {

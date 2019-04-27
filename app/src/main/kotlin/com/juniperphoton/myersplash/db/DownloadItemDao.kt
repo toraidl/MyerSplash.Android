@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash.model
+package com.juniperphoton.myersplash.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
+import com.juniperphoton.myersplash.model.DownloadItem
 import io.reactivex.Flowable
 
 @Dao
