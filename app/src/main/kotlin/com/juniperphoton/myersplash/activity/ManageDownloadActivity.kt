@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
@@ -46,9 +47,13 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.Callback {
 
         viewModel = ViewModelProviders.of(this).get(DownloadListViewModel::class.java)
 
-        initViews()
         AnalysisHelper.logEnterDownloads()
         moreFab.setOnClickListener(this)
+
+        Looper.myQueue().addIdleHandler {
+            initViews()
+            false
+        }
     }
 
     override fun onClickView(v: View) {
@@ -76,14 +81,25 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.Callback {
         noItemView.visibility = if (adapter.data.isEmpty()) View.GONE else View.VISIBLE
     }
 
+    private val spanCount: Int
+        get() {
+            val width = window.decorView.width
+            return if (width <= 1200) {
+                2
+            } else {
+                val min = resources.getDimensionPixelSize(R.dimen.download_item_min_width)
+                (width / min)
+            }
+        }
+
     private fun initViews() = runBlocking {
         adapter = DownloadsListAdapter(this@ManageDownloadActivity)
         adapter.callback = this@ManageDownloadActivity
 
-        val layoutManager = GridLayoutManager(this@ManageDownloadActivity, SPAN).apply {
+        val layoutManager = GridLayoutManager(this@ManageDownloadActivity, spanCount).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return if (position == adapter.itemCount - 1) 2 else 1
+                    return if (position == adapter.itemCount - 1) spanCount else 1
                 }
             }
         }

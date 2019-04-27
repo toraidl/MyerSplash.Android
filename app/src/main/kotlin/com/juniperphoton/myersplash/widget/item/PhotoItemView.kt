@@ -7,7 +7,7 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -20,13 +20,16 @@ import com.juniperphoton.myersplash.extension.updateVisibility
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import com.juniperphoton.myersplash.utils.extractThemeColor
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 typealias OnClickPhotoListener = ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)
 typealias OnClickQuickDownloadListener = ((image: UnsplashImage) -> Unit)
 typealias OnBindListener = ((View, Int) -> Unit)
 
-class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs
+class PhotoItemView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs
 ), View.OnClickListener, CoroutineScope by MainScope() {
     @BindView(R.id.row_photo_iv)
     lateinit var simpleDraweeView: SimpleDraweeView

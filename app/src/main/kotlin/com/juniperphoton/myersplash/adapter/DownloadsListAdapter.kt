@@ -24,7 +24,6 @@ class DownloadsListAdapter(private val context: Context) :
         private const val TAG = "DownloadsListAdapter"
         private const val ITEM_TYPE_ITEM = 0
         private const val ITEM_TYPE_FOOTER = 1
-        private const val ASPECT_RATIO = 1.7f
         private const val MAX_DIMENSION_PREVIEW_PX = 500
     }
 
@@ -53,11 +52,6 @@ class DownloadsListAdapter(private val context: Context) :
             ITEM_TYPE_ITEM -> {
                 val view = LayoutInflater.from(context)
                         .inflate(R.layout.row_download_item, parent, false)
-                val width = context.resources.displayMetrics.widthPixels
-                val params = view.layoutParams.apply {
-                    height = (width / ASPECT_RATIO).toInt()
-                }
-                view.layoutParams = params
                 DownloadItemViewHolder(view)
             }
             ITEM_TYPE_FOOTER -> {

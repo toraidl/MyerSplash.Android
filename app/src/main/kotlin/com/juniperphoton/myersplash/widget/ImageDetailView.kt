@@ -330,8 +330,14 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     }
 
     private val targetY: Float
-        get() = ((context as Activity).window.decorView.height
-                - resources.getDimensionPixelSize(R.dimen.img_detail_height)) / 2f
+        get() {
+            val decorView = (context as Activity).window.decorView
+            val height = decorView.height
+            val width = decorView.width
+            val detailHeight = (width / (3 / 2f)).toInt() +
+                    context.resources.getDimensionPixelSize(R.dimen.img_detail_info_height)
+            return (height - detailHeight) / 2f
+        }
 
     private fun toggleDetailRLAnimation(show: Boolean, oneshot: Boolean) {
         val startY = if (show) -resources.getDimensionPixelOffset(R.dimen.img_detail_info_height) else 0

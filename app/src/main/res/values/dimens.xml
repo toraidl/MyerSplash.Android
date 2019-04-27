@@ -7,7 +7,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="img_height">270dp</dimen>
     <dimen name="img_detail_info_height">100dp</dimen>
-    <dimen name="img_detail_height">370dp</dimen>
+    <dimen name="download_item_min_width">200dp</dimen>
 
     <dimen name="download_btn_margin_right">16dp</dimen>
     <dimen name="download_btn_margin_right_hide">100dp</dimen>
@@ -52,4 +52,5 @@
     <dimen name="settings_sub_title_margin_top">20dp</dimen>
     <dimen name="footer_height">60dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="cardview_corner_radius">2dp</dimen>
 </resources>

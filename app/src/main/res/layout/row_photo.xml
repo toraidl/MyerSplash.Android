@@ -5,23 +5,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/row_photo_root"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/img_height"
+    android:layout_height="wrap_content"
     android:clickable="true"
     tools:background="@android:color/black">
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/row_photo_iv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
-        app:backgroundTint="@color/colorPrimaryDark"/>
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="3:2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <FrameLayout
         android:id="@+id/row_photo_ripple_mask_rl"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="?android:attr/selectableItemBackground"
-        android:clickable="true">
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <FrameLayout
             android:id="@+id/row_photo_download_rl"
