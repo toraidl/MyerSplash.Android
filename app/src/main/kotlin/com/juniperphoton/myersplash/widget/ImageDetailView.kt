@@ -618,7 +618,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                     when (item?.status) {
                         DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> {
                             progressView.progress = item.progress
-                            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
+                            downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
                         }
                         DownloadItem.DOWNLOAD_STATUS_FAILED -> {
                             downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
