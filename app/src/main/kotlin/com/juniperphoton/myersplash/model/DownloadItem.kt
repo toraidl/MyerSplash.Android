@@ -56,6 +56,12 @@ open class DownloadItem() {
     @ColumnInfo(name = "file_name")
     var fileName: String? = null
 
+    @ColumnInfo(name = "width")
+    var width = 0
+
+    @ColumnInfo(name = "height")
+    var height = 0
+
     @Ignore
     open var lastStatus = DISPLAY_STATUS_NOT_SPECIFIED
 

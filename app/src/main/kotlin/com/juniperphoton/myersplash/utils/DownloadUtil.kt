@@ -105,7 +105,11 @@ object DownloadUtil {
     private fun persistDownloadItem(context: Context, image: UnsplashImage) {
         GlobalScope.launch(Dispatchers.IO) {
             val item = DownloadItem(image.id!!, image.listUrl!!, image.downloadUrl!!,
-                    image.fileNameForDownload)
+                    image.fileNameForDownload).apply {
+                color = image.themeColor
+                width = image.width
+                height = image.height
+            }
             item.color = image.themeColor
             AppDatabase.instance.downloadItemDao().insertAll(item)
         }

@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
 import com.juniperphoton.myersplash.model.DownloadItem
@@ -97,13 +98,7 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.Callback {
         adapter = DownloadsListAdapter(this@ManageDownloadActivity)
         adapter.callback = this@ManageDownloadActivity
 
-        val layoutManager = GridLayoutManager(this@ManageDownloadActivity, spanCount).apply {
-            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    return if (position == adapter.itemCount - 1) spanCount else 1
-                }
-            }
-        }
+        val layoutManager = StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
 
         downloadsList.layoutManager = layoutManager
         downloadsList.adapter = adapter

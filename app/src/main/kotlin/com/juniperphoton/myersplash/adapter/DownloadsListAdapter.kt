@@ -5,6 +5,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.SimpleDraweeView
@@ -96,6 +97,7 @@ class DownloadsListAdapter(private val context: Context) :
     }
 
     inner class DownloadItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private var previewRoot: ConstraintLayout? = itemView.findViewById(R.id.download_preview_root)
         private var draweeView: SimpleDraweeView? = itemView.findViewById(R.id.row_download_item_dv)
         private var flipperLayout: FlipperLayout? = itemView.findViewById(R.id.row_download_flipper_layout)
         private var downloadingView: DownloadingView? = itemView.findViewById(R.id.row_downloading_view)
@@ -136,6 +138,16 @@ class DownloadsListAdapter(private val context: Context) :
                 val controller = Fresco.newDraweeControllerBuilder().setImageRequest(request)
                         .setOldController(it.controller).build()
                 it.controller = controller
+
+                val lp = it.layoutParams as? ConstraintLayout.LayoutParams
+                lp?.let { param ->
+                    val w = item.width
+                    val h = item.height
+                    if (w > 0 && h > 0) {
+                        param.dimensionRatio = "$w:$h"
+                        it.layoutParams = param
+                    }
+                }
             }
 
             downloadingView?.progress = item.progress
