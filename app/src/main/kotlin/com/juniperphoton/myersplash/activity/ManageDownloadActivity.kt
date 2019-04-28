@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.juniperphoton.myersplash.R
@@ -67,6 +66,8 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.Callback {
     }
 
     private fun onClickMore() {
+        AnalysisHelper.logClickMoreButtonInDownloadList()
+
         AlertDialog.Builder(this).setTitle(R.string.clear_options_title)
                 .setItems(R.array.delete_options) { _, i ->
                     runBlocking {

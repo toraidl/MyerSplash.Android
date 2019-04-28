@@ -48,6 +48,10 @@ object AnalysisHelper {
         Analytics.trackEvent("Click set-as button in details")
     }
 
+    fun logClickSetAsInDownloadList() {
+        Analytics.trackEvent("Click set-as button in download list")
+    }
+
     fun logToggleImageDetails() {
         Analytics.trackEvent("Toggle image details")
     }
@@ -62,5 +66,9 @@ object AnalysisHelper {
 
     fun logEditShowPreview() {
         Analytics.trackEvent("Edit show preview")
+    }
+
+    fun logClickMoreButtonInDownloadList() {
+        Analytics.trackEvent("Click more button in download list")
     }
 }
