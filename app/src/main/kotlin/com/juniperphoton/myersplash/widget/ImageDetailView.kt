@@ -151,10 +151,10 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     private lateinit var viewModel: ImageDetailViewModel
 
     private val shareButtonHideOffset: Int
-        get() = resources.getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide)
+        get() = resources.getDimensionPixelSize(R.dimen.share_btn_margin_right_hide)
 
     private val downloadFlipperLayoutHideOffset: Int
-        get() = resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide)
+        get() = resources.getDimensionPixelSize(R.dimen.download_btn_margin_right_hide)
 
     private var animating: Boolean = false
     private var copied: Boolean = false
@@ -180,9 +180,9 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
         detailRootScrollView.visibility = View.INVISIBLE
 
-        detailInfoRootLayout.translationY = (-resources.getDimensionPixelOffset(R.dimen.img_detail_info_height)).toFloat()
-        downloadFlipperLayout.translationX = resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide).toFloat()
-        shareFAB.translationX = resources.getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide).toFloat()
+        detailInfoRootLayout.translationY = (-resources.getDimensionPixelSize(R.dimen.img_detail_info_height)).toFloat()
+        downloadFlipperLayout.translationX = resources.getDimensionPixelSize(R.dimen.download_btn_margin_right_hide).toFloat()
+        shareFAB.translationX = resources.getDimensionPixelSize(R.dimen.share_btn_margin_right_hide).toFloat()
 
         ValueAnimator.ofFloat(0f, 360f).apply {
             addUpdateListener { animation -> progressView.rotation = animation.animatedValue as Float }
@@ -333,8 +333,10 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         }
 
     private fun toggleDetailRLAnimation(show: Boolean, oneshot: Boolean) {
-        val startY = if (show) -resources.getDimensionPixelOffset(R.dimen.img_detail_info_height) else 0
-        val endY = if (show) 0 else -resources.getDimensionPixelOffset(R.dimen.img_detail_info_height)
+        val startY = if (show) -resources.getDimensionPixelSize(R.dimen.img_detail_info_height) else 0
+        val endY = if (show) 0 else -resources.getDimensionPixelSize(R.dimen.img_detail_info_height)
+
+        detailInfoRootLayout.translationY = startY.toFloat()
 
         ValueAnimator().apply {
             setFloatValues(startY.toFloat(), endY.toFloat())
