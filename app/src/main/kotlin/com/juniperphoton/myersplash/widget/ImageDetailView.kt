@@ -45,10 +45,7 @@ import com.juniperphoton.myersplash.viewmodel.ImageDetailViewModel
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -469,19 +466,20 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
     @OnClick(R.id.copy_url_flipper_layout)
     fun onClickCopy() {
-        if (copied) return
-        copied = true
+        // Must return Unit
+        launch(Dispatchers.Main) {
+            if (copied) return@launch
+            copied = true
 
-        copyUrlFlipperLayout.next()
+            copyUrlFlipperLayout.next()
 
-        AnalysisHelper.logClickCopyUrl()
+            AnalysisHelper.logClickCopyUrl()
 
-        viewModel.copyUrlToClipboard()
-
-        postDelayed({
+            viewModel.copyUrlToClipboard()
+            delay(URL_COPIED_DELAY_MILLIS)
             copyUrlFlipperLayout.next()
             copied = false
-        }, URL_COPIED_DELAY_MILLIS)
+        }
     }
 
     @OnClick(R.id.detail_share_fab)
