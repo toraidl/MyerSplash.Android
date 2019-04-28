@@ -1,5 +1,6 @@
 package com.juniperphoton.myersplash.fragment
 
+import android.app.Activity
 import android.graphics.RectF
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import com.juniperphoton.myersplash.adapter.PhotoAdapter
 import com.juniperphoton.myersplash.contract.MainContract
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
+import com.juniperphoton.myersplash.extension.usingWifi
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
 import org.greenrobot.eventbus.EventBus
@@ -220,7 +222,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
         adapter = PhotoAdapter(unsplashImages, context)
         adapter?.onClickQuickDownload = { image ->
             AnalysisHelper.logClickDownloadInList()
-            DownloadUtil.download(context, image)
+            download(image)
         }
         adapter?.onClickPhoto = onClickPhotoItem
         contentRecyclerView.adapter = adapter
@@ -229,6 +231,27 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
             presenter?.loadMore()
         }
         loadMoreListener!!.attach(contentRecyclerView)
+    }
+
+    private fun download(image: UnsplashImage) {
+        val context = context ?: return
+
+        if (!PermissionUtil.check(context as Activity)) {
+            Toaster.sendShortToast(context.getString(R.string.no_permission))
+            return
+        }
+
+        val warn = LocalSettingHelper.getBoolean(context,
+                context.getString(R.string.preference_key_download_via_metered_network), true)
+
+        if (warn && !context.usingWifi()) {
+            val builder = buildMeteredWarningDialog(context) {
+                DownloadUtil.download(context, image)
+            }
+            builder.create().show()
+        } else {
+            DownloadUtil.download(context, image)
+        }
     }
 
     private fun updateNoItemVisibility(show: Boolean) {

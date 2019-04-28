@@ -20,7 +20,6 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -496,18 +495,13 @@ class ImageDetailView(context: Context, attrs: AttributeSet
             return
         }
 
-        val warn = !LocalSettingHelper.getBoolean(context,
+        val warn = LocalSettingHelper.getBoolean(context,
                 context.getString(R.string.preference_key_download_via_metered_network), true)
 
-        if (warn || !context.usingWifi()) {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle(R.string.attention)
-            builder.setMessage(R.string.wifi_attention_content)
-            builder.setPositiveButton(R.string.download) { dialog, _ ->
-                dialog.dismiss()
+        if (warn && !context.usingWifi()) {
+            val builder = buildMeteredWarningDialog(context) {
                 viewModel.download()
             }
-            builder.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
             builder.create().show()
         } else {
             viewModel.download()
