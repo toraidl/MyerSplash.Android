@@ -42,11 +42,15 @@ import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
 import com.juniperphoton.myersplash.view.ImageDetailViewContract
 import com.juniperphoton.myersplash.viewmodel.ImageDetailViewModel
+import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 @Suppress("unused")
 class ImageDetailView(context: Context, attrs: AttributeSet
@@ -316,12 +320,9 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         }
     }
 
-    private fun checkDownloadStatus(item: DownloadItem) {
+    private fun checkDownloadStatus(item: DownloadItem): Boolean {
         val file = File(item.filePath)
-        if (file.exists() && file.canRead()) {
-            Pasteur.info(TAG, "checkDownloadStatus, set ok")
-            downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
-        }
+        return file.exists() && file.canRead()
     }
 
     private val targetY: Float
@@ -602,10 +603,17 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
         listPositionY = rectF.top
 
-        disposable = viewModel.associatedDownloadItem?.subscribeOn(Schedulers.io())
+        disposable = viewModel.associatedDownloadItem
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.distinctUntilChanged { prev, current ->
                     prev == current
+                }
+                ?.delay { item ->
+                    return@delay if (item.status == DownloadItem.DOWNLOAD_STATUS_OK && !animating) {
+                        Flowable.just(item).delay(FlipperLayout.DEFAULT_DURATION_MILLIS, TimeUnit.MILLISECONDS)
+                    } else {
+                        Flowable.just(item)
+                    }
                 }
                 ?.subscribe { item ->
                     Pasteur.info(TAG, "observe on new value: $item")
@@ -617,9 +625,11 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                         DownloadItem.DOWNLOAD_STATUS_FAILED -> {
                             downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
                         }
-                        DownloadItem.DOWNLOAD_STATUS_OK -> runBlocking {
-                            delay(FlipperLayout.DEFAULT_DURATION_MILLIS)
-                            checkDownloadStatus(item)
+                        DownloadItem.DOWNLOAD_STATUS_OK -> {
+                            if (checkDownloadStatus(item)) {
+                                val index = DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK
+                                downloadFlipperLayout.updateIndex(index)
+                            }
                         }
                     }
                 }

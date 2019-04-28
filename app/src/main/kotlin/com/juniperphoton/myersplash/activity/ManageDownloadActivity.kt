@@ -28,7 +28,8 @@ import kotlinx.coroutines.runBlocking
 class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.Callback {
     companion object {
         private const val TAG = "ManageDownloadActivity"
-        private const val SPAN = 2
+        private const val DEFAULT_SPAN = 2
+        private const val SCREEN_WIDTH_WITH_DEFAULT_SPAN = 1200
         const val ACTION = "action.downloads"
     }
 
@@ -84,8 +85,8 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.Callback {
     private val spanCount: Int
         get() {
             val width = window.decorView.width
-            return if (width <= 1200) {
-                2
+            return if (width <= SCREEN_WIDTH_WITH_DEFAULT_SPAN) {
+                DEFAULT_SPAN
             } else {
                 val min = resources.getDimensionPixelSize(R.dimen.download_item_min_width)
                 (width / min)
