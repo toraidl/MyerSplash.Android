@@ -151,7 +151,7 @@ class EditActivity : BaseActivity() {
                 App.instance.getString(R.string.authorities), file)
 
         try {
-            val intent = IntentUtil.getSetAsWallpaperIntent(uri)
+            val intent = IntentUtils.getSetAsWallpaperIntent(uri)
             startActivity(intent)
         } catch (e: IllegalArgumentException) {
             val bm = MediaStore.Images.Media.getBitmap(contentResolver, uri)
@@ -236,7 +236,7 @@ class EditActivity : BaseActivity() {
 
         Pasteur.d(TAG, "final bitmap drawn")
 
-        val finalFile = File(FileUtil.downloadOutputDir, SAVED_FILE_NAME)
+        val finalFile = File(FileUtils.downloadOutputDir, SAVED_FILE_NAME)
         val fos = FileOutputStream(finalFile)
         fos.use {
             bm.compress(Bitmap.CompressFormat.JPEG, 100, it)

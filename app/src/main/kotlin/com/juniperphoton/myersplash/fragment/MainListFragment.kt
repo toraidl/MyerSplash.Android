@@ -236,7 +236,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     private fun download(image: UnsplashImage) {
         val context = context ?: return
 
-        if (!PermissionUtil.check(context as Activity)) {
+        if (!PermissionUtils.check(context as Activity)) {
             Toaster.sendShortToast(context.getString(R.string.no_permission))
             return
         }
@@ -246,11 +246,11 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
 
         if (warn && !context.usingWifi()) {
             val builder = buildMeteredWarningDialog(context) {
-                DownloadUtil.download(context, image)
+                DownloadUtils.download(context, image)
             }
             builder.create().show()
         } else {
-            DownloadUtil.download(context, image)
+            DownloadUtils.download(context, image)
         }
     }
 

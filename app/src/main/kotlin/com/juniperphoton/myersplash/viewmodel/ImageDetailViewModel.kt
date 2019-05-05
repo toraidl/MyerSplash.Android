@@ -13,8 +13,8 @@ import com.juniperphoton.myersplash.db.DetailImageRepo
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.AnalysisHelper
-import com.juniperphoton.myersplash.utils.DownloadUtil
-import com.juniperphoton.myersplash.utils.FileUtil
+import com.juniperphoton.myersplash.utils.DownloadUtils
+import com.juniperphoton.myersplash.utils.FileUtils
 import com.juniperphoton.myersplash.utils.Toaster
 import com.juniperphoton.myersplash.view.ImageDetailViewContract
 import io.reactivex.Flowable
@@ -54,7 +54,7 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
 
     fun share() {
         val image = unsplashImage ?: return
-        val file = FileUtil.getCachedFile(image.listUrl!!)
+        val file = FileUtils.getCachedFile(image.listUrl!!)
 
         if (file == null || !file.exists()) {
             Toaster.sendShortToast(app.getString(R.string.something_wrong))
@@ -70,7 +70,7 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
     fun download() {
         AnalysisHelper.logClickDownloadInDetails()
         unsplashImage?.let {
-            DownloadUtil.download(app, it)
+            DownloadUtils.download(app, it)
         }
     }
 
@@ -82,7 +82,7 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
             repo.setStatusById(image.id!!, DownloadItem.DOWNLOAD_STATUS_FAILED)
         }
 
-        DownloadUtil.cancelDownload(app, image)
+        DownloadUtils.cancelDownload(app, image)
         return@runBlocking true
     }
 

@@ -14,14 +14,14 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 @Suppress("unused_parameter")
-object DownloadUtil {
-    private const val TAG = "DownloadUtil"
+object DownloadUtils {
+    private const val TAG = "DownloadUtils"
 
     /**
      * Get file to save given a [expectedName].
      */
     fun getFileToSave(expectedName: String): File? {
-        val galleryPath = FileUtil.downloadOutputDir ?: return null
+        val galleryPath = FileUtils.downloadOutputDir ?: return null
         val folder = File(galleryPath)
         if (!folder.exists()) {
             folder.mkdirs()
@@ -46,7 +46,7 @@ object DownloadUtil {
     fun download(context: Context, image: UnsplashImage) {
         var previewFile: File? = null
         image.listUrl?.let {
-            previewFile = FileUtil.getCachedFile(it)
+            previewFile = FileUtils.getCachedFile(it)
         }
         DownloadReporter.report(image.downloadLocationLink)
         startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!, previewFile?.path)

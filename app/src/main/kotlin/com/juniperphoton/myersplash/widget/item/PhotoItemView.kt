@@ -14,12 +14,12 @@ import butterknife.OnClick
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.SimpleDraweeView
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.extension.extractThemeColor
 import com.juniperphoton.myersplash.extension.getDarker
 import com.juniperphoton.myersplash.extension.toHexString
 import com.juniperphoton.myersplash.extension.updateVisibility
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
-import com.juniperphoton.myersplash.utils.extractThemeColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel

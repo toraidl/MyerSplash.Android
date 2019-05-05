@@ -24,7 +24,7 @@ import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.Params
-import com.juniperphoton.myersplash.utils.PermissionUtil
+import com.juniperphoton.myersplash.utils.PermissionUtils
 import com.juniperphoton.myersplash.widget.PivotTitleBar
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
@@ -102,7 +102,7 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        PermissionUtil.checkAndRequest(this@MainActivity)
+        PermissionUtils.checkAndRequest(this@MainActivity)
     }
 
     private fun toggleSearchView(show: Boolean, useAnimation: Boolean) {

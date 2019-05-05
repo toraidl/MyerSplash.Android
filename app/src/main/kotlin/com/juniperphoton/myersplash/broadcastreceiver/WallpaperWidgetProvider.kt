@@ -15,8 +15,8 @@ import com.juniperphoton.myersplash.extension.getLengthInKB
 import com.juniperphoton.myersplash.extension.writeToFile
 import com.juniperphoton.myersplash.model.UnsplashImageFactory
 import com.juniperphoton.myersplash.service.DownloadService
-import com.juniperphoton.myersplash.utils.AppWidgetUtil
-import com.juniperphoton.myersplash.utils.FileUtil
+import com.juniperphoton.myersplash.utils.AppWidgetUtils
+import com.juniperphoton.myersplash.utils.FileUtils
 import com.juniperphoton.myersplash.utils.Params
 import com.juniperphoton.myersplash.utils.Pasteur
 import kotlinx.coroutines.runBlocking
@@ -36,9 +36,9 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
         }
         Pasteur.debug(TAG, "onUpdate")
 
-        val file = File(FileUtil.cachedPath, "${UnsplashImageFactory.TODAY_THUMB_URL.hashCode()}.jpg")
+        val file = File(FileUtils.cachedPath, "${UnsplashImageFactory.TODAY_THUMB_URL.hashCode()}.jpg")
         if (file.exists() && file.getLengthInKB() > 100) {
-            AppWidgetUtil.doWithWidgetId {
+            AppWidgetUtils.doWithWidgetId {
                 updateWidget(App.instance, it, file.absolutePath)
             }
             return@runBlocking
@@ -48,7 +48,7 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
             val body = CloudService.downloadPhoto(UnsplashImageFactory.TODAY_THUMB_URL)
             val outputFile = body.writeToFile(file.path, null)
             outputFile?.let {
-                AppWidgetUtil.doWithWidgetId { id ->
+                AppWidgetUtils.doWithWidgetId { id ->
                     updateWidget(App.instance, id, it.absolutePath)
                 }
             }

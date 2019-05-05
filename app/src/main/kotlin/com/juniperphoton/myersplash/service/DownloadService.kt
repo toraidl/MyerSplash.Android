@@ -79,7 +79,7 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
             if (job != null) {
                 job.cancel()
                 Pasteur.info(TAG, "job cancelled")
-                NotificationUtil.cancelNotification(Uri.parse(downloadUrl))
+                NotificationUtils.cancelNotification(Uri.parse(downloadUrl))
                 Toaster.sendShortToast(getString(R.string.cancelled_download))
             }
         } else {
@@ -91,7 +91,7 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
     private fun downloadImage(url: String, fileName: String,
                               previewUri: Uri?, isUnsplash: Boolean) {
         val job = launch {
-            val file = DownloadUtil.getFileToSave(fileName)
+            val file = DownloadUtils.getFileToSave(fileName)
             try {
                 val responseBody = CloudService.downloadPhoto(url)
                 Pasteur.d(TAG, "outputFile download onNext, size=${responseBody.contentLength()}, thread: ${Thread.currentThread()}")
@@ -126,12 +126,12 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
 
         dao.setSuccess(url, newFile.path)
 
-        NotificationUtil.showCompleteNotification(Uri.parse(url), previewUri,
+        NotificationUtils.showCompleteNotification(Uri.parse(url), previewUri,
                 if (isUnsplash) null else newFile.absolutePath)
     }
 
     private fun onError(url: String, fileName: String, previewUri: Uri?) {
-        NotificationUtil.showErrorNotification(Uri.parse(url), fileName,
+        NotificationUtils.showErrorNotification(Uri.parse(url), fileName,
                 url, previewUri)
         dao.setFailed(url)
     }

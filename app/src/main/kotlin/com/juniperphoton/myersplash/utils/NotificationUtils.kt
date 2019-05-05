@@ -18,8 +18,8 @@ import com.juniperphoton.myersplash.service.DownloadService
 import java.io.File
 
 @Suppress("unused")
-object NotificationUtil {
-    private const val TAG = "NotificationUtil"
+object NotificationUtils {
+    private const val TAG = "NotificationUtils"
     private const val NOTIFICATION_CHANNEL_ID = "default_channel"
 
     private val notificationManager: NotificationManager

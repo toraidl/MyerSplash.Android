@@ -9,7 +9,7 @@ import com.facebook.imagepipeline.request.ImageRequest
 import com.juniperphoton.myersplash.App
 import java.io.File
 
-object FileUtil {
+object FileUtils {
     val downloadOutputDir: String?
         get() {
             val filesDir = App.instance.getExternalFilesDir(Environment.DIRECTORY_PICTURES)

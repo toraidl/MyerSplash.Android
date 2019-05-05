@@ -33,10 +33,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.EditActivity
-import com.juniperphoton.myersplash.extension.isLightColor
-import com.juniperphoton.myersplash.extension.updateIndex
-import com.juniperphoton.myersplash.extension.updateIndexWithoutAnimation
-import com.juniperphoton.myersplash.extension.usingWifi
+import com.juniperphoton.myersplash.extension.*
 import com.juniperphoton.myersplash.fragment.Action
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
@@ -496,7 +493,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
     @OnClick(R.id.detail_download_fab)
     fun onClickDownload() {
-        if (!PermissionUtil.check(context as Activity)) {
+        if (!PermissionUtils.check(context as Activity)) {
             Toaster.sendShortToast(context.getString(R.string.no_permission))
             return
         }
