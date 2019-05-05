@@ -236,7 +236,7 @@ class EditActivity : BaseActivity() {
 
         Pasteur.d(TAG, "final bitmap drawn")
 
-        val finalFile = File(FileUtil.galleryPath, SAVED_FILE_NAME)
+        val finalFile = File(FileUtil.downloadOutputDir, SAVED_FILE_NAME)
         val fos = FileOutputStream(finalFile)
         fos.use {
             bm.compress(Bitmap.CompressFormat.JPEG, 100, it)

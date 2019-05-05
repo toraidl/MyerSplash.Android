@@ -8,8 +8,8 @@ fun FlipperLayout.updateIndex(index: Int) {
     }
 }
 
-fun FlipperLayout.updateIndexWithoutAnimation(index: Int) {
-    if (displayIndex != index) {
-        next(index, animate = false)
+fun FlipperLayout.updateIndexWithoutAnimation(nextIndex: Int) {
+    if (displayIndex != nextIndex) {
+        next(nextIndex, animate = false)
     }
 }

@@ -116,7 +116,6 @@
                 </com.juniperphoton.myersplash.widget.RoundCardView>
             </com.juniperphoton.flipperlayout.FlipperLayout>
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.facebook.drawee.view.SimpleDraweeView
@@ -166,8 +165,8 @@
                 app:fabSize="normal"/>
 
             <FrameLayout
-                android:layout_width="56dp"
-                android:layout_height="56dp">
+                android:layout_width="@dimen/flipper_fab_size"
+                android:layout_height="@dimen/flipper_fab_size">
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/detail_cancel_download_fab"

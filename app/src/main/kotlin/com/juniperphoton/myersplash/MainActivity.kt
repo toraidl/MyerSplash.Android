@@ -18,6 +18,7 @@ import com.juniperphoton.myersplash.activity.BaseActivity
 import com.juniperphoton.myersplash.activity.ManageDownloadActivity
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
+import com.juniperphoton.myersplash.extension.getStatusBarHeight
 import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.service.DownloadService
@@ -169,6 +170,10 @@ class MainActivity : BaseActivity() {
         }
 
         pivotTitleBar.apply {
+            val lp = pivotTitleBar.layoutParams as ViewGroup.MarginLayoutParams
+            lp.topMargin = getStatusBarHeight()
+            layoutParams = lp
+
             onSingleTap = {
                 viewPager.currentItem = it
                 EventBus.getDefault().post(ScrollToTopEvent(ID_MAPS[it]!!, false))

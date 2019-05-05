@@ -35,6 +35,7 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.extension.isLightColor
 import com.juniperphoton.myersplash.extension.updateIndex
+import com.juniperphoton.myersplash.extension.updateIndexWithoutAnimation
 import com.juniperphoton.myersplash.extension.usingWifi
 import com.juniperphoton.myersplash.fragment.Action
 import com.juniperphoton.myersplash.model.DownloadItem
@@ -51,7 +52,7 @@ import java.util.concurrent.TimeUnit
 
 @Suppress("unused")
 class ImageDetailView(context: Context, attrs: AttributeSet
-) : FrameLayout(context, attrs), ImageDetailViewContract, CoroutineScope by MainScope() {
+) : FrameLayout(context, attrs), ImageDetailViewContract {
     companion object {
         private const val TAG = "ImageDetailView"
         private const val RESULT_CODE = 10000
@@ -73,6 +74,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     private var listPositionY = 0f
 
     private var clickedView: View? = null
+
+    private var scope: CoroutineScope? = null
 
     /**
      * Invoked when the display animation is started.
@@ -306,6 +309,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                         toggleMaskAnimation(false)
                         clickedView = null
                         animating = false
+                        quickReset()
                     } else {
                         toggleDetailRLAnimation(show = true, oneshot = false)
                         toggleDownloadFlipperLayoutAnimation(show = true, oneshot = false)
@@ -428,7 +432,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         toggleShareBtnAnimation(false, oneshot)
     }
 
-    private fun extractThemeColor(image: UnsplashImage) = launch {
+    private fun extractThemeColor(image: UnsplashImage) = scope?.launch {
         val color = image.extractThemeColor()
         if (color != Int.MIN_VALUE) {
             updateThemeColor(color)
@@ -468,20 +472,21 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
     @OnClick(R.id.copy_url_flipper_layout)
     fun onClickCopy() {
-        // Must return Unit
-        launch(Dispatchers.Main) {
-            if (copied) return@launch
-            copied = true
+        copyInternal()
+    }
 
-            copyUrlFlipperLayout.next()
+    private fun copyInternal() = scope?.launch {
+        if (copied) return@launch
+        copied = true
 
-            AnalysisHelper.logClickCopyUrl()
+        copyUrlFlipperLayout.next()
 
-            viewModel.copyUrlToClipboard()
-            delay(URL_COPIED_DELAY_MILLIS)
-            copyUrlFlipperLayout.next()
-            copied = false
-        }
+        AnalysisHelper.logClickCopyUrl()
+
+        viewModel.copyUrlToClipboard()
+        delay(URL_COPIED_DELAY_MILLIS)
+        copyUrlFlipperLayout.next()
+        copied = false
     }
 
     @OnClick(R.id.detail_share_fab)
@@ -574,6 +579,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet
             return
         }
 
+        scope = CoroutineScope(Dispatchers.Main)
+
         viewModel.unsplashImage = unsplashImage
 
         clickedView = itemView
@@ -616,33 +623,43 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                     }
                 }
                 ?.subscribe { item ->
-                    Pasteur.info(TAG, "observe on new value: $item")
-                    when (item?.status) {
-                        DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> {
-                            progressView.progress = item.progress
-                            downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
-                        }
-                        DownloadItem.DOWNLOAD_STATUS_FAILED -> {
-                            downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
-                        }
-                        DownloadItem.DOWNLOAD_STATUS_OK -> {
-                            if (checkDownloadStatus(item)) {
-                                val index = DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK
-                                downloadFlipperLayout.updateIndex(index)
-                            }
-                        }
-                    }
+                    updateByItem(item)
                 }
 
         toggleMaskAnimation(true)
         toggleHeroViewAnimation(listPositionY, targetY, true)
     }
 
+    private fun updateByItem(item: DownloadItem?) {
+        Pasteur.info(TAG, "observe on new value: $item")
+        when (item?.status) {
+            DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> {
+                progressView.progress = item.progress
+                downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
+            }
+            DownloadItem.DOWNLOAD_STATUS_FAILED -> {
+                downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+            }
+            DownloadItem.DOWNLOAD_STATUS_OK -> {
+                if (checkDownloadStatus(item)) {
+                    val index = DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK
+                    downloadFlipperLayout.updateIndex(index)
+                }
+            }
+        }
+    }
+
+    private fun quickReset() {
+        copyUrlFlipperLayout.updateIndexWithoutAnimation(0)
+        downloadFlipperLayout.updateIndexWithoutAnimation(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+        copied = false
+    }
+
     /**
      * Try to hide this view. If this view is fully displayed to user.
      */
     fun tryHide(): Boolean {
-        cancel()
+        scope?.cancel()
         disposable?.dispose()
         disposable = null
         viewModel.onHide()

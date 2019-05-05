@@ -5,71 +5,23 @@ import android.content.Intent
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.db.AppDatabase
-import com.juniperphoton.myersplash.extension.useWith
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.service.DownloadService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.ResponseBody
 import java.io.File
-import java.io.FileOutputStream
 
 @Suppress("unused_parameter")
 object DownloadUtil {
     private const val TAG = "DownloadUtil"
 
     /**
-     * Write [body] to a file of [fileUri].
-     * @param onProgress will be invoked when the progress has been updated.
-     */
-    suspend fun writeToFile(body: ResponseBody,
-                            fileUri: String,
-                            onProgress: ((Int) -> Unit)?): File? = withContext(Dispatchers.IO) {
-        return@withContext try {
-            val fileToSave = File(fileUri)
-
-            val inputStream = body.byteStream()
-            val outputStream = FileOutputStream(fileToSave)
-
-            inputStream.useWith(outputStream) { `is`, os ->
-                val buffer = ByteArray(2048)
-
-                val fileSize = body.contentLength()
-                var fileSizeDownloaded: Long = 0
-
-                var progressToReport = 0
-
-                while (true) {
-                    val read = `is`.read(buffer)
-                    if (read == -1) {
-                        break
-                    }
-
-                    os.write(buffer, 0, read)
-                    fileSizeDownloaded += read.toLong()
-
-                    val progress = (fileSizeDownloaded / fileSize.toDouble() * 100).toInt()
-                    if (progress - progressToReport >= 5) {
-                        progressToReport = progress
-                        onProgress?.invoke(progressToReport)
-                    }
-                }
-            }
-            return@withContext fileToSave
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-    /**
      * Get file to save given a [expectedName].
      */
     fun getFileToSave(expectedName: String): File? {
-        val galleryPath = FileUtil.galleryPath ?: return null
+        val galleryPath = FileUtil.downloadOutputDir ?: return null
         val folder = File(galleryPath)
         if (!folder.exists()) {
             folder.mkdirs()

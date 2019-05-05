@@ -1,15 +1,16 @@
 package com.juniperphoton.myersplash.service
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.net.Uri
-import android.os.Binder
 import android.os.IBinder
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.api.CloudService
 import com.juniperphoton.myersplash.db.AppDatabase
 import com.juniperphoton.myersplash.extension.notifyFileUpdated
+import com.juniperphoton.myersplash.extension.writeToFile
 import com.juniperphoton.myersplash.utils.*
 import kotlinx.coroutines.*
 import java.io.File
@@ -21,18 +22,19 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
-    
+
     // A map storing download url to downloading disposable object
     private val downloadUrlToJobMap = HashMap<String, Job>()
 
     private val dao = AppDatabase.instance.downloadItemDao()
 
+    @SuppressLint("CheckResult")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Pasteur.info(TAG, "on start command")
         intent?.let {
             onHandleIntent(it)
         }
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     override fun onDestroy() {
@@ -93,7 +95,7 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
             try {
                 val responseBody = CloudService.downloadPhoto(url)
                 Pasteur.d(TAG, "outputFile download onNext, size=${responseBody.contentLength()}, thread: ${Thread.currentThread()}")
-                val success = DownloadUtil.writeToFile(responseBody, file!!.path) {
+                val success = responseBody.writeToFile(file!!.path) {
                     dao.setProgress(url, it)
                 } != null
 
