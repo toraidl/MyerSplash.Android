@@ -100,7 +100,7 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
                 } != null
 
                 if (!success) {
-                    onError(url, fileName, previewUri)
+                    onError(url, fileName, previewUri, true)
                 } else {
                     onSuccess(url, file, previewUri, isUnsplash)
                 }
@@ -109,7 +109,7 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
             } catch (e: Exception) {
                 e.printStackTrace()
                 Pasteur.d(TAG, "on handle intent error $e, url $url, thread ${Thread.currentThread()}")
-                onError(url, fileName, null)
+                onError(url, fileName, null, e !is CancellationException)
             }
         }
         downloadUrlToJobMap[url] = job
@@ -130,9 +130,10 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
                 if (isUnsplash) null else newFile.absolutePath)
     }
 
-    private fun onError(url: String, fileName: String, previewUri: Uri?) {
-        NotificationUtils.showErrorNotification(Uri.parse(url), fileName,
-                url, previewUri)
+    private fun onError(url: String, fileName: String, previewUri: Uri?, showNotification: Boolean) {
+        if (showNotification) {
+            NotificationUtils.showErrorNotification(Uri.parse(url), fileName, url, previewUri)
+        }
         dao.setFailed(url)
     }
 }
