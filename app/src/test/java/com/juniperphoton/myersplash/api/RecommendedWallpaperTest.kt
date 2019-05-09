@@ -23,17 +23,23 @@ class RecommendedWallpaperTest {
         }
 
     @Test
-    suspend fun testRecommendedThumb() = withContext(Dispatchers.IO) {
-        CloudService.downloadPhoto(thumbUrl)
+    suspend fun testRecommendedThumb() {
+        withContext(Dispatchers.IO) {
+            CloudService.downloadPhoto(thumbUrl)
+        }
     }
 
     @Test
-    suspend fun testCantDownloadRecommendedThumb() = withContext(Dispatchers.IO) {
-        CloudService.downloadPhoto(invalidUrl)
+    suspend fun testCantDownloadRecommendedThumb() {
+        withContext(Dispatchers.IO) {
+            CloudService.downloadPhoto(invalidUrl)
+        }
     }
 
     @Test
-    suspend fun testRecommendedLarge() = withContext(Dispatchers.IO) {
-        CloudService.downloadPhoto(largeUrl)
+    suspend fun testRecommendedLarge() {
+        withContext(Dispatchers.IO) {
+            CloudService.downloadPhoto(largeUrl)
+        }
     }
 }

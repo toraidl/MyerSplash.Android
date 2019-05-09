@@ -24,7 +24,7 @@ android {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 420
+        versionCode 421
         versionName "3.2.0 BETA"
 
         def properties = new Properties()
@@ -81,6 +81,7 @@ dependencies {
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
 
     testImplementation 'junit:junit:4.12'
+    testImplementation "org.mockito:mockito-core:2.27.0"
 
     implementation "com.google.android.material:material:$androidx_version"
     implementation "androidx.legacy:legacy-support-v13:$androidx_version"
@@ -93,7 +94,7 @@ dependencies {
     implementation "com.jakewharton:butterknife:${butterknife_version}"
     kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
 
-    implementation 'com.facebook.fresco:fresco:1.12.0'
+    implementation 'com.facebook.fresco:fresco:1.13.0'
     implementation "com.facebook.fresco:imagepipeline-okhttp3:1.11.0"
 
     implementation 'io.reactivex.rxjava2:rxjava:2.2.7'
@@ -113,7 +114,7 @@ dependencies {
     implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
 
-    def room_version = "2.1.0-alpha06"
+    def room_version = "2.1.0-alpha07"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
