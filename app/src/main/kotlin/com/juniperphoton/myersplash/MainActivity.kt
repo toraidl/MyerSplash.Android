@@ -15,7 +15,7 @@ import android.view.ViewGroup
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
 import com.juniperphoton.myersplash.activity.BaseActivity
-import com.juniperphoton.myersplash.activity.ManageDownloadActivity
+import com.juniperphoton.myersplash.activity.DownloadsListActivity
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.extension.getStatusBarHeight
@@ -80,8 +80,8 @@ class MainActivity : BaseActivity() {
             if (shortcutManager.dynamicShortcuts.size > 0) {
                 shortcutManager.removeAllDynamicShortcuts()
             }
-            val intent = Intent(this, ManageDownloadActivity::class.java)
-            intent.action = ManageDownloadActivity.ACTION
+            val intent = Intent(this, DownloadsListActivity::class.java)
+            intent.action = DownloadsListActivity.ACTION
             val shortcut = ShortcutInfo.Builder(this, DOWNLOADS_SHORTCUT_ID)
                     .setShortLabel(getString(R.string.downloadLowercase))
                     .setLongLabel(getString(R.string.downloadLowercase))
@@ -254,7 +254,7 @@ class MainActivity : BaseActivity() {
                     toolbarLayout.post { toggleSearchView(show = true, useAnimation = false) }
                 }
                 ACTION_DOWNLOADS -> {
-                    val intent = Intent(this, ManageDownloadActivity::class.java)
+                    val intent = Intent(this, DownloadsListActivity::class.java)
                     startActivity(intent)
                 }
             }

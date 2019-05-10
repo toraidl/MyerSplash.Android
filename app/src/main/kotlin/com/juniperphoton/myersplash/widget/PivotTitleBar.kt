@@ -14,7 +14,7 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.AboutActivity
-import com.juniperphoton.myersplash.activity.ManageDownloadActivity
+import com.juniperphoton.myersplash.activity.DownloadsListActivity
 import com.juniperphoton.myersplash.activity.SettingsActivity
 
 typealias OnItemSelectedListener = ((Int) -> Unit)
@@ -96,7 +96,7 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
 
     private val menuMap: Map<Int, Class<out Any>> = mapOf(
             R.id.menu_settings to SettingsActivity::class.java,
-            R.id.menu_downloads to ManageDownloadActivity::class.java,
+            R.id.menu_downloads to DownloadsListActivity::class.java,
             R.id.menu_about to AboutActivity::class.java
     )
 

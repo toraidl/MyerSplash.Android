@@ -41,7 +41,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AboutTheme"/>
         <activity
-            android:name=".activity.ManageDownloadActivity"
+            android:name=".activity.DownloadsListActivity"
             android:label="DOWNLOADS"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"

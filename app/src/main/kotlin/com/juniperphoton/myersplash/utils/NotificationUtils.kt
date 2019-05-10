@@ -13,7 +13,7 @@ import androidx.core.app.NotificationCompat
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.EditActivity
-import com.juniperphoton.myersplash.activity.ManageDownloadActivity
+import com.juniperphoton.myersplash.activity.DownloadsListActivity
 import com.juniperphoton.myersplash.service.DownloadService
 import java.io.File
 
@@ -112,7 +112,7 @@ object NotificationUtils {
     }
 
     private fun injectAppIntent(builder: NotificationCompat.Builder) {
-        val intent = Intent(App.instance, ManageDownloadActivity::class.java)
+        val intent = Intent(App.instance, DownloadsListActivity::class.java)
         val resultPendingIntent = PendingIntent.getActivity(App.instance, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(resultPendingIntent)
     }
