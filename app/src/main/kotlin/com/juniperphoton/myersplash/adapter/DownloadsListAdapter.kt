@@ -24,7 +24,6 @@ class DownloadsListAdapter(private val context: Context) :
     companion object {
         private const val TAG = "DownloadsListAdapter"
         private const val ITEM_TYPE_ITEM = 0
-        private const val ITEM_TYPE_FOOTER = 1
         private const val MAX_DIMENSION_PREVIEW_PX = 500
     }
 
@@ -55,30 +54,18 @@ class DownloadsListAdapter(private val context: Context) :
                         .inflate(R.layout.row_download_item, parent, false)
                 DownloadItemViewHolder(view)
             }
-            ITEM_TYPE_FOOTER -> {
-                val footer = LayoutInflater.from(context).inflate(R.layout.row_footer_blank,
-                        parent, false)
-                DownloadItemViewHolder(footer)
-            }
             else -> throw IllegalArgumentException("unknown view type")
         }
     }
 
     override fun onBindViewHolder(holder: DownloadItemViewHolder, position: Int) {
-        if (getItemViewType(position) == ITEM_TYPE_FOOTER) {
-            return
-        }
         holder.bind(data[holder.adapterPosition])
     }
 
-    override fun getItemCount(): Int = data.size + 1
+    override fun getItemCount(): Int = data.size
 
     override fun getItemViewType(position: Int): Int {
-        return if (position >= itemCount - 1) {
-            ITEM_TYPE_FOOTER
-        } else {
-            ITEM_TYPE_ITEM
-        }
+        return ITEM_TYPE_ITEM
     }
 
     fun refresh(items: List<DownloadItem>) {
@@ -129,6 +116,10 @@ class DownloadsListAdapter(private val context: Context) :
         }
 
         internal fun bind(item: DownloadItem) {
+            if (this.downloadItem == item) {
+                return
+            }
+
             this.downloadItem = item
 
             draweeView?.let {
