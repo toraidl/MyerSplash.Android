@@ -10,7 +10,7 @@ class DetailImageRepo {
         return dao.getById(id)
     }
 
-    fun setStatusById(id: String, status: Int) {
+    suspend fun setStatusById(id: String, status: Int) {
         dao.setStatusById(id, status)
     }
 }

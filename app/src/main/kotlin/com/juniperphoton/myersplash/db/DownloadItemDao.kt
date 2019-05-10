@@ -24,7 +24,7 @@ abstract class DownloadItemDao {
     abstract fun getByUrl(url: String): LiveData<DownloadItem>
 
     @Query("UPDATE download_item SET status=:status WHERE id=:id")
-    abstract fun setStatusById(id: String, status: Int)
+    abstract suspend fun setStatusById(id: String, status: Int)
 
     @Query("UPDATE download_item SET status=:status WHERE download_url=:url")
     abstract fun setStatusByUrl(url: String, status: Int)
@@ -39,7 +39,7 @@ abstract class DownloadItemDao {
     abstract fun setProgress(url: String, progress: Int)
 
     @Query("DELETE FROM download_item WHERE id=:id")
-    abstract fun deleteById(id: String)
+    abstract suspend fun deleteById(id: String)
 
     @Insert(onConflict = REPLACE)
     abstract fun insertAll(vararg items: DownloadItem)
@@ -48,10 +48,10 @@ abstract class DownloadItemDao {
     abstract fun delete(item: DownloadItem)
 
     @Query("DELETE FROM download_item WHERE status=:status")
-    abstract fun deleteByStatus(status: Int)
+    abstract suspend fun deleteByStatus(status: Int)
 
     @Query("UPDATE download_item SET status=${DownloadItem.DOWNLOAD_STATUS_DOWNLOADING}, progress=0 WHERE id=:id")
-    abstract fun resetStatus(id: String)
+    abstract suspend fun resetStatus(id: String)
 
     @Query("UPDATE download_item SET status=${DownloadItem.DOWNLOAD_STATUS_FAILED}, progress=0 WHERE status!=${DownloadItem.DOWNLOAD_STATUS_OK}")
     abstract fun markAllFailed()

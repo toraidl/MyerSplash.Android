@@ -22,10 +22,13 @@ import com.trello.rxlifecycle3.android.lifecycle.kotlin.bindUntilEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_manage_download.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 @Suppress("unused")
-class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback {
+class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback, CoroutineScope by MainScope() {
     companion object {
         private const val TAG = "DownloadsListActivity"
         private const val DEFAULT_SPAN = 2
@@ -118,7 +121,7 @@ class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback {
     }
 
     override fun onClickRetry(item: DownloadItem) {
-        runBlocking {
+        launch {
             viewModel.resetItemStatus(item.id)
             adapter.updateItem(item)
 
@@ -131,7 +134,7 @@ class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback {
     }
 
     override fun onClickDelete(item: DownloadItem) {
-        runBlocking {
+        launch {
             viewModel.deleteItem(item.id)
             adapter.updateItem(item)
 
@@ -145,7 +148,7 @@ class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback {
     }
 
     override fun onClickCancel(item: DownloadItem) {
-        runBlocking {
+        launch {
             viewModel.updateItemStatus(item.id, DownloadItem.DOWNLOAD_STATUS_FAILED)
             adapter.updateItem(item)
 

@@ -32,15 +32,15 @@ class DownloadListViewModel(application: Application
         repository.deleteByStatus(status)
     }
 
-    suspend fun updateItemStatus(id: String, status: Int) = withContext(Dispatchers.IO) {
+    suspend fun updateItemStatus(id: String, status: Int) {
         repository.updateStatus(id, status)
     }
 
-    suspend fun resetItemStatus(id: String) = withContext(Dispatchers.IO) {
+    suspend fun resetItemStatus(id: String) {
         repository.resetStatus(id)
     }
 
-    suspend fun deleteItem(id: String) = withContext(Dispatchers.IO) {
+    suspend fun deleteItem(id: String)  {
         repository.deleteById(id)
     }
 }

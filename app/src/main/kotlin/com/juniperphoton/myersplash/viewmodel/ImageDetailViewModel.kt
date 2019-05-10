@@ -18,7 +18,9 @@ import com.juniperphoton.myersplash.utils.FileUtils
 import com.juniperphoton.myersplash.utils.Toaster
 import com.juniperphoton.myersplash.view.ImageDetailViewContract
 import io.reactivex.Flowable
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineScope by MainScope() {
@@ -78,9 +80,7 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
         AnalysisHelper.logClickCancelDownloadInDetails()
         val image = unsplashImage ?: return@runBlocking false
 
-        withContext(Dispatchers.IO) {
-            repo.setStatusById(image.id!!, DownloadItem.DOWNLOAD_STATUS_FAILED)
-        }
+        repo.setStatusById(image.id!!, DownloadItem.DOWNLOAD_STATUS_FAILED)
 
         DownloadUtils.cancelDownload(app, image)
         return@runBlocking true

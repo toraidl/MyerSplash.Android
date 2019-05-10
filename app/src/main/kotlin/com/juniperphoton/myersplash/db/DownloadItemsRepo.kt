@@ -7,19 +7,19 @@ class DownloadItemsRepo(private val dao: DownloadItemDao) {
     val downloadItems: Flowable<List<DownloadItem>>
         get() = dao.getAll()
 
-    fun deleteByStatus(status: Int) {
+    suspend fun deleteByStatus(status: Int) {
         dao.deleteByStatus(status)
     }
 
-    fun updateStatus(id: String, status: Int) {
+    suspend fun updateStatus(id: String, status: Int) {
         dao.setStatusById(id, status)
     }
 
-    fun resetStatus(id: String) {
+    suspend fun resetStatus(id: String) {
         dao.resetStatus(id)
     }
 
-    fun deleteById(id: String) {
+    suspend fun deleteById(id: String) {
         dao.deleteById(id)
     }
 }
