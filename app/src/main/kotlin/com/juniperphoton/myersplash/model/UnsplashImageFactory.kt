@@ -1,8 +1,10 @@
 package com.juniperphoton.myersplash.model
 
+import androidx.core.content.ContextCompat
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.api.Request
+import com.juniperphoton.myersplash.extension.toHexString
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -18,33 +20,41 @@ object UnsplashImageFactory {
             return createDateString(todayDate)
         }
 
+    val TODAY_STRING_FOR_DISPLAY: String
+        get() {
+            return SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(todayDate)
+        }
+
+    private val dateFormat = SimpleDateFormat("dd", Locale.ENGLISH)
+
+    private val todayDate: Date
+        get() = Calendar.getInstance(TimeZone.getDefault()).time
+
+    private val fallbackColor0: String by lazy {
+        ContextCompat.getColor(App.instance, R.color.highlightFallbackColor0).toHexString()
+    }
+
+    private val fallbackColor1: String by lazy {
+        ContextCompat.getColor(App.instance, R.color.highlightFallbackColor1).toHexString()
+    }
+
     fun createDateString(date: Date): String {
         return SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(date)
     }
 
-    fun createFullDownloadUrl(date: Date): String {
+    private fun createFullDownloadUrl(date: Date): String {
         return "${Request.AUTO_CHANGE_WALLPAPER}${createDateString(date)}.jpg"
     }
 
-    fun createThumbDownloadUrl(date: Date): String {
+    private fun createThumbDownloadUrl(date: Date): String {
         return "${Request.AUTO_CHANGE_WALLPAPER_THUMB}${createDateString(date)}.jpg"
     }
-
-    val TODAY_STRING_FOR_DISPLAY: String
-        get() {
-            return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(todayDate)
-        }
-
-    private val dateFormat = SimpleDateFormat("dd", Locale.getDefault())
-
-    private val todayDate: Date
-        get() = Calendar.getInstance(TimeZone.getDefault()).time
 
     fun createHighlightImage(date: Date, showTodayTag: Boolean = false): UnsplashImage {
         return UnsplashImage().apply {
             isUnsplash = false
             this.showTodayTag = showTodayTag
-            color = if (dateFormat.format(date).toInt() % 2 == 0) "#9c9c9c" else "#525252"
+            color = if (dateFormat.format(date).toInt() % 2 == 0) fallbackColor0 else fallbackColor1
             id = createDateString(date)
             urls = ImageUrl().apply {
                 val fullUrl = createFullDownloadUrl(date)
@@ -54,6 +64,8 @@ object UnsplashImageFactory {
                 regular = thumbUrl
                 small = thumbUrl
                 thumb = thumbUrl
+                width = 3
+                height = 2
             }
             user = UnsplashUser().apply {
                 val authorName = App.instance.getString(R.string.author_default_name)

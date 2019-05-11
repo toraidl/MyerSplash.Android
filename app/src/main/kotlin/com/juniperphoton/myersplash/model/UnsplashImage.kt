@@ -36,6 +36,12 @@ class UnsplashImage : Serializable {
     @SerializedName("links")
     private var links: ImageLinks? = null
 
+    @SerializedName("width")
+    var width = 0
+
+    @SerializedName("height")
+    var height = 0
+
     val downloadLocationLink: String?
         get() = links?.downloadLocation
 
@@ -64,8 +70,7 @@ class UnsplashImage : Serializable {
     val listUrl: String?
         get() {
             val urls = urls ?: return null
-            val choice = LocalSettingHelper.getInt(App.instance, listQualitySettingsKey, 0)
-            return when (choice) {
+            return when (LocalSettingHelper.getInt(App.instance, listQualitySettingsKey, 0)) {
                 0 -> urls.regular
                 1 -> urls.small
                 2 -> urls.thumb
@@ -76,8 +81,7 @@ class UnsplashImage : Serializable {
     val downloadUrl: String?
         get() {
             val urls = urls ?: return null
-            val choice = LocalSettingHelper.getInt(App.instance, savingQualitySettingsKey, 1)
-            return when (choice) {
+            return when (LocalSettingHelper.getInt(App.instance, savingQualitySettingsKey, 1)) {
                 0 -> urls.raw
                 1 -> urls.full
                 2 -> urls.small
@@ -87,8 +91,7 @@ class UnsplashImage : Serializable {
 
     private val tagForDownloadUrl: String
         get() {
-            val choice = LocalSettingHelper.getInt(App.instance, savingQualitySettingsKey, 1)
-            return when (choice) {
+            return when (LocalSettingHelper.getInt(App.instance, savingQualitySettingsKey, 1)) {
                 0 -> "raw"
                 1 -> "regular"
                 2 -> "small"

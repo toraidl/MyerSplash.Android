@@ -1,9 +1,11 @@
 package com.juniperphoton.myersplash.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.util.AttributeSet
 import android.view.*
+import android.view.View.OnTouchListener
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
@@ -12,13 +14,13 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.AboutActivity
-import com.juniperphoton.myersplash.activity.ManageDownloadActivity
+import com.juniperphoton.myersplash.activity.DownloadsListActivity
 import com.juniperphoton.myersplash.activity.SettingsActivity
-import com.juniperphoton.myersplash.model.UnsplashCategory
 
 typealias OnItemSelectedListener = ((Int) -> Unit)
 
 @Suppress("UNUSED")
+@SuppressLint("ClickableViewAccessibility")
 class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     companion object {
         const val DEFAULT_SELECTED = 0
@@ -82,7 +84,7 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
         }
     }
 
-    private val onTouchListener = View.OnTouchListener { v, event ->
+    private val onTouchListener = OnTouchListener { v, event ->
         when (v) {
             item0 -> touchingViewIndex = 0
             item1 -> touchingViewIndex = 1
@@ -94,7 +96,7 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
 
     private val menuMap: Map<Int, Class<out Any>> = mapOf(
             R.id.menu_settings to SettingsActivity::class.java,
-            R.id.menu_downloads to ManageDownloadActivity::class.java,
+            R.id.menu_downloads to DownloadsListActivity::class.java,
             R.id.menu_about to AboutActivity::class.java
     )
 

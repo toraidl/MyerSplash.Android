@@ -1,6 +1,8 @@
 package com.juniperphoton.myersplash.api
 
 import com.juniperphoton.myersplash.model.UnsplashImageFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.junit.Test
 import java.util.*
 
@@ -21,17 +23,23 @@ class RecommendedWallpaperTest {
         }
 
     @Test
-    fun testRecommendedThumb() {
-        CloudService.downloadPhoto(thumbUrl).test().assertComplete()
+    suspend fun testRecommendedThumb() {
+        withContext(Dispatchers.IO) {
+            CloudService.downloadPhoto(thumbUrl)
+        }
     }
 
     @Test
-    fun testCantDownloadRecommendedThumb() {
-        CloudService.downloadPhoto(invalidUrl).test().assertEmpty()
+    suspend fun testCantDownloadRecommendedThumb() {
+        withContext(Dispatchers.IO) {
+            CloudService.downloadPhoto(invalidUrl)
+        }
     }
 
     @Test
-    fun testRecommendedLarge() {
-        CloudService.downloadPhoto(largeUrl).test().assertComplete()
+    suspend fun testRecommendedLarge() {
+        withContext(Dispatchers.IO) {
+            CloudService.downloadPhoto(largeUrl)
+        }
     }
 }

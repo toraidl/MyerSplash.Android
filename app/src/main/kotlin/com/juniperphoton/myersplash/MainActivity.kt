@@ -15,13 +15,16 @@ import android.view.ViewGroup
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
 import com.juniperphoton.myersplash.activity.BaseActivity
-import com.juniperphoton.myersplash.activity.ManageDownloadActivity
+import com.juniperphoton.myersplash.activity.DownloadsListActivity
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
+import com.juniperphoton.myersplash.extension.getStatusBarHeight
 import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.model.UnsplashCategory
+import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.AnalysisHelper
-import com.juniperphoton.myersplash.utils.PermissionUtil
+import com.juniperphoton.myersplash.utils.Params
+import com.juniperphoton.myersplash.utils.PermissionUtils
 import com.juniperphoton.myersplash.widget.PivotTitleBar
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
@@ -60,6 +63,14 @@ class MainActivity : BaseActivity() {
 
         initShortcuts()
         initMainViews()
+        startServiceToCheck()
+    }
+
+    private fun startServiceToCheck() {
+        val intent = Intent(this, DownloadService::class.java).apply {
+            putExtra(Params.CHECK_STATUS, true)
+        }
+        startService(intent)
     }
 
     private fun initShortcuts() {
@@ -69,8 +80,8 @@ class MainActivity : BaseActivity() {
             if (shortcutManager.dynamicShortcuts.size > 0) {
                 shortcutManager.removeAllDynamicShortcuts()
             }
-            val intent = Intent(this, ManageDownloadActivity::class.java)
-            intent.action = ManageDownloadActivity.ACTION
+            val intent = Intent(this, DownloadsListActivity::class.java)
+            intent.action = DownloadsListActivity.ACTION
             val shortcut = ShortcutInfo.Builder(this, DOWNLOADS_SHORTCUT_ID)
                     .setShortLabel(getString(R.string.downloadLowercase))
                     .setLongLabel(getString(R.string.downloadLowercase))
@@ -91,16 +102,7 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        imageDetailView.registerEventBus()
-        searchView.registerEventBus()
-
-        PermissionUtil.checkAndRequest(this@MainActivity)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        imageDetailView.unregisterEventBus()
-        searchView.unregisterEventBus()
+        PermissionUtils.checkAndRequest(this@MainActivity)
     }
 
     private fun toggleSearchView(show: Boolean, useAnimation: Boolean) {
@@ -168,6 +170,10 @@ class MainActivity : BaseActivity() {
         }
 
         pivotTitleBar.apply {
+            val lp = pivotTitleBar.layoutParams as ViewGroup.MarginLayoutParams
+            lp.topMargin = getStatusBarHeight()
+            layoutParams = lp
+
             onSingleTap = {
                 viewPager.currentItem = it
                 EventBus.getDefault().post(ScrollToTopEvent(ID_MAPS[it]!!, false))
@@ -248,7 +254,7 @@ class MainActivity : BaseActivity() {
                     toolbarLayout.post { toggleSearchView(show = true, useAnimation = false) }
                 }
                 ACTION_DOWNLOADS -> {
-                    val intent = Intent(this, ManageDownloadActivity::class.java)
+                    val intent = Intent(this, DownloadsListActivity::class.java)
                     startActivity(intent)
                 }
             }

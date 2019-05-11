@@ -4,7 +4,6 @@ import android.app.Application
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory
 import com.juniperphoton.myersplash.api.OkHttpClientAPI
-import com.juniperphoton.myersplash.db.RealmCache
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
@@ -21,10 +20,9 @@ class App : Application() {
         instance = this
         Pasteur.init(BuildConfig.DEBUG)
 
-        val config = OkHttpImagePipelineConfigFactory.newBuilder(this, OkHttpClientAPI.createClient()).build()
+        val config = OkHttpImagePipelineConfigFactory
+                .newBuilder(this, OkHttpClientAPI.createClient()).build()
         Fresco.initialize(this, config)
-
-        RealmCache.init(this)
         AppCenter.start(this, BuildConfig.APP_CENTER_KEY, Analytics::class.java, Crashes::class.java)
     }
 }

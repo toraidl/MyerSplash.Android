@@ -1,23 +1,19 @@
 package com.juniperphoton.myersplash.adapter
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.SimpleDraweeView
 import com.facebook.imagepipeline.common.ResizeOptions
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.juniperphoton.flipperlayout.FlipperLayout
-import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.model.DownloadItem
-import com.juniperphoton.myersplash.service.DownloadService
-import com.juniperphoton.myersplash.utils.DownloadItemTransactionUtil
-import com.juniperphoton.myersplash.utils.Params
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.widget.DownloadCompleteView
 import com.juniperphoton.myersplash.widget.DownloadRetryView
@@ -28,65 +24,67 @@ class DownloadsListAdapter(private val context: Context) :
     companion object {
         private const val TAG = "DownloadsListAdapter"
         private const val ITEM_TYPE_ITEM = 0
-        private const val ITEM_TYPE_FOOTER = 1
-        private const val ASPECT_RATIO = 1.7f
         private const val MAX_DIMENSION_PREVIEW_PX = 500
     }
 
-    var data: MutableList<DownloadItem> = mutableListOf()
+    interface Callback {
+        fun onClickRetry(item: DownloadItem)
+        fun onClickDelete(item: DownloadItem)
+        fun onClickCancel(item: DownloadItem)
+    }
+
+    val data: MutableList<DownloadItem> = mutableListOf()
+    var callback: Callback? = null
+
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long {
+        if (position < 0 || position >= data.size) {
+            return RecyclerView.NO_ID
+        }
+        return data[position].id.hashCode().toLong()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DownloadItemViewHolder {
         return when (viewType) {
             ITEM_TYPE_ITEM -> {
                 val view = LayoutInflater.from(context)
                         .inflate(R.layout.row_download_item, parent, false)
-                val width = context.resources.displayMetrics.widthPixels
-                val params = view.layoutParams.apply {
-                    height = (width / ASPECT_RATIO).toInt()
-                }
-                view.layoutParams = params
                 DownloadItemViewHolder(view)
-            }
-            ITEM_TYPE_FOOTER -> {
-                val footer = LayoutInflater.from(context).inflate(R.layout.row_footer_blank,
-                        parent, false)
-                DownloadItemViewHolder(footer)
             }
             else -> throw IllegalArgumentException("unknown view type")
         }
     }
 
     override fun onBindViewHolder(holder: DownloadItemViewHolder, position: Int) {
-        if (getItemViewType(position) == ITEM_TYPE_FOOTER) {
-            return
-        }
         holder.bind(data[holder.adapterPosition])
     }
 
-    override fun getItemCount(): Int = data.size + 1
+    override fun getItemCount(): Int = data.size
 
     override fun getItemViewType(position: Int): Int {
-        return if (position >= itemCount - 1) {
-            ITEM_TYPE_FOOTER
-        } else {
-            ITEM_TYPE_ITEM
-        }
+        return ITEM_TYPE_ITEM
+    }
+
+    fun refresh(items: List<DownloadItem>) {
+        Pasteur.info(TAG, "refresh items: ${items.size}")
+        data.clear()
+        data.addAll(items)
+        notifyDataSetChanged()
     }
 
     fun updateItem(item: DownloadItem) {
         val index = data.indexOf(item)
         if (index >= 0 && index <= data.size) {
-            Pasteur.d(TAG, "notifyItemChanged:$index")
+            Pasteur.d(TAG, "notifyItemChanged:$index, item: $item")
             notifyItemChanged(index)
         }
     }
 
-    fun refreshItems(items: MutableList<DownloadItem>) {
-        data = items
-        notifyDataSetChanged()
-    }
-
     inner class DownloadItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private var previewRoot: ConstraintLayout? = itemView.findViewById(R.id.download_preview_root)
         private var draweeView: SimpleDraweeView? = itemView.findViewById(R.id.row_download_item_dv)
         private var flipperLayout: FlipperLayout? = itemView.findViewById(R.id.row_download_flipper_layout)
         private var downloadingView: DownloadingView? = itemView.findViewById(R.id.row_downloading_view)
@@ -97,48 +95,31 @@ class DownloadsListAdapter(private val context: Context) :
 
         init {
             downloadRetryView?.onClickDelete = onDelete@{
-                val item = downloadItem ?: return@onDelete
-                try {
-                    data.removeAt(adapterPosition)
-                    notifyItemRemoved(adapterPosition)
-
-                    val intent = Intent(App.instance, DownloadService::class.java)
-                    intent.putExtra(Params.CANCELED_KEY, true)
-                    intent.putExtra(Params.URL_KEY, item.downloadUrl)
-                    context.startService(intent)
-
-                    DownloadItemTransactionUtil.delete(item)
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                downloadItem?.let {
+                    callback?.onClickDelete(it)
                 }
             }
 
             downloadRetryView?.onClickRetry = onRetry@{
-                val item = downloadItem ?: return@onRetry
-
-                DownloadItemTransactionUtil.updateStatus(item,
-                        DownloadItem.DOWNLOAD_STATUS_DOWNLOADING)
-                flipperLayout?.next(item.status)
-
-                val intent = Intent(context, DownloadService::class.java)
-                intent.putExtra(Params.NAME_KEY, item.fileName)
-                intent.putExtra(Params.URL_KEY, item.downloadUrl)
-                context.startService(intent)
+                downloadItem?.let {
+                    flipperLayout?.next(DownloadItem.DOWNLOAD_STATUS_DOWNLOADING)
+                    callback?.onClickRetry(it)
+                }
             }
 
             downloadingView?.onClickCancel = onCancel@{
-                val item = downloadItem ?: return@onCancel
-                DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED)
-                flipperLayout?.next(item.status)
-
-                val intent = Intent(App.instance, DownloadService::class.java)
-                intent.putExtra(Params.CANCELED_KEY, true)
-                intent.putExtra(Params.URL_KEY, item.downloadUrl)
-                context.startService(intent)
+                downloadItem?.let {
+                    flipperLayout?.next(DownloadItem.DOWNLOAD_STATUS_FAILED)
+                    callback?.onClickCancel(it)
+                }
             }
         }
 
         internal fun bind(item: DownloadItem) {
+            if (this.downloadItem == item) {
+                return
+            }
+
             this.downloadItem = item
 
             draweeView?.let {
@@ -148,6 +129,16 @@ class DownloadsListAdapter(private val context: Context) :
                 val controller = Fresco.newDraweeControllerBuilder().setImageRequest(request)
                         .setOldController(it.controller).build()
                 it.controller = controller
+
+                val lp = it.layoutParams as? ConstraintLayout.LayoutParams
+                lp?.let { param ->
+                    val w = item.width
+                    val h = item.height
+                    if (w > 0 && h > 0) {
+                        param.dimensionRatio = "$w:$h"
+                        it.layoutParams = param
+                    }
+                }
             }
 
             downloadingView?.progress = item.progress

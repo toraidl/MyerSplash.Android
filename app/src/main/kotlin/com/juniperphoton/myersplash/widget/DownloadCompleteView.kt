@@ -16,6 +16,7 @@ import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.extension.isLightColor
+import com.juniperphoton.myersplash.utils.AnalysisHelper
 import java.io.File
 
 @Suppress("unused")
@@ -38,6 +39,7 @@ class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(
 
     @OnClick(R.id.widget_set_as_rl)
     fun setAs() {
+        AnalysisHelper.logClickSetAsInDownloadList()
         filePath?.let {
             val intent = Intent(context, EditActivity::class.java)
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(it)))

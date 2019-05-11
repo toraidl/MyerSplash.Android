@@ -5,8 +5,6 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -24,8 +22,9 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
+import androidx.fragment.app.FragmentActivity
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -34,26 +33,23 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.EditActivity
-import com.juniperphoton.myersplash.db.RealmCache
-import com.juniperphoton.myersplash.event.DownloadStartedEvent
-import com.juniperphoton.myersplash.extension.isLightColor
+import com.juniperphoton.myersplash.extension.*
 import com.juniperphoton.myersplash.fragment.Action
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
-import io.realm.RealmChangeListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
+import com.juniperphoton.myersplash.view.ImageDetailViewContract
+import com.juniperphoton.myersplash.viewmodel.ImageDetailViewModel
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.*
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 @Suppress("unused")
 class ImageDetailView(context: Context, attrs: AttributeSet
-) : FrameLayout(context, attrs), CoroutineScope by MainScope() {
+) : FrameLayout(context, attrs), ImageDetailViewContract {
     companion object {
         private const val TAG = "ImageDetailView"
         private const val RESULT_CODE = 10000
@@ -75,7 +71,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     private var listPositionY = 0f
 
     private var clickedView: View? = null
-    private var clickedImage: UnsplashImage? = null
+
+    private var scope: CoroutineScope? = null
 
     /**
      * Invoked when the display animation is started.
@@ -151,21 +148,13 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     @BindView(R.id.detail_set_as_fab)
     lateinit var setAsFAB: FloatingActionButton
 
-    private var associatedDownloadItem: DownloadItem? = null
-
-    private val realmChangeListener = RealmChangeListener<DownloadItem> { element ->
-        when (element.status) {
-            DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> progressView.progress = element.progress
-            DownloadItem.DOWNLOAD_STATUS_FAILED -> downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
-            DownloadItem.DOWNLOAD_STATUS_OK -> downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
-        }
-    }
+    private lateinit var viewModel: ImageDetailViewModel
 
     private val shareButtonHideOffset: Int
-        get() = resources.getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide)
+        get() = resources.getDimensionPixelSize(R.dimen.share_btn_margin_right_hide)
 
     private val downloadFlipperLayoutHideOffset: Int
-        get() = resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide)
+        get() = resources.getDimensionPixelSize(R.dimen.download_btn_margin_right_hide)
 
     private var animating: Boolean = false
     private var copied: Boolean = false
@@ -179,6 +168,9 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initDetailViews() {
+        viewModel = ViewModelProviders.of(context as FragmentActivity).get(ImageDetailViewModel::class.java)
+        viewModel.viewContract = this
+
         detailRootScrollView.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 tryHide()
@@ -188,9 +180,9 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
         detailRootScrollView.visibility = View.INVISIBLE
 
-        detailInfoRootLayout.translationY = (-resources.getDimensionPixelOffset(R.dimen.img_detail_info_height)).toFloat()
-        downloadFlipperLayout.translationX = resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide).toFloat()
-        shareFAB.translationX = resources.getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide).toFloat()
+        detailInfoRootLayout.translationY = (-resources.getDimensionPixelSize(R.dimen.img_detail_info_height)).toFloat()
+        downloadFlipperLayout.translationX = resources.getDimensionPixelSize(R.dimen.download_btn_margin_right_hide).toFloat()
+        shareFAB.translationX = resources.getDimensionPixelSize(R.dimen.share_btn_margin_right_hide).toFloat()
 
         ValueAnimator.ofFloat(0f, 360f).apply {
             addUpdateListener { animation -> progressView.rotation = animation.animatedValue as Float }
@@ -291,21 +283,9 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         downloadFlipperLayout.translationX = downloadFlipperLayoutHideOffset.toFloat()
     }
 
-    private fun associateWithDownloadItem(item: DownloadItem?) {
-        if (item == null) {
-            RealmCache.getInstance().executeTransaction {
-                associatedDownloadItem = it.where(DownloadItem::class.java)
-                        .equalTo(DownloadItem.ID_KEY, clickedImage!!.id).findFirst()
-            }
-        }
-
-        associatedDownloadItem?.removeAllChangeListeners()
-        associatedDownloadItem?.addChangeListener(realmChangeListener)
-    }
-
     private fun toggleHeroViewAnimation(startY: Float, endY: Float, show: Boolean) {
         if (!show) {
-            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+            downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
         } else {
             detailImgRL.translationX = 0f
         }
@@ -325,8 +305,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                         clickedView!!.visibility = View.VISIBLE
                         toggleMaskAnimation(false)
                         clickedView = null
-                        clickedImage = null
                         animating = false
+                        quickReset()
                     } else {
                         toggleDetailRLAnimation(show = true, oneshot = false)
                         toggleDownloadFlipperLayoutAnimation(show = true, oneshot = false)
@@ -338,20 +318,26 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         }
     }
 
-    private fun checkDownloadStatus(item: DownloadItem) {
+    private fun checkDownloadStatus(item: DownloadItem): Boolean {
         val file = File(item.filePath)
-        if (file.exists() && file.canRead()) {
-            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
-        }
+        return file.exists() && file.canRead()
     }
 
     private val targetY: Float
-        get() = ((context as Activity).window.decorView.height
-                - resources.getDimensionPixelSize(R.dimen.img_detail_height)) / 2f
+        get() {
+            val decorView = (context as Activity).window.decorView
+            val height = decorView.height
+            val width = decorView.width
+            val detailHeight = (width / (3 / 2f)).toInt() +
+                    context.resources.getDimensionPixelSize(R.dimen.img_detail_info_height)
+            return (height - detailHeight) / 2f
+        }
 
     private fun toggleDetailRLAnimation(show: Boolean, oneshot: Boolean) {
-        val startY = if (show) -resources.getDimensionPixelOffset(R.dimen.img_detail_info_height) else 0
-        val endY = if (show) 0 else -resources.getDimensionPixelOffset(R.dimen.img_detail_info_height)
+        val startY = if (show) -resources.getDimensionPixelSize(R.dimen.img_detail_info_height) else 0
+        val endY = if (show) 0 else -resources.getDimensionPixelSize(R.dimen.img_detail_info_height)
+
+        detailInfoRootLayout.translationY = startY.toFloat()
 
         ValueAnimator().apply {
             setFloatValues(startY.toFloat(), endY.toFloat())
@@ -443,7 +429,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         toggleShareBtnAnimation(false, oneshot)
     }
 
-    private fun extractThemeColor(image: UnsplashImage) = launch {
+    private fun extractThemeColor(image: UnsplashImage) = scope?.launch {
         val color = image.extractThemeColor()
         if (color != Int.MIN_VALUE) {
             updateThemeColor(color)
@@ -476,122 +462,106 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         }
     }
 
-    fun registerEventBus() {
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this)
-        }
-    }
-
-    fun unregisterEventBus() {
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this)
-        }
-    }
-
     @OnClick(R.id.detail_name_tv)
     fun onClickName() {
-        clickedImage?.userHomePage?.let {
-            val uri = Uri.parse(it)
-
-            val intentBuilder = CustomTabsIntent.Builder()
-
-            intentBuilder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
-            intentBuilder.setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
-
-            intentBuilder.setStartAnimations(context, R.anim.in_from_right, R.anim.out_from_left)
-            intentBuilder.setExitAnimations(context, R.anim.in_from_left, R.anim.out_from_right)
-
-            val customTabsIntent = intentBuilder.build()
-
-            customTabsIntent.launchUrl(context, uri)
-        }
+        viewModel.navigateToAuthorPage()
     }
 
     @OnClick(R.id.copy_url_flipper_layout)
     fun onClickCopy() {
-        if (copied) return
+        copyInternal()
+    }
+
+    private fun copyInternal() = scope?.launch {
+        if (copied) return@launch
         copied = true
 
         copyUrlFlipperLayout.next()
 
         AnalysisHelper.logClickCopyUrl()
 
-        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText(context.getString(R.string.app_name), clickedImage?.downloadUrl)
-        clipboard.primaryClip = clip
-
-        postDelayed({
-            copyUrlFlipperLayout.next()
-            copied = false
-        }, URL_COPIED_DELAY_MILLIS)
+        viewModel.copyUrlToClipboard()
+        delay(URL_COPIED_DELAY_MILLIS)
+        copyUrlFlipperLayout.next()
+        copied = false
     }
 
     @OnClick(R.id.detail_share_fab)
     fun onClickShare() {
-        val file = FileUtil.getCachedFile(clickedImage!!.listUrl!!)
+        viewModel.share()
+    }
 
-        if (file == null || !file.exists()) {
-            Toaster.sendShortToast(context.getString(R.string.something_wrong))
+    @OnClick(R.id.detail_download_fab)
+    fun onClickDownload() {
+        if (!PermissionUtils.check(context as Activity)) {
+            Toaster.sendShortToast(context.getString(R.string.no_permission))
             return
         }
 
-        val shareText = context.getString(R.string.share_text, clickedImage!!.userName, clickedImage!!.downloadUrl)
+        val warn = LocalSettingHelper.getBoolean(context,
+                context.getString(R.string.preference_key_download_via_metered_network), true)
 
+        if (warn && !context.usingWifi()) {
+            val builder = buildMeteredWarningDialog(context) {
+                viewModel.download()
+            }
+            builder.create().show()
+        } else {
+            viewModel.download()
+        }
+    }
+
+    @OnClick(R.id.detail_cancel_download_fab)
+    fun onClickCancelDownload() {
+        if (viewModel.cancelDownload()) {
+            downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+        }
+    }
+
+    @OnClick(R.id.detail_set_as_fab)
+    fun onClickSetAsFAB() {
+        viewModel.setAs()
+    }
+
+    override fun launchEditActivity(uri: Uri) {
+        val intent = Intent(context, EditActivity::class.java)
+        intent.putExtra(Intent.EXTRA_STREAM, uri)
+        context.startActivity(intent)
+    }
+
+    override fun navigateToAuthorPage(url: String) {
+        val uri = Uri.parse(url)
+
+        val intentBuilder = CustomTabsIntent.Builder()
+
+        intentBuilder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+        intentBuilder.setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
+
+        intentBuilder.setStartAnimations(context, R.anim.in_from_right, R.anim.out_from_left)
+        intentBuilder.setExitAnimations(context, R.anim.in_from_left, R.anim.out_from_right)
+
+        val customTabsIntent = intentBuilder.build()
+
+        customTabsIntent.launchUrl(context, uri)
+    }
+
+    override fun launchShare(uri: Uri, text: String) {
         val intent = Intent(Intent.ACTION_SEND)
-        val contentUri = FileProvider.getUriForFile(context,
-                context.getString(R.string.authorities), file)
+
         intent.apply {
             action = Intent.ACTION_SEND
             type = "image/*"
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            putExtra(Intent.EXTRA_STREAM, contentUri)
+            putExtra(Intent.EXTRA_STREAM, uri)
             putExtra(Intent.EXTRA_SUBJECT, "Share")
-            putExtra(Intent.EXTRA_TEXT, shareText)
+            putExtra(Intent.EXTRA_TEXT, text)
         }
+
         context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_title)))
     }
 
-    @OnClick(R.id.detail_download_fab)
-    fun onClickDownload() {
-        AnalysisHelper.logClickDownloadInDetails()
-        if (clickedImage == null) {
-            return
-        }
-        DownloadUtil.download(context as Activity, clickedImage!!)
-    }
-
-    @OnClick(R.id.detail_cancel_download_fab)
-    fun onClickCancelDownload() {
-        AnalysisHelper.logClickCancelDownloadInDetails()
-        if (clickedImage == null) {
-            return
-        }
-        downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
-
-        DownloadItemTransactionUtil.updateStatus(associatedDownloadItem!!, DownloadItem.DOWNLOAD_STATUS_FAILED)
-        DownloadUtil.cancelDownload(context, clickedImage!!)
-    }
-
-    @OnClick(R.id.detail_set_as_fab)
-    fun onClickSetAsFAB() {
-        AnalysisHelper.logClickSetAsInDetails()
-        if (associatedDownloadItem == null) {
-            return
-        }
-        val url = "${associatedDownloadItem!!.filePath}"
-        val intent = Intent(context, EditActivity::class.java)
-        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(url)))
-        context.startActivity(intent)
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun receivedDownloadStarted(event: DownloadStartedEvent) {
-        if (clickedImage != null && event.id == clickedImage?.id) {
-            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
-            associateWithDownloadItem(null)
-        }
-    }
+    private var disposable: Disposable? = null
 
     /**
      * Show detailed image
@@ -605,13 +575,17 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         if (clickedView != null) {
             return
         }
-        clickedImage = unsplashImage
+
+        scope = CoroutineScope(Dispatchers.Main)
+
+        viewModel.unsplashImage = unsplashImage
+
         clickedView = itemView
         clickedView!!.visibility = View.INVISIBLE
 
         val themeColor = unsplashImage.themeColor
 
-        if (!clickedImage!!.isUnsplash) {
+        if (!unsplashImage.isUnsplash) {
             photoByTextView.text = context.getString(R.string.recommended_by)
 
             extractThemeColor(unsplashImage)
@@ -633,36 +607,59 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
         listPositionY = rectF.top
 
-        associatedDownloadItem = DownloadUtil.getDownloadItemById(unsplashImage.id)
-        if (associatedDownloadItem != null) {
-            Pasteur.d(TAG, "found download item,status:" + associatedDownloadItem!!.status)
-            when (associatedDownloadItem?.status) {
-                DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> {
-                    downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
-                    progressView.progress = associatedDownloadItem!!.progress
+        disposable = viewModel.associatedDownloadItem
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.distinctUntilChanged { prev, current ->
+                    prev == current
                 }
-                DownloadItem.DOWNLOAD_STATUS_FAILED -> {
+                ?.delay { item ->
+                    return@delay if (item.status == DownloadItem.DOWNLOAD_STATUS_OK && !animating) {
+                        Flowable.just(item).delay(FlipperLayout.DEFAULT_DURATION_MILLIS, TimeUnit.MILLISECONDS)
+                    } else {
+                        Flowable.just(item)
+                    }
                 }
-                DownloadItem.DOWNLOAD_STATUS_OK -> {
-                    checkDownloadStatus(associatedDownloadItem!!)
+                ?.subscribe { item ->
+                    updateByItem(item)
                 }
-            }
-            associateWithDownloadItem(associatedDownloadItem)
-        }
 
         toggleMaskAnimation(true)
         toggleHeroViewAnimation(listPositionY, targetY, true)
+    }
+
+    private fun updateByItem(item: DownloadItem?) {
+        Pasteur.info(TAG, "observe on new value: $item")
+        when (item?.status) {
+            DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> {
+                progressView.progress = item.progress
+                downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
+            }
+            DownloadItem.DOWNLOAD_STATUS_FAILED -> {
+                downloadFlipperLayout.updateIndex(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+            }
+            DownloadItem.DOWNLOAD_STATUS_OK -> {
+                if (checkDownloadStatus(item)) {
+                    val index = DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK
+                    downloadFlipperLayout.updateIndex(index)
+                }
+            }
+        }
+    }
+
+    private fun quickReset() {
+        copyUrlFlipperLayout.updateIndexWithoutAnimation(0)
+        downloadFlipperLayout.updateIndexWithoutAnimation(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+        copied = false
     }
 
     /**
      * Try to hide this view. If this view is fully displayed to user.
      */
     fun tryHide(): Boolean {
-        cancel()
-        if (associatedDownloadItem?.isValid == true) {
-            associatedDownloadItem!!.removeChangeListener(realmChangeListener)
-            associatedDownloadItem = null
-        }
+        scope?.cancel()
+        disposable?.dispose()
+        disposable = null
+        viewModel.onHide()
         if (detailRootScrollView.visibility == View.VISIBLE) {
             hideDetailPanel()
             return true

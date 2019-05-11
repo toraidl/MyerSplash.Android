@@ -16,4 +16,6 @@
     <color name="HintColor">#afafaf</color>
     <color name="LightGray">#e2e2e2</color>
     <color name="ShadowColor">#2f000000</color>
+    <color name="highlightFallbackColor0">#9c9c9c</color>
+    <color name="highlightFallbackColor1">#525252</color>
 </resources>

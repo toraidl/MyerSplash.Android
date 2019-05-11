@@ -21,11 +21,11 @@
 
             <androidx.legacy.widget.Space
                 android:id="@+id/top_space"
-                app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/about_space"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"/>
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <LinearLayout
                 android:id="@+id/about_title_layout"
@@ -84,12 +84,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:paddingBottom="4dp"
+                android:background="@drawable/version_background"
                 android:paddingLeft="8dp"
-                android:paddingRight="8dp"
                 android:paddingTop="4dp"
-                android:textColor="@color/MyerSplashThemeColor"
-                android:textSize="15sp"
+                android:paddingRight="8dp"
+                android:paddingBottom="4dp"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -113,6 +114,7 @@
                 <TextView
                     style="@style/AboutSubContentTextView"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="30dp"
                     android:layout_marginRight="30dp"
                     android:gravity="center"
