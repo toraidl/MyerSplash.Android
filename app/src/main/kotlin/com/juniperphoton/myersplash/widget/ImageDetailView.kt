@@ -20,6 +20,7 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.annotation.UiThread
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -608,7 +609,6 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         listPositionY = rectF.top
 
         disposable = viewModel.associatedDownloadItem
-                ?.observeOn(AndroidSchedulers.mainThread())
                 ?.distinctUntilChanged { prev, current ->
                     prev == current
                 }
@@ -619,6 +619,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                         Flowable.just(item)
                     }
                 }
+                ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe { item ->
                     updateByItem(item)
                 }
@@ -627,6 +628,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         toggleHeroViewAnimation(listPositionY, targetY, true)
     }
 
+    @UiThread
     private fun updateByItem(item: DownloadItem?) {
         Pasteur.info(TAG, "observe on new value: $item")
         when (item?.status) {
