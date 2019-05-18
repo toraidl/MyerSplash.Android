@@ -74,3 +74,11 @@ fun Context.startActivitySafely(intent: Intent) {
         e.printStackTrace()
     }
 }
+
+fun Context.startServiceSafely(intent: Intent) {
+    try {
+        startService(intent)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}

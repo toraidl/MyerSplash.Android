@@ -20,6 +20,7 @@ import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.extension.getStatusBarHeight
 import com.juniperphoton.myersplash.extension.pow
+import com.juniperphoton.myersplash.extension.startServiceSafely
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.AnalysisHelper
@@ -70,7 +71,7 @@ class MainActivity : BaseActivity() {
         val intent = Intent(this, DownloadService::class.java).apply {
             putExtra(Params.CHECK_STATUS, true)
         }
-        startService(intent)
+        startServiceSafely(intent)
     }
 
     private fun initShortcuts() {
